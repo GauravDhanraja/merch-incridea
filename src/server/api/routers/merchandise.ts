@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
 import { z } from "zod";
 
 export const merchandiseRouter = createTRPCRouter({
-    createMerch: protectedProcedure
+    createMerch: adminProcedure
         .input(z.object({
             name: z.string().min(3),
             description: z.string(),
@@ -59,7 +59,7 @@ export const merchandiseRouter = createTRPCRouter({
 
             }
         }),
-    updateMerch: protectedProcedure
+    updateMerch: adminProcedure
         .input(z.object({
             id: z.string(),
             name: z.string().min(3),
@@ -88,7 +88,7 @@ export const merchandiseRouter = createTRPCRouter({
 
             }
         }),
-    deleteMerch: protectedProcedure
+    deleteMerch: adminProcedure
         .input(
             z.object({
                 id: z.string()
