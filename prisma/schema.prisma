@@ -115,4 +115,5 @@ enum Status {
   PENDING
   SUCCESS
   FAILED
+  REFUNDED
 }
