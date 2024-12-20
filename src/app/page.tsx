@@ -5,12 +5,13 @@ import { auth } from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+  // const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
+  // if (session?.user) {
+  //   void api.post.getLatest.prefetch();
+  // }
+  const merchandise = await api.merch.getAllMerch();
 
   return (
     <HydrateClient>
@@ -19,35 +20,46 @@ export default async function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Merch <span className="text-[hsl(280,100%,70%)]">Incridea</span>
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
+
+          {/* copy the below component wherever you want to display the merchandise */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-8">
+            {merchandise.map((merch) => (
+              <div
+                key={merch.id}
+                className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white/10 p-4 text-center"
+              >
+                <img
+                  src={merch?.image}
+                  alt={merch?.name}
+                  className="h-48 w-full rounded-lg object-cover"
+                />
+                <h2 className="text-2xl font-semibold">{merch.name}</h2>
+                <p className="w-full truncate rounded-3xl bg-white/20 py-1 text-lg">
+                  {merch.description}
+                </p>
+                <p className="w-full rounded-3xl bg-white/20 py-1 text-lg">
+                  {merch.available ? (
+                    <p className="text-green-500">Available</p>
+                  ) : (
+                    <p className="text-red-700">Sold out</p>
+                  )}
+                </p>
+                <p className="w-full rounded-3xl bg-white/20 py-1 text-lg">
+                  Stock: {merch?.stock}
+                </p>
+                <p className="flex gap-4 text-lg font-semibold">
+                  <span className="text-red-500 line-through">
+                    ₹{merch?.originalPrice}
+                  </span>{" "}
+                  ₹{merch?.discountPrice}
+                </p>
+                <button className="w-full rounded-lg bg-red-500 py-2">
+                  Buy this Item
+                </button>
               </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
+            ))}
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-
             <div className="flex flex-col items-center justify-center gap-4">
               <p className="text-center text-2xl text-white">
                 {session && <span>Logged in as {session.user?.name}</span>}
@@ -61,7 +73,7 @@ export default async function Home() {
             </div>
           </div>
 
-          {session?.user && <LatestPost />}
+          {/* {session?.user && <LatestPost />} */}
         </div>
       </main>
     </HydrateClient>

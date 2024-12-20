@@ -32,7 +32,15 @@ export const merchandiseRouter = createTRPCRouter({
     getAllMerch: publicProcedure
         .query(async ({ ctx }) => {
             try {
-                return ctx.db.merchandise.findMany({});
+                return ctx.db.merchandise.findMany({
+                    include: {
+                        order: {
+                            select: {
+                                quantity: true
+                            }
+                        }
+                    }
+                });
             } catch (error) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
