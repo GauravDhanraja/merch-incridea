@@ -40,7 +40,26 @@ export const merchandiseRouter = createTRPCRouter({
     }),
   getAllMerch: publicProcedure.query(async ({ ctx }) => {
     try {
+      return ctx.db.merchandise.findMany({});
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not get merchandise",
+      });
+    }
+  }),
+  getMerchSales: publicProcedure.query(async ({ ctx }) => {
+    try {
       return ctx.db.merchandise.findMany({
+        where: {
+          order: {
+            some: {
+              paymentOrder: {
+                status: "SUCCESS"
+              }
+            }
+          }
+        },
         include: {
           order: {
             select: {
@@ -137,7 +156,7 @@ export const merchandiseRouter = createTRPCRouter({
         merchId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const merch = await ctx.db.merchandise.findUnique({
           where: { id: input.merchId },

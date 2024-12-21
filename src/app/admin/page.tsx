@@ -15,7 +15,7 @@ import { merchColumns, orderColumns } from "./_components/columns";
 import { OrderData } from "./_components/orderData";
 
 export default function Admin() {
-  const merchData = api.merchandise.getAllMerch.useQuery().data;
+  const merchData = api.merchandise.getMerchSales.useQuery().data;
   const orderData = api.order.getAllUserOrders.useQuery().data;
 
   return (

@@ -2,7 +2,8 @@ import Link from "next/link";
 
 import { LatestPost } from "~/app/_components/post";
 import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
+import { api } from "~/trpc/react";
 
 export default async function Home() {
   // const hello = await api.post.hello({ text: "from tRPC" });
@@ -11,8 +12,8 @@ export default async function Home() {
   // if (session?.user) {
   //   void api.post.getLatest.prefetch();
   // }
-  const merchandise = await api.merchandise.getAllMerch();
-
+  const merchandise = await api.merchandise.getAllMerch.useQuery().data;
+  const purchaseMerch = await api.merchandise.purchaseMerch.useMutation();
   return (
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -23,7 +24,7 @@ export default async function Home() {
 
           {/* copy the below component wherever you want to display the merchandise */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-8">
-            {merchandise.map((merch) => (
+            {merchandise?.map((merch) => (
               <div
                 key={merch.id}
                 className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white/10 p-4 text-center"
@@ -53,7 +54,11 @@ export default async function Home() {
                   </span>{" "}
                   ₹{merch?.discountPrice}
                 </p>
-                <button className="w-full rounded-lg bg-red-500 py-2">
+                {/* razorpay yet to be added */}
+                <button
+                  className="w-full rounded-lg bg-red-500 py-2"
+                  onClick={() => purchaseMerch.mutate({ merchId: merch.id })}
+                >
                   Buy this Item
                 </button>
               </div>
