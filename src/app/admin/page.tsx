@@ -11,10 +11,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { api } from "~/trpc/react";
 import { MerchData } from "./_components/merchData";
-import { columns } from "./_components/columns";
+import { merchColumns, orderColumns } from "./_components/columns";
+import { OrderData } from "./_components/orderData";
 
 export default function Admin() {
-  const data = api.merchandise.getAllMerch.useQuery().data;
+  const merchData = api.merchandise.getAllMerch.useQuery().data;
+  const orderData = api.order.getAllUserOrders.useQuery().data;
 
   return (
     <PageContainer scrollable>
@@ -140,7 +142,17 @@ export default function Admin() {
               </Card>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <div className="col-span-4">{/* <BarGraph /> */}</div>
+              <Card className="col-span-5 md:col-span-4">
+                <CardHeader>
+                  <CardTitle>Order Wise Data</CardTitle>
+                  <CardDescription>This is the order wise data</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {orderData && (
+                    <OrderData columns={orderColumns} data={orderData} />
+                  )}
+                </CardContent>
+              </Card>
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
                   <CardTitle>Merchandise Wise Data</CardTitle>
@@ -149,10 +161,12 @@ export default function Admin() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {data && <MerchData columns={columns} data={data} />}
+                  {merchData && (
+                    <MerchData columns={merchColumns} data={merchData} />
+                  )}
                 </CardContent>
               </Card>
-              <div className="col-span-4">{/* <AreaGraph /> */}</div>
+              <div className="col-span-4">{/* <PieGraph /> */}</div>
               <div className="col-span-4 md:col-span-3">
                 {/* <PieGraph /> */}
               </div>

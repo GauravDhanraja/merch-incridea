@@ -1,14 +1,23 @@
-import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { AppSidebar } from "~/components/AppSidebar";
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
+import { auth } from "~/server/auth";
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+  if (session?.user && session?.user?.role === "ADMIN") {
+    return (
       <main className="h-full min-h-screen w-full bg-[#06040b]">
-        <SidebarTrigger />
         {children}
       </main>
-    </SidebarProvider>
+    );
+  }
+  return (
+    <main className="flex h-full min-h-screen w-full flex-col items-center justify-center gap-4 bg-[#06040b]">
+      <h1 className="font-sans text-8xl font-bold text-white">404</h1>
+      <h2 className="font-sans text-3xl font-bold text-white">
+        Page not Found
+      </h2>
+    </main>
   );
 }

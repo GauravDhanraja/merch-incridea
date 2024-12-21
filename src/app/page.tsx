@@ -11,7 +11,7 @@ export default async function Home() {
   // if (session?.user) {
   //   void api.post.getLatest.prefetch();
   // }
-  const merchandise = await api.merch.getAllMerch();
+  const merchandise = await api.merchandise.getAllMerch();
 
   return (
     <HydrateClient>

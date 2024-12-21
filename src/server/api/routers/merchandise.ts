@@ -48,6 +48,11 @@ export const merchandiseRouter = createTRPCRouter({
             }
           }
         }
+      }).then(merchandise => {
+        return merchandise.map(item => ({
+          ...item,
+          totalSales: item.order.reduce((sum, order) => sum + order.quantity, 0)
+        }));
       });
     } catch (error) {
       throw new TRPCError({

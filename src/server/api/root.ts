@@ -1,6 +1,7 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { merchandiseRouter } from "./routers/merchandise";
 import { razorpayRouter } from "./routers/razorpay";
+import { orderRouter } from "./routers/order";
 
 /**
  * This is the primary router for your server.
@@ -9,7 +10,8 @@ import { razorpayRouter } from "./routers/razorpay";
  */
 export const appRouter = createTRPCRouter({
   merchandise: merchandiseRouter,
-  payment: razorpayRouter
+  payment: razorpayRouter,
+  order: orderRouter,
 });
 
 // export type definition of API
