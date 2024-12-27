@@ -24,21 +24,22 @@ function Home() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-white">
-      <div className="flex h-[90vh] w-[90vw] flex-col justify-between rounded-3xl bg-neutral-900 p-4 sm:flex-row">
-        <div className="h-full w-1/3 rounded-2xl bg-neutral-400/40"></div>
-        <div className="mx-2 my-auto flex h-1/2 w-1/12 flex-col rounded-2xl bg-neutral-400/40">
-          <div></div>
-          <div></div>
-          <div></div>
+    <div className="flex h-full w-screen justify-center md:h-screen md:items-center bg-white">
+      <div className="flex flex-col w-full h-full bg-neutral-900 p-4 md:rounded-3xl md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between">
+      <div className="flex flex-col w-full h-[60vh] md:h-full md:w-1/3">
+        <div className="flex h-full w-full rounded-2xl bg-neutral-400/40 mb-2"></div>
+        <div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>
         </div>
-        <div className="flex w-2/3 flex-row items-center justify-center">
-          <div className="m-10 flex w-1/2 flex-col">
-            <p className="text-6xl font-extralight text-white">Merch 1</p>
-            <p className="my-2 text-2xl font-extralight text-white">
+        <div className="flex flex-col w-full items-center justify-center md:w-2/3 md:flex-row">
+          <div className="m-10 flex flex-col w-full md:w-1/2">
+          <div className="md:mb-32">
+            <p className="text-4xl md:text-6xl font-extralight text-white md:mb-6">Merch 1</p>
+            <p className="text-2xl my-2 md:text-4xl font-extralight text-white">
               ${price.toPrecision(5)}
             </p>
+            </div>
             <div className="flex h-full w-full flex-col justify-center">
+            <div className="flex flex-row justify-center-center gap-2 md:flex-col">
               <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
                 <div className="mx-auto text-neutral-100">{size}</div>
                 <div
@@ -67,13 +68,14 @@ function Home() {
                   +
                 </div>
               </div>
+              </div>
               <div className="mt-8 h-16 w-full cursor-pointer select-none rounded-2xl bg-neutral-400/40 py-5 text-center text-neutral-200">
                 Add to Cart
               </div>
             </div>
           </div>
-          <div className="mx-2 my-12 flex h-1/2 w-1/2 flex-col overflow-y-auto rounded-xl p-4 scrollable">
-            <p className="text-xl text-neutral-400">
+          <div className="my-12 flex h-3/4 w-full flex-col overflow-y-auto rounded-xl scrollable justify-center md:mx-2 md:w-1/2 md:p-4">
+            <p className="text-xl text-neutral-400 text-justify">
               Premium Graphic T-Shirt Style that Speaks to You! Make a statement
               with our [Your Design Name] T-Shirt, crafted for those who love to
               wear their passion. Made with 100% soft, breathable cotton, this
