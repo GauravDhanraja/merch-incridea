@@ -15,14 +15,25 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
-  const handleItemChange = (item) => {
-    setSelectedItem(item);
-    setCount(0); 
+  type ItemType = "T" | "K" | "F";
 
-    
-    if (item === "T") setPrice(100);
-    else if (item === "K") setPrice(200);
-    else if (item === "F") setPrice(300);
+  const handleItemChange = (item: ItemType) => {
+    setSelectedItem(item);
+    setCount(0);
+
+    const priceMap: Record<ItemType, number> = {
+      T: 100,
+      K: 200,
+      F: 300,
+    };
+
+    setPrice(priceMap[item]);
+  };
+
+  const descriptionMap: Record<ItemType, string> = {
+    T: "This is a trendy T-shirt, perfect for casual wear.",
+    K: "Stay cozy with this premium hoodie, a wardrobe essential.",
+    F: "Fashion meets comfort with this fantastic sweatshirt.",
   };
 
   return (
@@ -33,8 +44,8 @@ function Home() {
         <div className="flex justify-center items-center w-full lg:w-1/3 h-50 lg:auto">
           <Canvas />
         </div>
-        
-        
+
+        {/* Buttons Panel */}
         <div className="flex justify-center items-center lg:items-start lg:flex-none">
           <div className="flex flex-row lg:flex-col bg-white p-5 w-[90%] max-w-[300px] h-auto m-5 gap-2 rounded-3xl">
             <button
@@ -64,10 +75,13 @@ function Home() {
           </div>
         </div>
 
-        {/* Merch Price */}
+        {/* Merch Price and Description */}
         <div className="m-5">
           <p className="font-extrabold text-xl lg:text-2xl text-white">
             Merch Price: ₹{price}
+          </p>
+          <p className="font-bold text-lg lg:text-2xl text-gray-300 mt-3">
+            {descriptionMap[selectedItem]}
           </p>
         </div>
 
@@ -76,9 +90,8 @@ function Home() {
           <div className="flex flex-col items-center justify-center">
             {/* Controls Section */}
             <div className="flex flex-row items-center justify-center w-full gap-4 p-4">
-              
               {selectedItem === "T" && (
-                <div className="flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between">
+                <div className="flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between lg:px-8 lg:py-6">
                   <div className="font-bold text-lg text-black mx-4">{size}</div>
                   <button
                     className="font-bold text-lg text-white bg-black px-4 py-2 rounded-full"
@@ -91,7 +104,7 @@ function Home() {
 
               {/* Quantity Control */}
               <div
-                className={`flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between ${
+                className={`flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between lg:px-8 lg:py-6 ${
                   selectedItem !== "T" ? "mx-auto" : ""
                 }`}
               >
@@ -114,7 +127,7 @@ function Home() {
             </div>
 
             {/* Add to Cart Button */}
-            <button className="font-bold text-black bg-white px-8 py-4 rounded-3xl hover:scale-110 transition-transform duration-150">
+            <button className="font-bold text-black bg-white px-8 py-4 rounded-3xl hover:scale-110 transition-transform duration-150 lg:px-8 lg:py-6">
               Add to Cart
             </button>
           </div>
@@ -125,3 +138,4 @@ function Home() {
 }
 
 export default Home;
+
