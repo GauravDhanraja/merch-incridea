@@ -1,12 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import Canvas from "../../components/ui/canvas";
 
 function Home() {
   const [count, setCount] = useState(0);
   const [size, setSize] = useState("S");
-  const [selectedItem, setSelectedItem] = useState("T"); 
-  const [price, setPrice] = useState(100); 
+  const [selectedItem, setSelectedItem] = useState("T");
+  const [price, setPrice] = useState(100);
 
   const handleSizeChange = () => {
     if (size === "S") setSize("M");
@@ -17,106 +16,79 @@ function Home() {
 
   const handleItemChange = (item) => {
     setSelectedItem(item);
-    setCount(0); 
+    setCount(0);
 
-    
     if (item === "T") setPrice(100);
     else if (item === "K") setPrice(200);
     else if (item === "F") setPrice(300);
   };
 
   return (
-    <div className="p-0 m-0">
-      {/* Main Container */}
-      <div className="my-7 lg:m-10 rounded-3xl min-h-screen bg-neutral-800 flex flex-col lg:flex-row">
-        {/* Left Panel for Canvas */}
-        <div className="flex justify-center items-center w-full lg:w-1/3 h-50 lg:auto">
-          <Canvas />
+    <div className="flex h-screen w-screen items-center justify-center bg-white">
+      <div className="flex h-[90vh] w-[90vw] flex-col justify-between rounded-3xl bg-neutral-900 p-4 sm:flex-row">
+        <div className="h-full w-1/3 rounded-2xl bg-neutral-400/40"></div>
+        <div className="mx-2 my-auto flex h-1/2 w-1/12 flex-col rounded-2xl bg-neutral-400/40">
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-        
-        
-        <div className="flex justify-center items-center lg:items-start lg:flex-none">
-          <div className="flex flex-row lg:flex-col bg-white p-5 w-[90%] max-w-[300px] h-auto m-5 gap-2 rounded-3xl">
-            <button
-              className={`bg-black p-3 flex-grow h-[50px] rounded-3xl text-white ${
-                selectedItem === "T" ? "border-2 border-yellow-500" : ""
-              }`}
-              onClick={() => handleItemChange("T")}
-            >
-              T
-            </button>
-            <button
-              className={`bg-black p-3 flex-grow h-[50px] rounded-3xl text-white ${
-                selectedItem === "K" ? "border-2 border-yellow-500" : ""
-              }`}
-              onClick={() => handleItemChange("K")}
-            >
-              K
-            </button>
-            <button
-              className={`bg-black p-3 flex-grow h-[50px] rounded-3xl text-white ${
-                selectedItem === "F" ? "border-2 border-yellow-500" : ""
-              }`}
-              onClick={() => handleItemChange("F")}
-            >
-              F
-            </button>
-          </div>
-        </div>
-
-        {/* Merch Price */}
-        <div className="m-5">
-          <p className="font-extrabold text-xl lg:text-2xl text-white">
-            Merch Price: ₹{price}
-          </p>
-        </div>
-
-        {/* Right Panel for Controls */}
-        <div className="flex flex-col items-center justify-center w-full lg:w-2/3 gap-6 p-4">
-          <div className="flex flex-col items-center justify-center">
-            {/* Controls Section */}
-            <div className="flex flex-row items-center justify-center w-full gap-4 p-4">
-              
-              {selectedItem === "T" && (
-                <div className="flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between">
-                  <div className="font-bold text-lg text-black mx-4">{size}</div>
-                  <button
-                    className="font-bold text-lg text-white bg-black px-4 py-2 rounded-full"
-                    onClick={handleSizeChange}
-                  >
-                    ^
-                  </button>
+        <div className="flex w-2/3 flex-row items-center justify-center">
+          <div className="m-10 flex w-1/2 flex-col">
+            <p className="text-6xl font-extralight text-white">Merch 1</p>
+            <p className="my-2 text-2xl font-extralight text-white">
+              ${price.toPrecision(5)}
+            </p>
+            <div className="flex h-full w-full flex-col justify-center">
+              <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
+                <div className="mx-auto text-neutral-100">{size}</div>
+                <div
+                  className="h-full w-3/4 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
+                  onClick={handleSizeChange}
+                >
+                  Change Size
                 </div>
-              )}
-
-              {/* Quantity Control */}
-              <div
-                className={`flex items-center px-4 py-3 mx-2 rounded-3xl bg-white w-full max-w-sm justify-between ${
-                  selectedItem !== "T" ? "mx-auto" : ""
-                }`}
-              >
-                <button
-                  className="font-bold text-lg text-white bg-black px-4 py-2 rounded-full"
+              </div>
+              <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
+                <div
+                  className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
                   onClick={() => {
                     if (count > 0) setCount(count - 1);
                   }}
                 >
                   -
-                </button>
-                <div className="font-bold text-lg text-black mx-4">{count}</div>
-                <button
-                  className="font-bold text-lg text-white bg-black px-4 py-2 rounded-full"
-                  onClick={() => setCount(count + 1)}
+                </div>
+                <div className="text-neutral-200">{count}</div>
+                <div
+                  className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
+                  onClick={() => {
+                    if (count >= 0) setCount(count + 1);
+                  }}
                 >
                   +
-                </button>
+                </div>
+              </div>
+              <div className="mt-8 h-16 w-full cursor-pointer select-none rounded-2xl bg-neutral-400/40 py-5 text-center text-neutral-200">
+                Add to Cart
               </div>
             </div>
-
-            {/* Add to Cart Button */}
-            <button className="font-bold text-black bg-white px-8 py-4 rounded-3xl hover:scale-110 transition-transform duration-150">
-              Add to Cart
-            </button>
+          </div>
+          <div className="mx-2 my-12 flex h-1/2 w-1/2 flex-col overflow-y-auto rounded-xl p-4 scrollable">
+            <p className="text-xl text-neutral-400">
+              Premium Graphic T-Shirt Style that Speaks to You! Make a statement
+              with our [Your Design Name] T-Shirt, crafted for those who love to
+              wear their passion. Made with 100% soft, breathable cotton, this
+              tee ensures all-day comfort without compromising on durability.
+              Features: Bold Design: High-quality, fade-resistant prints that
+              stand out. Unmatched Comfort: Lightweight fabric with a relaxed
+              fit for everyday wear. Eco-Friendly Materials: Sustainably sourced
+              cotton for guilt-free style. Perfect for Any Occasion: Casual
+              outings, workouts, or lounging at home. Available in a variety of
+              colors and sizes (S to 3XL), this t-shirt is perfect for everyone.
+              Pair it with your favorite jeans, shorts, or joggers for an
+              effortlessly cool look. Why You’ll Love It: Stylish and Versatile
+              Durable and Long-Lasting Designed with You in Mind Get yours today
+              and turn heads wherever you go!
+            </p>
           </div>
         </div>
       </div>
