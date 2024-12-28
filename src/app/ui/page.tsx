@@ -76,7 +76,7 @@ function Home() {
               </div>
             </div>
           </div>
-          <div className="m-4 flex h-auto md:h-full w-full flex-col rounded-xl scrollable p-4 bg-neutral-800 text-white md:mx-2 md:w-1/2">
+          <div className="m-4 flex h-auto md:h-full w-full flex-col rounded-xl scrollable p-8 bg-neutral-800 text-white md:mx-2 md:w-1/2">
           <p className="text-lg md:text-xl  text-neutral-400">
               Premium Graphic T-Shirt Style that Speaks to You! Make a statement
               with our [Your Design Name] T-Shirt, crafted for those who love to
