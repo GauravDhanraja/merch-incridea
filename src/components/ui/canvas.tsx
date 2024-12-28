@@ -43,7 +43,7 @@ const Canvas = () => {
     <div className="flex justify-center items-center my-4 mx-2 sm:mx-4">
       <canvas
         ref={canvasRef}
-        className="border border-gray-600 rounded-lg shadow-md"
+        className="border border-gray-600 rounded-2xl shadow-md"
       />
     </div>
   );
