@@ -76,8 +76,8 @@ function Home() {
               </div>
             </div>
           </div>
-          <div className="my-12 flex h-3/4 w-full flex-col overflow-y-auto rounded-xl scrollable justify-center md:mx-2 md:w-1/2 md:p-4">
-            <p className="text-xl text-neutral-400 text-justify">
+          <div className="m-4 flex h-auto md:h-full w-full flex-col rounded-xl scrollable p-4 bg-neutral-800 text-white md:mx-2 md:w-1/2">
+          <p className="text-lg md:text-xl  text-neutral-400">
               Premium Graphic T-Shirt Style that Speaks to You! Make a statement
               with our [Your Design Name] T-Shirt, crafted for those who love to
               wear their passion. Made with 100% soft, breathable cotton, this
