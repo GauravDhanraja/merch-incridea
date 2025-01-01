@@ -5,28 +5,22 @@ import { useRouter } from 'next/navigation';
 
 function Home() {
   const [count, setCount] = useState(0);
-  const [size, setSize] = useState("S");
   const [selectedItem, setSelectedItem] = useState("T");
   const [price, setPrice] = useState(100);
 
-  const handleSizeChange = () => {
-    if (size === "S") setSize("M");
-    else if (size === "M") setSize("L");
-    else if (size === "L") setSize("XL");
-    else if (size === "XL") setSize("S");
+  const router = useRouter();
+  const images = [
+    { src: '', route: '/ui', alt: 'Image 1' },
+    { src: '', route: '/magnet', alt: 'Image 2' },
+    { src: '', route: '/keychain', alt: 'Image 3' },
+  ];
+
+  const handleImageClick = (route: string) => {
+    router.push(route);
   };
 
-   const router = useRouter();
-       const images = [
-         { src: '', route: '/ui', alt: 'Image 1' },
-         { src: '', route: '/magnet', alt: 'Image 2' },
-         { src: '', route: '/keychain', alt: 'Image 3' },
-       ];
-     
-       const handleImageClick = (route: string) => {
-         router.push(route);
-       };
-     
+
+ 
 
   return (
     <div className="flex flex-col w-screen h-screen">
@@ -55,15 +49,7 @@ function Home() {
               </div>
               <div className="flex h-full w-full flex-col justify-center">
                 <div className="justify-center flex flex-row gap-2 md:flex-col">
-                  <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
-                    <div className="mx-auto text-neutral-100">{size}</div>
-                    <div
-                      className="h-full w-3/4 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
-                      onClick={handleSizeChange}
-                    >
-                      Change Size
-                    </div>
-                  </div>
+                  
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
                     <div
                       className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
@@ -89,7 +75,7 @@ function Home() {
                 </div>
               </div>
             </div>
-            <div className="scrollable m-4 flex h-4/6 w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
+            <div className="scrollable m-4 flex h-4/6 w-full  rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
               <p className="text-lg text-neutral-400 md:text-xl">
                 Premium Graphic T-Shirt Style that Speaks to You! Make a
                 statement with our [Your Design Name] T-Shirt, crafted for those
