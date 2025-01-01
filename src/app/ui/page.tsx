@@ -36,6 +36,17 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
+  type ItemType = "T" | "K" | "F";
+
+  const handleItemChange = (item: ItemType) => {
+    setSelectedItem(item);
+    setCount(0);
+
+    if (item === "T") setPrice(100);
+    else if (item === "K") setPrice(200);
+    else if (item === "F") setPrice(300);
+  };
+
   return (
     <div className="flex h-full w-screen flex-col overflow-x-hidden">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
@@ -45,7 +56,7 @@ function Home() {
             <div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>
           </div>
           <div className="flex w-full flex-col items-center justify-center md:w-2/3 md:flex-row">
-            <div className="m-10 flex w-full flex-col md:w-1/2">
+            <div className="m-10 flex w-full h-4/6 flex-col md:w-1/2">
               <div className="md:mb-32">
                 <p className="text-4xl font-extralight text-white md:mb-6 md:text-6xl">
                   {name}
@@ -61,7 +72,7 @@ function Home() {
                 )}
               </div>
               <div className="flex h-full w-full flex-col justify-center">
-                <div className="justify-center-center flex flex-row gap-2 md:flex-col">
+                <div className="justify-center flex flex-row gap-2 md:flex-col">
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
                     <div className="mx-auto text-neutral-100">{size}</div>
                     <div
@@ -97,7 +108,7 @@ function Home() {
                 </div>
               </div>
             </div>
-            <div className="scrollable m-4 flex h-auto w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:max-h-full md:w-1/2 md:overflow-y-auto md:bg-neutral-900">
+            <div className="scrollable m-4 flex h-4/6 w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
               <p className="text-lg text-neutral-400 md:text-xl">
                 {description}
               </p>
