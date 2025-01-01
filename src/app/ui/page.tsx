@@ -6,6 +6,7 @@ import Image from "next/image";
 import RenderModel from "~/app/testing3d/RenderModel";
 import { FridgeMagnet } from "~/app/testing3d/models/FridgeMagnet";
 import { TShirt } from "~/app/testing3d/models/TShirt";
+import { useRouter } from 'next/navigation';
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -43,22 +44,31 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
-  type ItemType = "T" | "K" | "F";
+   const router = useRouter();
+       const images = [
+         { src: '', route: '/ui', alt: 'Image 1' },
+         { src: '', route: '/magnet', alt: 'Image 2' },
+         { src: '', route: '/keychain', alt: 'Image 3' },
+       ];
 
-  const handleItemChange = (item: ItemType) => {
-    setSelectedItem(item);
-    setCount(0);
+       const handleImageClick = (route: string) => {
+         router.push(route);
+       };
 
-    if (item === "T") setPrice(100);
-    else if (item === "K") setPrice(200);
-    else if (item === "F") setPrice(300);
-  };
 
   return (
     <div className="flex h-full w-screen flex-col overflow-x-hidden">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
+            <div className="mb-2 flex h-full w-full rounded-2xl bg-neutral-400/40"></div>
+            <div className="flex h-1/6 w-full items-center justify-center rounded-2xl bg-neutral-400/40">
+             {images.map((image, index) => (
+              <div key={index} onClick={() => handleImageClick(image.route)} style={{ cursor: 'pointer' }}>
+                <img src={image.src} alt={image.alt} style={{ width: '100px', height: '100px' }} />
+               </div>
+               ))}
+            </div>
             <div className="relative mb-2 flex h-5/6 w-full overflow-hidden rounded-2xl bg-neutral-400/40">
               <Image
                 src={imageLink}
