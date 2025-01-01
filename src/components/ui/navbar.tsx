@@ -7,8 +7,8 @@ const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
    const navItems = [
-    { label: "Home", href: "#" },
-    { label: "Shop", href: "#" },
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/ui" },
     { label: "Cart", href: "#" },
   ];
 
