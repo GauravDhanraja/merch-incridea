@@ -43,7 +43,7 @@ function Home() {
 
   const router = useRouter();
   const images = [
-    { src: imageLink[0], route: "/ui", alt: "Image 1" },
+    { src: imageLink[0], route: "/tshirt", alt: "Image 1" },
     { src: imageLink[1], route: "/magnet", alt: "Image 2" },
     { src: imageLink[2], route: "/keychain", alt: "Image 3" },
   ];
