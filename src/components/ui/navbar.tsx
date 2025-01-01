@@ -28,7 +28,6 @@ const Navbar = () => {
               width={100}
               height={40}
             />
-            <span className="text-xl tracking-tight font-extralight text-white md:text-xl">Incridea Merch</span>
           </div>
           <ul className="hidden text-xl font-extralight text-white lg:flex items-center justify-center space-x-12">
             {navItems.map((item, index) => (

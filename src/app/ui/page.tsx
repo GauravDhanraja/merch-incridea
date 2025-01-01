@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 
-import RenderModel from "~/app/testing3d/RenderModel";
-import { FridgeMagnet } from "~/app/testing3d/models/FridgeMagnet";
-import { TShirt } from "~/app/testing3d/models/TShirt";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -17,7 +14,7 @@ function Home() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [priceWithFanumTax, setPriceWithFanumTax] = useState(0);
-  const [imageLink, setImageLink] = useState("");
+  const [imageLink, setImageLink] = useState([]);
 
   const {
     data: merchData,
@@ -33,7 +30,7 @@ function Home() {
       setDescription(merchData[1].description);
       setTotalCount(merchData[1].stock);
       setPriceWithFanumTax(merchData[1].originalPrice);
-      setImageLink(merchData[1].image);
+      setImageLink([merchData[0].image,merchData[1].image,merchData[2].image]);
     }
   }, [merchData]);
 
@@ -44,41 +41,47 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
-   const router = useRouter();
-       const images = [
-         { src: '', route: '/ui', alt: 'Image 1' },
-         { src: '', route: '/magnet', alt: 'Image 2' },
-         { src: '', route: '/keychain', alt: 'Image 3' },
-       ];
+  const router = useRouter();
+  const images = [
+    { src: imageLink[0], route: "/ui", alt: "Image 1" },
+    { src: imageLink[1], route: "/magnet", alt: "Image 2" },
+    { src: imageLink[2], route: "/keychain", alt: "Image 3" },
+  ];
 
-       const handleImageClick = (route: string) => {
-         router.push(route);
-       };
-
+  const handleImageClick = (route: string) => {
+    router.push(route);
+  };
 
   return (
     <div className="flex h-full w-screen flex-col overflow-x-hidden">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
-            <div className="mb-2 flex h-full w-full rounded-2xl bg-neutral-400/40"></div>
-            <div className="flex h-1/6 w-full items-center justify-center rounded-2xl bg-neutral-400/40">
-             {images.map((image, index) => (
-              <div key={index} onClick={() => handleImageClick(image.route)} style={{ cursor: 'pointer' }}>
-                <img src={image.src} alt={image.alt} style={{ width: '100px', height: '100px' }} />
-               </div>
-               ))}
-            </div>
             <div className="relative mb-2 flex h-5/6 w-full overflow-hidden rounded-2xl bg-neutral-400/40">
               <Image
-                src={imageLink}
+                src={imageLink[0]}
                 alt={name}
                 layout="fill" // This makes the image fill the parent container
                 objectFit="cover" // This ensures the image covers the entire area
                 className="rounded-2xl" // Optional: to keep the rounded corners
               />
             </div>
-            <div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>
+            <div className="flex h-1/6 w-full items-center justify-center rounded-2xl bg-neutral-400/40">
+              {images.map((image, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleImageClick(image.route)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    style={{ width: "100px", height: "100px" }}
+                  />
+                </div>
+              ))}
+            </div>
+            {/*<div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>*/}
           </div>
           <div className="flex w-full flex-col items-center justify-center md:w-2/3 md:flex-row">
             <div className="m-10 flex h-4/6 w-full flex-col md:w-1/2">
@@ -132,7 +135,7 @@ function Home() {
                   </div>
                 </div>
                 <div className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center text-neutral-200">
-                  Add to Cart
+                  Buy
                 </div>
               </div>
             </div>
