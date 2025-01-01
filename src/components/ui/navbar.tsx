@@ -22,15 +22,15 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center flex-shrink-0">
             <Image
-              className="h-10 w-10 mr-2"
-              src=""
+                className="mr-2"
+              src="/logo.png"
               alt="Logo"
-              width={40}
+              width={100}
               height={40}
             />
-            <span className="text-xl tracking-tight text-white md:text-xl">Incridea Merch</span>
+            <span className="text-xl tracking-tight font-extralight text-white md:text-xl">Incridea Merch</span>
           </div>
-          <ul className="hidden font-bold text-xl text-white lg:flex items-center justify-center space-x-12">
+          <ul className="hidden text-xl font-extralight text-white lg:flex items-center justify-center space-x-12">
             {navItems.map((item, index) => (
               <li key={index}>
                 <a href={item.href}>{item.label}</a>
@@ -62,7 +62,7 @@ const Navbar = () => {
           <div className="fixed right-0 z-20 bg-neutral-900 w-full h-svh flex flex-col items-center border-b border-neutral-700/80 lg:hidden">
             <ul className="flex flex-col mt-12">
               {navItems.map((item, index) => (
-                <li key={index} className="font-bold text-white text-center text-6xl py-12">
+                <li key={index} className="font-bold text-white text-center text-3xl py-12">
                   <a href={item.href}>{item.label}</a>
                 </li>
               ))}

@@ -1,12 +1,33 @@
 "use client";
-import React, { useState } from "react";
-import Navbar from "~/components/ui/navbar";
+import React, { useEffect, useState } from "react";
+import { api } from "~/trpc/react";
 
 function Home() {
   const [count, setCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [size, setSize] = useState("S");
   const [selectedItem, setSelectedItem] = useState("T");
-  const [price, setPrice] = useState(100);
+  const [price, setPrice] = useState(0);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
+  const {
+    data: merchData,
+    isLoading,
+    isError,
+  } = api.merchandise.getMerchById.useQuery({
+    id: 'cm5dwz6jl0001869zkti2ch71',
+  });
+
+  // Update price when data is fetched
+  useEffect(() => {
+    if (merchData) {
+      setPrice(merchData.discountPrice); // Assuming the API returns an array with a `price` field
+      setName(merchData.name);
+      setDescription(merchData.description);
+      setTotalCount(merchData.stock);
+    }
+  }, [merchData]);
 
   const handleSizeChange = () => {
     if (size === "S") setSize("M");
@@ -15,22 +36,10 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
-  type ItemType = "T" | "K" | "F";
-
-  const handleItemChange = (item: ItemType) => {
-    setSelectedItem(item);
-    setCount(0);
-
-    if (item === "T") setPrice(100);
-    else if (item === "K") setPrice(200);
-    else if (item === "F") setPrice(300);
-  };
-
   return (
-    <div className="flex flex-col w-screen h-full">
-      <Navbar />
+    <div className="flex h-full w-screen flex-col overflow-x-hidden">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
-        <div className="flex h-full w-full flex-col bg-neutral-900 p-4 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
+        <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
             <div className="mb-2 flex h-full w-full rounded-2xl bg-neutral-400/40"></div>
             <div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>
@@ -39,11 +48,17 @@ function Home() {
             <div className="m-10 flex w-full flex-col md:w-1/2">
               <div className="md:mb-32">
                 <p className="text-4xl font-extralight text-white md:mb-6 md:text-6xl">
-                  Merch 1
+                  {name}
                 </p>
-                <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
-                  ${price.toPrecision(5)}
-                </p>
+                {isLoading ? (
+                  <p className="text-neutral-400">Loading...</p>
+                ) : isError ? (
+                  <p className="text-red-500">Failed to load merchandise</p>
+                ) : (
+                  <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
+                    ${price}
+                  </p>
+                )}
               </div>
               <div className="flex h-full w-full flex-col justify-center">
                 <div className="justify-center-center flex flex-row gap-2 md:flex-col">
@@ -69,35 +84,22 @@ function Home() {
                     <div
                       className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
                       onClick={() => {
-                        if (count >= 0) setCount(count + 1);
+                        if (count >= 0 && count < totalCount)
+                          setCount(count + 1);
                       }}
                     >
                       +
                     </div>
                   </div>
                 </div>
-                <div className="mt-8 h-16 w-full cursor-pointer select-none rounded-2xl bg-neutral-400/40 py-5 text-center justify-center text-neutral-200">
+                <div className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center text-neutral-200">
                   Add to Cart
                 </div>
               </div>
             </div>
-            <div className="scrollable m-4 flex h-auto w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
+            <div className="scrollable m-4 flex h-auto w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:max-h-full md:w-1/2 md:overflow-y-auto md:bg-neutral-900">
               <p className="text-lg text-neutral-400 md:text-xl">
-                Premium Graphic T-Shirt Style that Speaks to You! Make a
-                statement with our [Your Design Name] T-Shirt, crafted for those
-                who love to wear their passion. Made with 100% soft, breathable
-                cotton, this tee ensures all-day comfort without compromising on
-                durability. Features: Bold Design: High-quality, fade-resistant
-                prints that stand out. Unmatched Comfort: Lightweight fabric
-                with a relaxed fit for everyday wear. Eco-Friendly Materials:
-                Sustainably sourced cotton for guilt-free style. Perfect for Any
-                Occasion: Casual outings, workouts, or lounging at home.
-                Available in a variety of colors and sizes (S to 3XL), this
-                t-shirt is perfect for everyone. Pair it with your favorite
-                jeans, shorts, or joggers for an effortlessly cool look. Why
-                You’ll Love It: Stylish and Versatile Durable and Long-Lasting
-                Designed with You in Mind Get yours today and turn heads
-                wherever you go!
+                {description}
               </p>
             </div>
           </div>
