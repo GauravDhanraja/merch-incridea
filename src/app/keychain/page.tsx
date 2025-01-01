@@ -46,7 +46,7 @@ function Home() {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col">
+    <main className="flex min-h-full w-screen flex-col">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
@@ -121,7 +121,7 @@ function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
