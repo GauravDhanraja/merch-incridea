@@ -8,8 +8,9 @@ const Navbar = () => {
 
    const navItems = [
     { label: "Home", href: "/" },
-    { label: "Shop", href: "/tshirt" },
-    { label: "Cart", href: "#" },
+    { label: "Tshirt", href: "/tshirt" },
+    { label: "Keychain", href: "/keychain" },
+    { label: "Magnet", href: "/magnet" },
   ];
 
   const toggleNavbar = () => {
@@ -59,14 +60,14 @@ const Navbar = () => {
 
         {mobileDrawerOpen && (
           <div className="fixed right-0 z-20 bg-neutral-900 w-full h-svh flex flex-col items-center border-b border-neutral-700/80 lg:hidden">
-            <ul className="flex flex-col mt-12">
+            <ul className="flex flex-col m-2">
               {navItems.map((item, index) => (
-                <li key={index} className="font-bold text-white text-center text-3xl py-12">
+                <li key={index} className="font-bold text-white text-center text-4xl py-10">
                   <a href={item.href}>{item.label}</a>
                 </li>
               ))}
             </ul>
-            <div className="flex mt-12">
+            <div className="flex mt-8">
               <a href="#" className="py-2 px-4 border border-white text-white rounded-md hover:bg-white hover:text-black">
                 Sign In
               </a>
