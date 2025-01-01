@@ -1,6 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
+import Image from "next/image";
+
+import RenderModel from "~/app/testing3d/RenderModel";
+import { FridgeMagnet } from "~/app/testing3d/models/FridgeMagnet";
+import { TShirt } from "~/app/testing3d/models/TShirt";
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -10,22 +15,24 @@ function Home() {
   const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [priceWithFanumTax, setPriceWithFanumTax] = useState(0);
+  const [imageLink, setImageLink] = useState("");
 
   const {
     data: merchData,
     isLoading,
     isError,
-  } = api.merchandise.getMerchById.useQuery({
-    id: 'cm5dwz6jl0001869zkti2ch71',
-  });
+  } = api.merchandise.getAllMerch.useQuery();
 
   // Update price when data is fetched
   useEffect(() => {
     if (merchData) {
-      setPrice(merchData.discountPrice); // Assuming the API returns an array with a `price` field
-      setName(merchData.name);
-      setDescription(merchData.description);
-      setTotalCount(merchData.stock);
+      setPrice(merchData[1].discountPrice); // Assuming the API returns an array with a `price` field
+      setName(merchData[1].name);
+      setDescription(merchData[1].description);
+      setTotalCount(merchData[1].stock);
+      setPriceWithFanumTax(merchData[1].originalPrice);
+      setImageLink(merchData[1].image);
     }
   }, [merchData]);
 
@@ -52,11 +59,19 @@ function Home() {
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
-            <div className="mb-2 flex h-full w-full rounded-2xl bg-neutral-400/40"></div>
+            <div className="relative mb-2 flex h-5/6 w-full overflow-hidden rounded-2xl bg-neutral-400/40">
+              <Image
+                src={imageLink}
+                alt={name}
+                layout="fill" // This makes the image fill the parent container
+                objectFit="cover" // This ensures the image covers the entire area
+                className="rounded-2xl" // Optional: to keep the rounded corners
+              />
+            </div>
             <div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>
           </div>
           <div className="flex w-full flex-col items-center justify-center md:w-2/3 md:flex-row">
-            <div className="m-10 flex w-full h-4/6 flex-col md:w-1/2">
+            <div className="m-10 flex h-4/6 w-full flex-col md:w-1/2">
               <div className="md:mb-32">
                 <p className="text-4xl font-extralight text-white md:mb-6 md:text-6xl">
                   {name}
@@ -67,12 +82,15 @@ function Home() {
                   <p className="text-red-500">Failed to load merchandise</p>
                 ) : (
                   <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
+                    <del className="text-blue-400/30">
+                      ${priceWithFanumTax}{" "}
+                    </del>
                     ${price}
                   </p>
                 )}
               </div>
               <div className="flex h-full w-full flex-col justify-center">
-                <div className="justify-center flex flex-row gap-2 md:flex-col">
+                <div className="flex flex-row justify-center gap-2 md:flex-col">
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
                     <div className="mx-auto text-neutral-100">{size}</div>
                     <div
