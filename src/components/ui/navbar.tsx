@@ -41,6 +41,11 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
+          <div
+            className="hidden items-center justify-center space-x-12 lg:flex"
+            onClick={() => signIn("google")}
+          >
+            <a className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black">
           <div className="hidden items-center justify-center space-x-12 lg:flex">
             <a
               href="#"
@@ -74,6 +79,7 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
+            <div className="mt-8 flex"></div>
             <div className="mt-8 flex">
               <a
                 href="#"
