@@ -27,7 +27,7 @@ export default async function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Merch <span className="text-[hsl(280,100%,70%)]">Incridea</span>
           </h1>
-          <p className="hidden md:block md:text-md md:mr-16 md:text-2xl">
+          <p className="md:block md:text-md md:mr-16 md:text-2xl">
             Celebrate the spirit of Nitte Incridea with our exclusive custom
             merchandise. Perfect for showcasing your love for the event or
             gifting to fellow enthusiasts.
@@ -37,7 +37,7 @@ export default async function Home() {
             <div className="my-8 md:my-12 flex justify-center items-center">
               <a
                 href="/tshirt"
-                className="rounded-md border border-white bg-white px-8 py-3 text-xl font-bold text-black hover:bg-purple-600 hover:text-white md:px-12 md:py-6 md:text-3xl"
+                className="rounded-md border border-white bg-white px-8 py-3 text-xl font-bold text-black hover:bg-purple-600 hover:text-white md:px-12 md:py-6 md:text-3xl transition ease-in-out duration-500 transform hover:scale-110"
               >
                 Buy now
               </a>

@@ -2,6 +2,8 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import { signIn } from 'next-auth/react';
+
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -37,9 +39,9 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="hidden lg:flex justify-center space-x-12 items-center">
+          <div className="hidden lg:flex justify-center space-x-12 items-center" onClick={()=>signIn('google')}>
             <a
-              href="#"
+             
               className="py-2 px-3 border border-white text-white rounded-md hover:bg-white hover:text-black"
             >
               Sign In
