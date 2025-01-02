@@ -1,35 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TShirt } from "~/app/testing3d/models/TShirt";
 import RenderModel from "~/app/testing3d/RenderModel";
-
-function getCookie(name: string) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return undefined;
-}
+import { useMusic } from "~/components/ui/MusicContext"; // Import the useMusic hook
 
 export default function HomePage() {
-  const [isMusicPlaying, setIsMusicPlaying] = useState<boolean | null>(null);
   const router = useRouter();
+  const { isMusicPlaying } = useMusic(); // Use context for the music state
 
   useEffect(() => {
-    const hasInteracted = getCookie("hasInteracted");
-    const isMusicPlayingCookie = getCookie("isMusicPlaying");
-
-    if (!hasInteracted || isMusicPlayingCookie === undefined) {
-      // Redirect to /preference if cookies are missing
+    if (isMusicPlaying === undefined) {
+      // Redirect to /preference if the music preference is not set
       router.push("/preference");
-    } else {
-      // Update state based on cookie values
-      setIsMusicPlaying(isMusicPlayingCookie === "true");
     }
-  }, [router]);
+  }, [router, isMusicPlaying]);
 
-  // Display a loading state while cookies are being verified
-  if (isMusicPlaying === null) {
+  // Display a loading state while cookies are being verified or the music preference is undefined
+  if (isMusicPlaying === undefined) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
         <h1 className="text-2xl font-bold">Loading...</h1>
@@ -44,7 +32,8 @@ export default function HomePage() {
           <div className="relative h-full w-full flex-col rounded-3xl bg-white/50 shadow-xl shadow-black/30 backdrop-blur-xl">
             <div className="relative flex h-full w-full overflow-hidden rounded-3xl">
               <RenderModel>
-                <TShirt playAudio={isMusicPlaying} />
+                <TShirt playAudio={isMusicPlaying} />{" "}
+                {/* Pass music state to TShirt */}
               </RenderModel>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
+import { signIn } from "next-auth/react";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -42,12 +43,12 @@ const Navbar = () => {
             <div className="hidden md:block">
               <ToggleMute />
             </div>
-            <a
-              href="#"
+            <button
               className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+              onClick={() => signIn("google")}
             >
               Sign In
-            </a>
+            </button>
           </div>
 
           <div className="flex flex-row gap-4 lg:hidden">
@@ -75,12 +76,12 @@ const Navbar = () => {
               ))}
             </ul>
             <div className="mt-8 flex">
-              <a
-                href="#"
-                className="rounded-md border border-white px-4 py-2 text-white hover:bg-white hover:text-black"
+              <button
+                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                onClick={() => signIn("google")}
               >
                 Sign In
-              </a>
+              </button>
             </div>
           </div>
         )}

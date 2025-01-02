@@ -2,35 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-function getCookie(name: string) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return undefined;
-}
+import { useMusic } from "~/components/ui/MusicContext"; // Import the context hook
 
 export default function Preference() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { isMusicPlaying, setMusicPreference } = useMusic(); // Use setMusicPreference instead of toggleMusic
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user has already interacted and has cookies set
-    const hasInteractedCookie = getCookie("hasInteracted");
-
-    if (hasInteractedCookie === "true") {
-      // Redirect to `/` immediately if cookies are present
+    if (isMusicPlaying !== undefined) {
+      // If the music preference is already set, redirect to the homepage
+      setIsLoading(true);
       router.push("/");
-    } else {
-      // Allow rendering if cookies are not present
-      setIsLoading(false);
     }
-  }, [router]);
+  }, [isMusicPlaying]);
 
   const handleMusicChoice = (play: boolean) => {
-    document.cookie = "hasInteracted=true; path=/; max-age=31536000"; // Set the interaction cookie for 1 year
-    document.cookie = `isMusicPlaying=${play}; path=/; max-age=31536000`; // Set the music choice cookie for 1 year
-    router.push("/"); // Redirect to home
+    // Set the cookie explicitly
+    document.cookie = `isMusicPlaying=${play}; path=/; max-age=31536000`;
+
+    // Use the context to update the preference
+    setMusicPreference(play);
+
+    // Redirect to the homepage
+    router.push("/");
   };
 
   if (isLoading) {

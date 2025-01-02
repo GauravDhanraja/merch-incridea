@@ -51,6 +51,7 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
     const audioElement = new Audio("/music/anthem.mp3");
+    audioElement.id = "merch-music";
     audioElement.loop = true;
     audioElementRef.current = audioElement;
 
