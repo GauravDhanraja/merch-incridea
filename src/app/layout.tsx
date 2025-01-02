@@ -1,7 +1,6 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-
 import { TRPCReactProvider } from "~/trpc/react";
 import Navbar from "~/components/ui/navbar";
 import { SessionProvider } from "next-auth/react";
@@ -26,3 +25,4 @@ export default function RootLayout({
     </html>
   );
 }
+

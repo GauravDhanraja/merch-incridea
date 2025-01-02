@@ -5,9 +5,11 @@ import Image from "next/image";
 import ToggleMute from "./toggle-mute";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";  
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const { data: session } = useSession();  
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -44,12 +46,21 @@ const Navbar = () => {
             <div className="hidden md:block">
               <ToggleMute />
             </div>
-            <button
-              className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
-              onClick={() => signIn("google")}
-            >
-              Sign In
-            </button>
+            {!session ? (
+              <button
+                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                onClick={() => signIn("google")}
+              >
+                Sign In
+              </button>
+            ) : (
+              <button
+                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                onClick={() => signIn("google")}
+              >
+                Sign Out
+              </button>
+            )}
           </div>
 
           <div className="flex flex-row gap-4 lg:hidden">
@@ -72,17 +83,26 @@ const Navbar = () => {
                   key={index}
                   className="py-10 text-center text-4xl font-bold text-white"
                 >
-                  <a href={item.href}>{item.label}</a>
+                  <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
             </ul>
             <div className="mt-8 flex">
-              <button
-                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
-                onClick={() => signIn("google")}
-              >
-                Sign In
-              </button>
+              {!session ? (
+                <button
+                  className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                  onClick={() => signIn("google")}
+                >
+                  Sign In
+                </button>
+              ) : (
+                <button
+                  className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                  onClick={() => signIn("google")}
+                >
+                  Sign Out
+                </button>
+              )}
             </div>
           </div>
         )}
