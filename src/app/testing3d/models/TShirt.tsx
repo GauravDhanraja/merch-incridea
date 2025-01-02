@@ -94,7 +94,7 @@ export function TShirt(props) {
         if (bone.isBone) {
           const wiggleBone = new WiggleBone(bone, {
             damping: 30,
-            stiffness: 300,
+            stiffness: 30,
           });
           wiggleBones.current.push(wiggleBone);
         }

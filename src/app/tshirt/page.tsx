@@ -41,23 +41,12 @@ function Home() {
     else if (size === "XL") setSize("S");
   };
 
-  const router = useRouter();
-  const images = [
-    { src: imageLink[0], route: "/tshirt", alt: "Image 1" },
-    { src: imageLink[1], route: "/magnet", alt: "Image 2" },
-    { src: imageLink[2], route: "/keychain", alt: "Image 3" },
-  ];
-
-  const handleImageClick = (route: string) => {
-    router.push(route);
-  };
-
   return (
     <div className="flex h-full w-screen flex-col overflow-x-hidden">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
-            <div className="relative mb-2 flex h-5/6 w-full overflow-hidden rounded-2xl bg-neutral-400/40">
+            <div className="relative flex h-full w-full overflow-hidden rounded-2xl bg-neutral-400/40">
               <Image
                 src={imageLink[0]}
                 alt={name}
@@ -66,22 +55,6 @@ function Home() {
                 className="rounded-2xl" // Optional: to keep the rounded corners
               />
             </div>
-            <div className="flex h-1/6 w-full items-center justify-center rounded-2xl bg-neutral-400/40">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleImageClick(image.route)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    style={{ width: "100px", height: "100px" }}
-                  />
-                </div>
-              ))}
-            </div>
-            {/*<div className="flex h-1/6 w-full flex-col rounded-2xl bg-neutral-400/40"></div>*/}
           </div>
           <div className="flex w-full flex-col items-center justify-center md:w-2/3 md:flex-row">
             <div className="m-10 flex h-4/6 w-full flex-col md:w-1/2">

@@ -1,10 +1,10 @@
 import "~/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Navbar from "~/components/ui/navbar";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "Incridea Merch",
@@ -13,13 +13,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="flex flex-col max-h-screen">
-      <Navbar />
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="en">
+      <body className="flex max-h-screen flex-col">
+        <SessionProvider>
+          <Navbar />
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   );
