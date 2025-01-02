@@ -8,50 +8,59 @@ import {
   ReactNode,
 } from "react";
 
-// Create MusicContext with updated types
 const MusicContext = createContext<{
   isMusicPlaying: boolean | undefined;
-  setMusicPreference: (play: boolean) => void;
   toggleMusic: () => void;
+  setMusicPreference: (play: boolean) => void;
 } | null>(null);
 
-// MusicProvider to manage state and preferences
 export const MusicProvider = ({ children }: { children: ReactNode }) => {
-  // Set the initial state to `undefined` if the cookie is not found
   const [isMusicPlaying, setIsMusicPlaying] = useState<boolean | undefined>(
     () => {
-      const cookie = getCookie("isMusicPlaying");
-      return cookie === undefined ? undefined : cookie === "true";
+      if (typeof window !== "undefined") {
+        const cookie = getCookie("isMusicPlaying");
+        return cookie ? cookie === "true" : undefined;
+      }
+      return undefined; // Default for SSR
     },
   );
 
-  // Update cookie whenever `isMusicPlaying` changes
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    if (isMusicPlaying !== undefined) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && isMusicPlaying !== undefined) {
       setCookie("isMusicPlaying", isMusicPlaying.toString(), 7);
     }
   }, [isMusicPlaying]);
 
-  // Function to set the music preference explicitly (from user interaction)
   const setMusicPreference = (play: boolean) => {
     setIsMusicPlaying(play);
   };
 
-  // Function to toggle the current music state
   const toggleMusic = () => {
-    setIsMusicPlaying((prev) => (prev === undefined ? true : !prev)); // Toggle between true/false or default to true if undefined
+    if (isMusicPlaying !== undefined) {
+      setIsMusicPlaying(!isMusicPlaying);
+    }
   };
+
+  // Wait until client-side rendering to render the content
+  if (!isMounted) {
+    return null; // Don't render anything until mounted
+  }
 
   return (
     <MusicContext.Provider
-      value={{ isMusicPlaying, setMusicPreference, toggleMusic }}
+      value={{ isMusicPlaying, toggleMusic, setMusicPreference }}
     >
       {children}
     </MusicContext.Provider>
   );
 };
 
-// Custom hook to use music context
 export const useMusic = () => {
   const context = useContext(MusicContext);
   if (!context) {
@@ -62,13 +71,15 @@ export const useMusic = () => {
 
 // Cookie helpers
 function getCookie(name: string) {
+  if (typeof document === "undefined") return undefined;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return undefined; // Return `undefined` if the cookie is not found
+  return undefined;
 }
 
 function setCookie(name: string, value: string, days: number) {
+  if (typeof document === "undefined") return;
   const date = new Date();
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
