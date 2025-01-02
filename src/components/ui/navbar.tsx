@@ -2,9 +2,9 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import ToggleMute from "./toggle-mute";
 import Link from "next/link";
-import { signIn } from 'next-auth/react';
-
+import { signIn } from "next-auth/react";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -40,16 +40,20 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="hidden lg:flex justify-center space-x-12 items-center" onClick={()=>signIn('google')}>
-            <a
-
-              className="py-2 px-3 border border-white text-white rounded-md hover:bg-white hover:text-black"
+          <div className="hidden items-center justify-center space-x-12 lg:flex">
+            <div className="hidden md:block">
+              <ToggleMute />
+            </div>
+            <button
+              className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+              onClick={() => signIn("google")}
             >
               Sign In
-            </a>
+            </button>
           </div>
 
-          <div className="lg:hidden">
+          <div className="flex flex-row gap-4 lg:hidden">
+            <ToggleMute />
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
@@ -59,7 +63,6 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-
 
         {mobileDrawerOpen && (
           <div className="fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 lg:hidden">
@@ -74,6 +77,12 @@ const Navbar = () => {
               ))}
             </ul>
             <div className="mt-8 flex">
+              <button
+                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                onClick={() => signIn("google")}
+              >
+                Sign In
+              </button>
             </div>
           </div>
         )}
@@ -83,4 +92,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

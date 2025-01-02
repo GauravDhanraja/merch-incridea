@@ -67,29 +67,29 @@ function Home() {
               <div className="flex h-full w-full flex-col justify-center">
                 <div className="flex flex-row justify-center gap-2 md:flex-col">
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
-                    <div
-                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
+                    <button
+                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center font-bold text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={() => {
                         if (count > 0) setCount(count - 1);
                       }}
                     >
                       -
-                    </div>
-                    <div className="text-neutral-200">{count}</div>
-                    <div
-                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400"
+                    </button>
+                    <div className="text-neutral-200 font-bold">{count}</div>
+                    <button
+                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center font-bold text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={() => {
                         if (count >= 0 && count < totalCount)
                           setCount(count + 1);
                       }}
                     >
                       +
-                    </div>
+                    </button>
                   </div>
                 </div>
-                <div className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center text-neutral-200">
+                <button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl font-bold bg-neutral-400/40 py-5 text-center text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">
                   Buy
-                </div>
+                </button>
               </div>
             </div>
             <div className="scrollable m-4 flex h-4/6 w-full rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
