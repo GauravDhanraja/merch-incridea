@@ -2,9 +2,6 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-
 import ToggleMute from "./toggle-mute";
 
 const Navbar = () => {
@@ -37,16 +34,14 @@ const Navbar = () => {
           <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item, index) => (
               <li key={index}>
-                <Link href={item.href}>{item.label}</Link>
+                <a href={item.href}>{item.label}</a>
               </li>
             ))}
           </ul>
-          <div
-            className="hidden items-center justify-center space-x-12 lg:flex"
-            onClick={() => signIn("google")}
-          >
-            <a className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black">
           <div className="hidden items-center justify-center space-x-12 lg:flex">
+            <div className="hidden md:block">
+              <ToggleMute />
+            </div>
             <a
               href="#"
               className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
@@ -79,7 +74,6 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
-            <div className="mt-8 flex"></div>
             <div className="mt-8 flex">
               <a
                 href="#"
