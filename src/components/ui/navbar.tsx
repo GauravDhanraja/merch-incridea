@@ -2,11 +2,12 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-   const navItems = [
+  const navItems = [
     { label: "Home", href: "/" },
     { label: "Tshirt", href: "/tshirt" },
     { label: "Keychain", href: "/keychain" },
@@ -18,32 +19,26 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 py-3 w-screen backdrop-blur-lg border-b border-neutral-700/80 bg-neutral-900">
-      <div className="container px-4 mx-auto relative lg:text-sm">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center flex-shrink-0">
+    <nav className="sticky top-0 z-50 w-screen border-b border-neutral-700/80 bg-neutral-900 py-3 backdrop-blur-lg">
+      <div className="container relative mx-auto px-4 lg:text-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-shrink-0 items-center">
             <Image
-                className="mr-2"
+              className="mr-2"
               src="/logo.png"
               alt="Logo"
               width={100}
               height={40}
             />
           </div>
-          <ul className="hidden text-xl font-extralight text-white lg:flex items-center justify-center space-x-12">
+          <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item, index) => (
               <li key={index}>
-                <a href={item.href}>{item.label}</a>
+                <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
-          <div className="hidden lg:flex justify-center space-x-12 items-center">
-            <a
-              href="#"
-              className="py-2 px-3 border border-white text-white rounded-md hover:bg-white hover:text-black"
-            >
-              Sign In
-            </a>
+          <div className="hidden items-center justify-center space-x-12 lg:flex">
           </div>
 
           <div className="lg:hidden">
@@ -57,20 +52,19 @@ const Navbar = () => {
           </div>
         </div>
 
-
         {mobileDrawerOpen && (
-          <div className="fixed right-0 z-20 bg-neutral-900 w-full h-svh flex flex-col items-center border-b border-neutral-700/80 lg:hidden">
-            <ul className="flex flex-col m-2">
+          <div className="fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 lg:hidden">
+            <ul className="m-2 flex flex-col">
               {navItems.map((item, index) => (
-                <li key={index} className="font-bold text-white text-center text-4xl py-10">
+                <li
+                  key={index}
+                  className="py-10 text-center text-4xl font-bold text-white"
+                >
                   <a href={item.href}>{item.label}</a>
                 </li>
               ))}
             </ul>
-            <div className="flex mt-8">
-              <a href="#" className="py-2 px-4 border border-white text-white rounded-md hover:bg-white hover:text-black">
-                Sign In
-              </a>
+            <div className="mt-8 flex">
             </div>
           </div>
         )}
@@ -80,4 +74,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
