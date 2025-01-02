@@ -3,9 +3,9 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";  
+import { useSession } from "next-auth/react"; 
+import Link from "next/link"; 
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -38,7 +38,7 @@ const Navbar = () => {
           <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item, index) => (
               <li key={index}>
-                <Link href={item.href}>{item.label}</Link>
+                <a href={item.href}>{item.label}</a>
               </li>
             ))}
           </ul>
