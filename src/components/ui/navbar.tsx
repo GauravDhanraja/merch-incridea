@@ -3,6 +3,8 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from 'next-auth/react';
+
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -38,7 +40,13 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="hidden items-center justify-center space-x-12 lg:flex">
+          <div className="hidden lg:flex justify-center space-x-12 items-center" onClick={()=>signIn('google')}>
+            <a
+
+              className="py-2 px-3 border border-white text-white rounded-md hover:bg-white hover:text-black"
+            >
+              Sign In
+            </a>
           </div>
 
           <div className="lg:hidden">
@@ -51,6 +59,7 @@ const Navbar = () => {
             </button>
           </div>
         </div>
+
 
         {mobileDrawerOpen && (
           <div className="fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 lg:hidden">
@@ -74,3 +83,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

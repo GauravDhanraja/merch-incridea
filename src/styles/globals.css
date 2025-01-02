@@ -1,6 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+15&family=Russo+One&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+@layer base {
+  body {
+    font-family: "Russo One", serif;
+    font-weight: 400;
+    font-style: normal;
+    @apply bg-background text-foreground; 
+  }
+}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -116,3 +130,4 @@
     display: none; 
   }
 }
+
