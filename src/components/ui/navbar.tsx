@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -35,7 +36,7 @@ const Navbar = () => {
           <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item, index) => (
               <li key={index}>
-                <a href={item.href}>{item.label}</a>
+                <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
@@ -71,7 +72,7 @@ const Navbar = () => {
                   key={index}
                   className="py-10 text-center text-4xl font-bold text-white"
                 >
-                  <a href={item.href}>{item.label}</a>
+                  <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
             </ul>

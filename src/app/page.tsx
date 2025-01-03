@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TShirt } from "~/app/testing3d/models/TShirt";
 import RenderModel from "~/app/testing3d/RenderModel";
-import { useMusic } from "~/components/ui/MusicContext"; // Import the useMusic hook
+import { useMusic } from "~/components/ui/MusicContext";
+import Link from "next/link"; // Import the useMusic hook
 
 export default function HomePage() {
   const router = useRouter();
@@ -51,12 +52,12 @@ export default function HomePage() {
 
           <div className="flex items-center justify-center md:justify-normal">
             <div className="my-8 flex items-center justify-center md:my-12">
-              <a
+              <Link
                 href="/tshirt"
                 className="transform rounded-md border border-white bg-white px-8 py-3 text-xl font-bold text-black transition duration-500 ease-in-out hover:scale-110 hover:bg-purple-600 hover:text-white md:px-12 md:py-6 md:text-3xl"
               >
                 Buy now
-              </a>
+              </Link>
             </div>
           </div>
         </div>
