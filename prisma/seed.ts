@@ -4,7 +4,7 @@ async function main() {
     const prisma = new PrismaClient({
         datasources: {
             db: {
-                url: 'postgresql://postgres:QNWugPaKSKXbF-VU@host.docker.internal:5001/merch-incridea'
+                url: 'postgresql://postgres:QNWugPaKSKXbF-VU@host.docker.internal:5432/merch-incridea'
             }
         }
     })
