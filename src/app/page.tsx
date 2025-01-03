@@ -56,7 +56,7 @@ export default function HomePage() {
                 href="/tshirt"
                 className="transform rounded-md border border-white bg-white px-8 py-3 text-xl font-bold text-black transition duration-500 ease-in-out hover:scale-110 hover:bg-purple-600 hover:text-white md:px-12 md:py-6 md:text-3xl"
               >
-                Buy now
+                Buy Now
               </Link>
             </div>
           </div>

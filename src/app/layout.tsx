@@ -1,6 +1,5 @@
 import "~/styles/globals.css";
 import { type Metadata } from "next";
-
 import { TRPCReactProvider } from "~/trpc/react";
 import Navbar from "~/components/ui/navbar";
 import { MusicProvider } from "~/components/ui/MusicContext";
@@ -31,3 +30,4 @@ export default function RootLayout({
     </html>
   );
 }
+
