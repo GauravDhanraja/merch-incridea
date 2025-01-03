@@ -30,7 +30,11 @@ function Home() {
       setDescription(merchData[1].description);
       setTotalCount(merchData[1].stock);
       setPriceWithFanumTax(merchData[1].originalPrice);
-      setImageLink([merchData[0].image,merchData[1].image,merchData[2].image]);
+      setImageLink([
+        merchData[0].image,
+        merchData[1].image,
+        merchData[2].image,
+      ]);
     }
   }, [merchData]);
 
@@ -78,7 +82,9 @@ function Home() {
               <div className="flex h-full w-full flex-col justify-center">
                 <div className="flex flex-row justify-center gap-2 md:flex-col">
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1">
-                    <div className="mx-auto text-neutral-100 font-bold">{size}</div>
+                    <div className="mx-auto font-bold text-neutral-100">
+                      {size}
+                    </div>
                     <button
                       className="h-full w-3/4 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={handleSizeChange}
@@ -88,16 +94,16 @@ function Home() {
                   </div>
                   <div className="my-1 flex h-16 w-full flex-row items-center justify-between rounded-2xl bg-neutral-400/40 p-1 text-xl">
                     <button
-                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 text-center text-neutral-400 font-bold active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
+                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 text-center font-bold text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={() => {
                         if (count > 0) setCount(count - 1);
                       }}
                     >
                       -
                     </button>
-                    <div className="text-neutral-200 font-bold">{count}</div>
+                    <div className="font-bold text-neutral-200">{count}</div>
                     <button
-                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 text-center text-neutral-400 font-bold active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
+                      className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 text-center font-bold text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={() => {
                         if (count >= 0 && count < totalCount)
                           setCount(count + 1);

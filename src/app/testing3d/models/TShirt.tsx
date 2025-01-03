@@ -10,8 +10,13 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   const { nodes, materials, scene } = useGLTF("/models/tshirt.glb");
   const modelRef = useRef();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [deviceOrientation, setDeviceOrientation] = useState({
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  });
   const [audioLevel, setAudioLevel] = useState(0);
-  const wiggleBones = useRef([]);
+  const wiggleBones = useRef<WiggleBone[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   // React Spring Animations
@@ -20,26 +25,32 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     config: { mass: 1, tension: 120, friction: 2 },
   });
 
-  const mouseSpring = useSpring({
-    rotationX: mousePosition.y * 0.2,
-    rotationY: mousePosition.x * 0.2,
-    config: { mass: 1, tension: 120, friction: 7 },
-  });
+  const [mouseRotation, setMouseRotation] = useState({ x: 0, y: 0 });
+  const [gyroRotation, setGyroRotation] = useState({ x: 0, y: 0 });
 
   // Mouse Movement Handler
   const handleMouseMove = (event: MouseEvent) => {
     const { innerWidth, innerHeight } = window;
-    setMousePosition({
-      x: (event.clientX / innerWidth) * 2 - 1,
-      y: -(event.clientY / innerHeight) * 2 + 1,
-    });
+    const x = (event.clientX / innerWidth) * 2 - 1;
+    const y = -(event.clientY / innerHeight) * 2 + 1;
+    setMouseRotation({ x: y * 0.2, y: x * 0.2 });
   };
 
-  // Attach and Detach Mouse Listener
+  // Device Orientation Handler
+  const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
+    const beta = (event.beta || 0) * 0.5;
+    const gamma = (event.gamma || 0) * 0.5;
+    setGyroRotation({ x: beta, y: gamma });
+  };
+
+  // Attach Event Listeners
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("deviceorientation", handleDeviceOrientation);
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
     };
   }, []);
 
@@ -51,7 +62,6 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
     const audioElement = new Audio("/music/anthem.mp3");
-    audioElement.id = "merch-music";
     audioElement.loop = true;
     audioElementRef.current = audioElement;
 
@@ -88,8 +98,8 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
 
   // Update Wiggle Bones with Audio Level
   useFrame(() => {
-    wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
-      const scaledAudioLevel = Math.pow(audioLevel, 2);
+    const scaledAudioLevel = Math.pow(audioLevel, 2);
+    wiggleBones.current.forEach((wiggleBone) => {
       wiggleBone.options.stiffness = 300 + scaledAudioLevel * 1000;
       wiggleBone.options.damping = 20 + scaledAudioLevel * 50;
       wiggleBone.update();
@@ -98,16 +108,14 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
 
   // Add Wiggle Bones
   useEffect(() => {
-    if (!scene || !nodes) return; // Ensure `scene` and `nodes` are defined
+    if (!scene || !nodes) return;
 
-    // Traverse the scene to set shadow casting
     scene.traverse((node) => {
       if (node.isMesh) {
         node.castShadow = true;
       }
     });
 
-    // Initialize wiggle bones
     ["Bone"].forEach((rootBone) => {
       if (!nodes[rootBone]) return;
 
@@ -117,21 +125,14 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
             damping: 30,
             stiffness: 30,
           });
-          wiggleBones.current.push(wiggleBone); // Push to wiggleBones array
+          wiggleBones.current.push(wiggleBone);
         }
       });
     });
 
     return () => {
-      if (wiggleBones.current?.length > 0) {
-        wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
-          if (wiggleBone && typeof wiggleBone.dispose === "function") {
-            wiggleBone.reset();
-            wiggleBone.dispose();
-          }
-        });
-        wiggleBones.current = []; // Clear the array to avoid dangling references
-      }
+      wiggleBones.current.forEach((wiggleBone) => wiggleBone.dispose());
+      wiggleBones.current = [];
     };
   }, [nodes, scene]);
 
@@ -141,10 +142,10 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       dispose={null}
       scale={[2, 2, 2]}
       position={[0, -2, 0]}
-      rotation-x={audioSpring.rotationX.to(
-        (audioX) => audioX + mouseSpring.rotationX.get(),
-      )}
-      rotation-y={mouseSpring.rotationY}
+      rotation-x={
+        audioSpring.rotationX.get() + mouseRotation.x + gyroRotation.x
+      }
+      rotation-y={mouseRotation.y + gyroRotation.y}
     >
       <skinnedMesh
         geometry={nodes.Object_2.geometry}
