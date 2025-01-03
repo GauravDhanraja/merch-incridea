@@ -11,7 +11,6 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   const modelRef = useRef();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [deviceOrientation, setDeviceOrientation] = useState({
-    alpha: 0,
     beta: 0,
     gamma: 0,
   });
@@ -24,23 +23,31 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     rotationX: audioLevel * 0.6,
     config: { mass: 1, tension: 120, friction: 2 },
   });
-
-  const [mouseRotation, setMouseRotation] = useState({ x: 0, y: 0 });
-  const [gyroRotation, setGyroRotation] = useState({ x: 0, y: 0 });
+  const mouseSpring = useSpring({
+    rotationX: mousePosition.y * 0.2,
+    rotationY: mousePosition.x * 0.2,
+    config: { mass: 1, tension: 120, friction: 7 },
+  });
+  const gyroSpring = useSpring({
+    rotationX: deviceOrientation.beta * 0.5,
+    rotationY: deviceOrientation.gamma * 0.5,
+    config: { mass: 1, tension: 120, friction: 5 },
+  });
 
   // Mouse Movement Handler
   const handleMouseMove = (event: MouseEvent) => {
     const { innerWidth, innerHeight } = window;
-    const x = (event.clientX / innerWidth) * 2 - 1;
-    const y = -(event.clientY / innerHeight) * 2 + 1;
-    setMouseRotation({ x: y * 0.2, y: x * 0.2 });
+    setMousePosition({
+      x: (event.clientX / innerWidth) * 2 - 1,
+      y: -(event.clientY / innerHeight) * 2 + 1,
+    });
   };
 
   // Device Orientation Handler
   const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
-    const beta = (event.beta || 0) * 0.5;
-    const gamma = (event.gamma || 0) * 0.5;
-    setGyroRotation({ x: beta, y: gamma });
+    const y = (event.beta || 0) * 0.5;
+    const z = (event.gamma || 0) * 0.5;
+    setDeviceOrientation({ beta: y, gamma: z });
   };
 
   // Attach Event Listeners
@@ -154,9 +161,11 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       scale={[2, 2, 2]}
       position={[0, -2, 0]}
       rotation-x={
-        audioSpring.rotationX.get() + mouseRotation.x + gyroRotation.x
+        audioSpring.rotationX.get() +
+        mouseSpring.rotationX.get() +
+        gyroSpring.rotationX.get()
       }
-      rotation-y={mouseRotation.y + gyroRotation.y}
+      rotation-y={mouseSpring.rotationY.get() + gyroSpring.rotationY.get()}
     >
       <skinnedMesh
         geometry={nodes.Object_2.geometry}
