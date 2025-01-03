@@ -7,6 +7,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
+
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { data: session } = useSession();
@@ -37,10 +38,12 @@ const Navbar = () => {
             />
           </div>
 
+
           {/* Desktop Nav */}
           <ul className="hidden lg:flex items-center space-x-12 text-xl font-extralight text-white">
             {navItems.map((item) => (
               <li key={item.href}>
+
                 <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
