@@ -131,8 +131,19 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     });
 
     return () => {
-      wiggleBones.current.forEach((wiggleBone) => wiggleBone.dispose());
-      wiggleBones.current = [];
+      if (wiggleBones.current?.length > 0) {
+        wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
+          if (
+            wiggleBone &&
+            typeof wiggleBone.dispose === "function" &&
+            wiggleBone.parent // Ensure the parent exists before calling dispose
+          ) {
+            wiggleBone.reset?.(); // Safely call reset if available
+            wiggleBone.dispose();
+          }
+        });
+        wiggleBones.current = []; // Clear the array to avoid dangling references
+      }
     };
   }, [nodes, scene]);
 

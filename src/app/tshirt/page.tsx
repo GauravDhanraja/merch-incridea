@@ -14,7 +14,7 @@ function Home() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [priceWithFanumTax, setPriceWithFanumTax] = useState(0);
-  const [imageLink, setImageLink] = useState([]);
+  const [imageLink, setImageLink] = useState();
 
   const {
     data: merchData,
@@ -30,11 +30,7 @@ function Home() {
       setDescription(merchData[1].description);
       setTotalCount(merchData[1].stock);
       setPriceWithFanumTax(merchData[1].originalPrice);
-      setImageLink([
-        merchData[0].image,
-        merchData[1].image,
-        merchData[2].image,
-      ]);
+      setImageLink(merchData[1].image);
     }
   }, [merchData]);
 
@@ -52,7 +48,7 @@ function Home() {
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
             <div className="relative flex h-full w-full overflow-hidden rounded-2xl bg-neutral-400/40">
               <Image
-                src={imageLink[0]}
+                src={imageLink}
                 alt={name}
                 layout="fill" // This makes the image fill the parent container
                 objectFit="cover" // This ensures the image covers the entire area
@@ -73,9 +69,9 @@ function Home() {
                 ) : (
                   <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
                     <del className="text-blue-400/30">
-                      ${priceWithFanumTax}{" "}
+                      ₹{priceWithFanumTax}{" "}
                     </del>
-                    ${price}
+                    ₹{price}
                   </p>
                 )}
               </div>

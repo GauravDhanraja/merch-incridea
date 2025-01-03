@@ -6,7 +6,7 @@ import RenderModel from "~/app/testing3d/RenderModel";
 import { useMusic } from "~/components/ui/MusicContext"; // Import the useMusic hook
 import { useSession } from "next-auth/react"; // Import the useSession hook for getting the user's session
 import Link from "next/link"; // Import the useMusic hook
-
+import Loader from "~/components/ui/loader";
 
 export default function HomePage() {
   const router = useRouter();
@@ -39,7 +39,8 @@ export default function HomePage() {
           <div className="relative h-full w-full flex-col rounded-3xl bg-white/50 shadow-xl shadow-black/30 backdrop-blur-xl">
             <div className="relative flex h-full w-full overflow-hidden rounded-3xl">
               <RenderModel>
-                <TShirt playAudio={isMusicPlaying} /> {/* Pass music state to TShirt */}
+                <TShirt playAudio={isMusicPlaying} />{" "}
+                {/* Pass music state to TShirt */}
               </RenderModel>
             </div>
           </div>
@@ -58,7 +59,9 @@ export default function HomePage() {
           {/* Display the user's name if logged in */}
           <div className="mt-4 text-xl font-bold text-white">
             {userName === "Guest" ? (
-              <p>Welcome, Guest! Please sign in to enjoy personalized features.</p>
+              <p>
+                Welcome, Guest! Please sign in to enjoy personalized features.
+              </p>
             ) : (
               <p>Welcome, {userName}!</p>
             )}
