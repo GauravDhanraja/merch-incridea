@@ -14,7 +14,7 @@ function Home() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [priceWithFanumTax, setPriceWithFanumTax] = useState(0);
-  const [imageLink, setImageLink] = useState([]);
+  const [imageLink, setImageLink] = useState();
 
   const {
     data: merchData,
@@ -30,18 +30,18 @@ function Home() {
       setDescription(merchData[0].description);
       setTotalCount(merchData[0].stock);
       setPriceWithFanumTax(merchData[0].originalPrice);
-      setImageLink([merchData[0].image,merchData[1].image,merchData[2].image]);
+      setImageLink(merchData[0].image);
     }
   }, [merchData]);
 
   return (
     <main className="flex min-h-full w-screen flex-col">
       <div className="flex h-full w-screen flex-col justify-center bg-white md:h-screen md:items-center">
-        <div className="flex h-full w-full flex-col bg-neutral-900 p-4 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl shadow-black/30 shadow-xl">
+        <div className="flex h-full w-full flex-col bg-neutral-900 p-4 shadow-xl shadow-black/30 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
             <div className="relative flex h-full w-full overflow-hidden rounded-2xl bg-neutral-400/40">
               <Image
-                src={imageLink[1]}
+                src={imageLink}
                 alt={name}
                 layout="fill" // This makes the image fill the parent container
                 objectFit="cover" // This ensures the image covers the entire area
@@ -56,7 +56,7 @@ function Home() {
                   {name}
                 </p>
                 <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
-                  <del className="text-blue-400/30">${priceWithFanumTax} </del>$
+                  <del className="text-blue-400/30">₹{priceWithFanumTax} </del>₹
                   {price}
                 </p>
               </div>
@@ -71,18 +71,19 @@ function Home() {
                     >
                       -
                     </button>
-                    <div className="text-neutral-200 font-bold">{count}</div>
+                    <div className="font-bold text-neutral-200">{count}</div>
                     <button
                       className="h-full w-1/3 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center font-bold text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={() => {
-                        if (count >= 0 && count < totalCount) setCount(count + 1);
+                        if (count >= 0 && count < totalCount)
+                          setCount(count + 1);
                       }}
                     >
                       +
                     </button>
                   </div>
                 </div>
-                <button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl font-bold bg-neutral-400/40 py-5 text-center text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">
+                <button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center font-bold text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">
                   Buy
                 </button>
               </div>

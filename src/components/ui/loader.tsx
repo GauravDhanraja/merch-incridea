@@ -1,60 +1,74 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import gsap from "gsap";
+import { usePathname } from "next/navigation";
 
-export default function TransitionWrapper({
-                                            children,
-                                          }: Readonly<{ children: React.ReactNode }>) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname(); // Detects route changes
-
+function AnimatedLogo({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
-    const fadeIn = () => {
-      // Transition to black
-      return gsap.to(overlayRef.current, {
-        backgroundColor: "black",
-        duration: 1,
-        ease: "power2.out",
+    const logoElement = document.querySelector("#animated-logo");
+    if (!logoElement) return;
+
+    const tl = gsap.timeline({
+      onComplete, // Callback to notify the parent when the animation finishes
+    });
+
+    tl.to(logoElement, {
+      y: -200, // Jump to the center
+      duration: 0.7,
+      rotate: 720,
+      ease: "power2.out",
+    })
+      .to(logoElement, {
+        y: 0, // Land at the center
+        duration: 0.3,
+        ease: "bounce.out",
+      })
+      .to(logoElement, {
+        rotation: 360, // Rotate one full circle
+        duration: 0.5,
+        ease: "linear",
+      })
+      .to(logoElement, {
+        y: 300, // Fall out of view
+        duration: 0.7,
+        rotation: 720, // Rotate twice while falling
+        ease: "power2.in",
       });
-    };
-
-    const fadeOut = () => {
-      // Transition to transparent
-      return gsap.to(overlayRef.current, {
-        backgroundColor: "transparent",
-        duration: 1,
-        ease: "power2.out",
-      });
-    };
-
-    const handleRouteChange = async () => {
-      await fadeIn(); // Fade to black
-      fadeOut(); // Fade back to transparent
-    };
-
-    handleRouteChange(); // Run on initial load and subsequent route changes
-  }, [pathname]); // Trigger whenever the pathname changes
+  }, [onComplete]);
 
   return (
-      <>
-        {/* Full-screen overlay for transitions */}
-        <div
-            ref={overlayRef}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "black",
-              pointerEvents: "none",
-              zIndex: 9999,
-            }}
-        ></div>
-        {/* Actual content */}
-        {children}
-      </>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+      <img
+        id="animated-logo"
+        src="/icon.png" // Ensure this path points to your image
+        alt="Incridea Logo"
+        className="h-24 w-24"
+        style={{ transform: "translateY(100%)" }} // Start off-screen
+      />
+    </div>
+  );
+}
+
+export default function Loader({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  useEffect(() => {
+    if (pathname === "/preference") {
+      setIsAnimating(false); // Skip animation for specific routes
+    } else {
+      setIsAnimating(true); // Trigger animation on other routes
+    }
+  }, [pathname]);
+
+  return (
+    <>
+      {isAnimating ? (
+        <AnimatedLogo onComplete={() => setIsAnimating(false)} />
+      ) : (
+        children
+      )}
+    </>
   );
 }
