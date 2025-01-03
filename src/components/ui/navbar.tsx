@@ -7,7 +7,6 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { data: session } = useSession();
@@ -38,19 +37,17 @@ const Navbar = () => {
             />
           </div>
 
-
           {/* Desktop Nav */}
-          <ul className="hidden lg:flex items-center space-x-12 text-xl font-extralight text-white">
+          <ul className="hidden items-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item) => (
               <li key={item.href}>
-
                 <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden items-center space-x-4 lg:flex">
             <ToggleMute />
             {session ? (
               <button
@@ -70,22 +67,33 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="lg:hidden flex items-center">
+          <div className="flex items-center justify-center gap-3 lg:hidden">
             <ToggleMute />
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
               className="text-white focus:outline-none"
             >
-              {mobileDrawerOpen ? <X /> : <Menu />}
+              {mobileDrawerOpen ? (
+                <X className="size-8" />
+              ) : (
+                <Menu className="size-8" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Mobile Drawer */}
-        {mobileDrawerOpen && (
-          <div className="fixed top-0 right-0 z-20 w-full h-full bg-neutral-900 border-b border-neutral-700/80 flex flex-col items-center lg:hidden">
-            <ul className="flex flex-col items-center mt-16 space-y-6">
+          <div
+            className={`fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 transition-opacity duration-300 ease-in lg:hidden ${
+              mobileDrawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <ul
+              className={`mt-16 flex transform flex-col items-center space-y-16 transition-transform duration-500 ease-out ${
+                mobileDrawerOpen ? "translate-y-0" : "-translate-y-8"
+              }`}
+            >
               {navItems.map((item) => (
                 <li key={item.href} className="text-4xl font-bold text-white">
                   <Link href={item.href} onClick={toggleNavbar}>
@@ -94,17 +102,21 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
-            <div className="mt-8">
+            <div 
+              className={`my-16 transition-transform duration-500 ease-out ${
+                mobileDrawerOpen ? "translate-y-0" : "translate-y-8"
+              }`}
+>
               {session ? (
                 <button
-                  className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                  className="rounded-md border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
                   onClick={() => signOut()}
                 >
                   Sign Out
                 </button>
               ) : (
                 <button
-                  className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                  className="rounded-md border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
                   onClick={() => signIn("google")}
                 >
                   Sign In
@@ -112,12 +124,9 @@ const Navbar = () => {
               )}
             </div>
           </div>
-        )}
       </div>
     </nav>
   );
 };
 
 export default Navbar;
-
-
