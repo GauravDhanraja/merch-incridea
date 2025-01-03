@@ -4,12 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
 import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react"; 
-import Link from "next/link"; 
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const { data: session } = useSession();  
+  const { data: session } = useSession();
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -38,7 +38,7 @@ const Navbar = () => {
           <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
             {navItems.map((item, index) => (
               <li key={index}>
-                <a href={item.href}>{item.label}</a>
+                <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
