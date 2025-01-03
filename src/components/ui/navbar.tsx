@@ -3,13 +3,13 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react"; 
-import Link from "next/link"; 
+import { signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const { data: session } = useSession();  
+  const { data: session } = useSession();
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -26,7 +26,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-screen border-b border-neutral-700/80 bg-neutral-900 py-3 backdrop-blur-lg">
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
-          <div className="flex flex-shrink-0 items-center">
+          {/* Logo */}
+          <div className="flex items-center">
             <Image
               className="mr-2"
               src="/logo.png"
@@ -35,35 +36,38 @@ const Navbar = () => {
               height={40}
             />
           </div>
-          <ul className="hidden items-center justify-center space-x-12 text-xl font-extralight text-white lg:flex">
-            {navItems.map((item, index) => (
-              <li key={index}>
-                <a href={item.href}>{item.label}</a>
+
+          {/* Desktop Nav */}
+          <ul className="hidden lg:flex items-center space-x-12 text-xl font-extralight text-white">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
           </ul>
-          <div className="hidden items-center justify-center space-x-12 lg:flex">
-            <div className="hidden md:block">
-              <ToggleMute />
-            </div>
-            {!session ? (
+
+          {/* Desktop Actions */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <ToggleMute />
+            {session ? (
               <button
                 className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
-                onClick={() => signIn("google")}
+                onClick={() => signOut()}
               >
-                Sign In
+                Sign Out
               </button>
             ) : (
               <button
                 className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
                 onClick={() => signIn("google")}
               >
-                Sign Out
+                Sign In
               </button>
             )}
           </div>
 
-          <div className="flex flex-row gap-4 lg:hidden">
+          {/* Mobile Menu Toggle */}
+          <div className="lg:hidden flex items-center">
             <ToggleMute />
             <button
               onClick={toggleNavbar}
@@ -75,32 +79,32 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Mobile Drawer */}
         {mobileDrawerOpen && (
-          <div className="fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 lg:hidden">
-            <ul className="m-2 flex flex-col">
-              {navItems.map((item, index) => (
-                <li
-                  key={index}
-                  className="py-10 text-center text-4xl font-bold text-white"
-                >
-                  <Link href={item.href}>{item.label}</Link>
+          <div className="fixed top-0 right-0 z-20 w-full h-full bg-neutral-900 border-b border-neutral-700/80 flex flex-col items-center lg:hidden">
+            <ul className="flex flex-col items-center mt-16 space-y-6">
+              {navItems.map((item) => (
+                <li key={item.href} className="text-4xl font-bold text-white">
+                  <Link href={item.href} onClick={toggleNavbar}>
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
-            <div className="mt-8 flex">
-              {!session ? (
+            <div className="mt-8">
+              {session ? (
                 <button
                   className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
-                  onClick={() => signIn("google")}
+                  onClick={() => signOut()}
                 >
-                  Sign In
+                  Sign Out
                 </button>
               ) : (
                 <button
                   className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
                   onClick={() => signIn("google")}
                 >
-                  Sign Out
+                  Sign In
                 </button>
               )}
             </div>
@@ -112,3 +116,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+

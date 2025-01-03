@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { TShirt } from "~/app/testing3d/models/TShirt";
 import RenderModel from "~/app/testing3d/RenderModel";
 import { useMusic } from "~/components/ui/MusicContext"; // Import the useMusic hook
+import { useSession } from "next-auth/react"; // Import the useSession hook for getting the user's session
 
 export default function HomePage() {
   const router = useRouter();
   const { isMusicPlaying } = useMusic(); // Use context for the music state
+  const { data: session } = useSession(); // Use session to get user information
 
   useEffect(() => {
     if (isMusicPlaying === undefined) {
@@ -25,6 +27,9 @@ export default function HomePage() {
     );
   }
 
+  // Get the user's name from the session (if available)
+  const userName = session?.user?.name || "Guest";
+
   return (
     <main className="flex h-screen w-screen flex-col overflow-x-hidden bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white md:h-screen md:flex-row">
       <div className="flex h-full w-screen flex-col items-center p-3 md:flex-row md:justify-center md:p-8">
@@ -32,14 +37,13 @@ export default function HomePage() {
           <div className="relative h-full w-full flex-col rounded-3xl bg-white/50 shadow-xl shadow-black/30 backdrop-blur-xl">
             <div className="relative flex h-full w-full overflow-hidden rounded-3xl">
               <RenderModel>
-                <TShirt playAudio={isMusicPlaying} />{" "}
-                {/* Pass music state to TShirt */}
+                <TShirt playAudio={isMusicPlaying} /> {/* Pass music state to TShirt */}
               </RenderModel>
             </div>
           </div>
         </div>
 
-        <div className="order-2 mt-8 flex h-fit w-fit flex-col justify-center md:order-1 md:mt-0 md:gap-14 md:p-24">
+        <div className="order-2 mt-8 flex h-fit w-fit flex-col justify-center md:order-1 md:mt-8 md:gap-14 md:p-24">
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Merch <span className="text-[hsl(280,100%,70%)]">Incridea</span>
           </h1>
@@ -48,6 +52,15 @@ export default function HomePage() {
             merchandise. Perfect for showcasing your love for the event or
             gifting to fellow enthusiasts.
           </p>
+
+          {/* Display the user's name if logged in */}
+          <div className="mt-4 text-xl font-bold text-white">
+            {userName === "Guest" ? (
+              <p>Welcome, Guest! Please sign in to enjoy personalized features.</p>
+            ) : (
+              <p>Welcome, {userName}!</p>
+            )}
+          </div>
 
           <div className="flex items-center justify-center md:justify-normal">
             <div className="my-8 flex items-center justify-center md:my-12">
