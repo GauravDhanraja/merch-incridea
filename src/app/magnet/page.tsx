@@ -4,6 +4,7 @@ import Navbar from "~/components/ui/navbar";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import Image from "next/image";
+import PurchaseButton from "~/trpc/buy";
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -21,6 +22,10 @@ function Home() {
     isLoading,
     isError,
   } = api.merchandise.getAllMerch.useQuery();
+
+  const { data: tf } = api.merchandise.purchaseMerch.useMutation({
+    id: "cm5dwz6jl0001869zkti2ch71",
+  });
 
   // Update price when data is fetched
   useEffect(() => {
@@ -83,7 +88,10 @@ function Home() {
                     </button>
                   </div>
                 </div>
-                <button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center font-bold text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">
+                <button
+                  className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center font-bold text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
+                  onClick={() => {}}
+                >
                   Buy
                 </button>
               </div>
