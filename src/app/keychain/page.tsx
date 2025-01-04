@@ -4,6 +4,8 @@ import Navbar from "~/components/ui/navbar";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import Image from "next/image";
+import CircleLoader from "~/components/ui/loader-circle-progress";
+import PurchaseMerchButton from "~/components/ui/buyButton";
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -21,6 +23,7 @@ function Home() {
     isLoading,
     isError,
   } = api.merchandise.getAllMerch.useQuery();
+
 
   // Update price when data is fetched
   useEffect(() => {
@@ -40,20 +43,24 @@ function Home() {
         <div className="flex h-full w-full flex-col bg-neutral-900 p-4 md:h-[90vh] md:w-[90vw] md:flex-row md:justify-between md:rounded-3xl">
           <div className="flex h-[60vh] w-full flex-col md:h-full md:w-1/3">
             <div className="relative flex h-full w-full overflow-hidden rounded-2xl bg-neutral-400/40">
-              <Image
-                src={imageLink}
-                alt={name}
-                layout="fill" // This makes the image fill the parent container
-                objectFit="cover" // This ensures the image covers the entire area
-                className="rounded-2xl" // Optional: to keep the rounded corners
-              />
+              {isLoading ? (
+                <CircleLoader />
+              ) : (
+                <Image
+                  src={imageLink}
+                  alt={name}
+                  layout="fill" // This makes the image fill the parent container
+                  objectFit="cover" // This ensures the image covers the entire area
+                  className="rounded-2xl" // Optional: to keep the rounded corners
+                />
+              )}
             </div>
           </div>
           <div className="flex w-full flex-col items-center justify-center md:w-2/3 md:flex-row">
             <div className="m-10 flex h-4/6 w-full flex-col md:w-1/2">
               <div className="md:mb-32">
                 <p className="text-4xl font-extralight text-white md:mb-6 md:text-6xl">
-                  {name}
+                  {isLoading ? <div className="loading-bar"></div> : name}
                 </p>
                 <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
                   <del className="text-blue-400/30">₹{priceWithFanumTax} </del>₹
@@ -83,9 +90,10 @@ function Home() {
                     </button>
                   </div>
                 </div>
-                <button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center font-bold text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">
-                  Buy
-                </button>
+                {/*<button className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-2xl bg-neutral-400/40 py-5 text-center font-bold text-neutral-200 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black">*/}
+                {/*  Buy*/}
+                {/*</button>*/}
+                <PurchaseMerchButton merchId={"cm5dwz6jl0001869zkti2ch71"}/>
               </div>
             </div>
             <div className="scrollable m-4 flex h-4/6 w-full rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
