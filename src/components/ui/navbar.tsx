@@ -13,7 +13,6 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Tshirt", href: "/tshirt" },
     { label: "Keychain", href: "/keychain" },
     { label: "Magnet", href: "/magnet" },
   ];
@@ -23,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-screen border-b border-neutral-700/80 bg-neutral-900 py-3 backdrop-blur-lg">
+    <nav className="sticky top-0 z-50 w-screen lg:border-b lg:border-neutral-700/80 bg-neutral-900 py-3 backdrop-blur-lg">
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -51,14 +50,14 @@ const Navbar = () => {
             <ToggleMute />
             {session ? (
               <button
-                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                className="rounded-lg border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className="rounded-md border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                className="rounded-lg border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
                 onClick={() => signIn("google")}
               >
                 Sign In
@@ -84,46 +83,48 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Drawer */}
-          <div
-            className={`fixed right-0 z-20 flex h-svh w-full flex-col items-center border-b border-neutral-700/80 bg-neutral-900 transition-opacity duration-300 ease-in lg:hidden ${
-              mobileDrawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        <div
+          className={`fixed right-0 top-0 z-20 flex h-svh w-full flex-col items-center justify-center bg-neutral-900 backdrop-blur-2xl transition-all duration-700 ease-in-out lg:hidden ${
+            mobileDrawerOpen
+              ? "pointer-events-auto translate-y-16 opacity-100 visible"
+              : "pointer-events-none -translate-y-0 opacity-0 invisible"
+          }`}
+        >
+          <ul
+            className={`flex flex-col items-center space-y-16 transition-transform duration-500 ease-out ${
+              mobileDrawerOpen ? "translate-y-0" : "-translate-y-8"
             }`}
           >
-            <ul
-              className={`mt-16 flex transform flex-col items-center space-y-16 transition-transform duration-500 ease-out ${
-                mobileDrawerOpen ? "translate-y-0" : "-translate-y-8"
-              }`}
-            >
-              {navItems.map((item) => (
-                <li key={item.href} className="text-4xl font-bold text-white">
-                  <Link href={item.href} onClick={toggleNavbar}>
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div 
-              className={`my-16 transition-transform duration-500 ease-out ${
-                mobileDrawerOpen ? "translate-y-0" : "translate-y-8"
-              }`}
->
-              {session ? (
-                <button
-                  className="rounded-md border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </button>
-              ) : (
-                <button
-                  className="rounded-md border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
-                  onClick={() => signIn("google")}
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
+            {navItems.map((item) => (
+              <li key={item.href} className="text-4xl font-bold text-white">
+                <Link href={item.href} onClick={toggleNavbar}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div
+            className={`my-16 transition-transform duration-700 ease-out ${
+              mobileDrawerOpen ? "translate-y-0" : "translate-y-24"
+            }`}
+          >
+            {session ? (
+              <button
+                className="rounded-lg border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
+                onClick={() => signOut()}
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                className="rounded-lg border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
+                onClick={() => signIn("google")}
+              >
+                Sign In
+              </button>
+            )}
           </div>
+        </div>
       </div>
     </nav>
   );
