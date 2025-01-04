@@ -14,6 +14,8 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", href: "/" },
+    { label: "Keychain", href: "/keychain" },
+    { label: "Magnet", href: "/magnet" },
     { label: "Buy", href: "/buy" },
   ];
 
@@ -134,6 +136,7 @@ const Navbar = () => {
               </button>
             ) : (
               <button
+                className="rounded-lg border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
                 className="rounded-md border border-text_1 px-6 py-4 text-4xl font-bold text-text_1 hover:bg-white hover:text-black"
                 onClick={() => signIn("google")}
               >
