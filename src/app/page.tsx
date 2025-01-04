@@ -47,17 +47,17 @@ export default function HomePage() {
         </div>
 
         <div className="order-2 mt-8 flex h-fit w-fit flex-col justify-center md:order-1 md:mt-8 md:gap-14 md:p-24">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+          <h1 className="text-5xl  font-extrabold tracking-tight sm:text-[5rem]">
             Merch <span className="text-[hsl(280,100%,70%)]">Incridea</span>
           </h1>
-          <p className="md:text-md mt-4 md:mr-16 md:text-2xl">
+          <p className="md:text-2xl mt-4 md:mr-16 md:text-2xl  font-extrabold">
             Celebrate the spirit of Nitte Incridea with our exclusive custom
             merchandise. Perfect for showcasing your love for the event or
             gifting to fellow enthusiasts.
           </p>
 
           {/* Display the user's name if logged in */}
-          <div className="my-4 text-xl font-bold text-white md:text-4xl">
+          <div className="my-4 text-xl font-bold text-white md:text-xl">
             {userName === "Guest" ? (
               <p>
                 Welcome, Guest! Please sign in to enjoy personalized features.

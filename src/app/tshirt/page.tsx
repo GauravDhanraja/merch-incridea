@@ -82,7 +82,7 @@ function Home() {
                       {size}
                     </div>
                     <button
-                      className="h-full w-3/4 cursor-pointer select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
+                      className="h-full w-3/4 cursor-pointer font-bold select-none rounded-xl bg-neutral-900 py-4 text-center text-neutral-400 active:bg-white/80 active:text-black md:hover:bg-white/80 md:hover:text-black"
                       onClick={handleSizeChange}
                     >
                       Change Size
@@ -115,7 +115,7 @@ function Home() {
               </div>
             </div>
             <div className="scrollable m-4 flex h-4/6 w-full flex-col rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
-              <p className="text-lg text-neutral-400 md:text-xl">
+              <p className="text-lg text-neutral-400 md:text-xl font-extrabold">
                 {description}
               </p>
             </div>
