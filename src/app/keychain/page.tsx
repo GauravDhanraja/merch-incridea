@@ -62,7 +62,7 @@ function Home() {
                 <p className="text-4xl font-extralight text-white md:mb-6 md:text-6xl">
                   {isLoading ? <div className="loading-bar"></div> : name}
                 </p>
-                <p className="my-2 text-2xl font-extralight text-white md:text-4xl">
+                <p className="my-2 text-2xl font-medium text-white md:text-4xl">
                   <del className="text-blue-400/30">₹{priceWithFanumTax} </del>₹
                   {price}
                 </p>
@@ -97,7 +97,7 @@ function Home() {
               </div>
             </div>
             <div className="scrollable m-4 flex h-4/6 w-full rounded-xl bg-neutral-800 p-4 text-white md:w-1/2 md:bg-neutral-900">
-              <p className="text-lg text-neutral-400 md:text-xl">
+              <p className="text-lg text-neutral-400 md:text-xl font-bold">
                 {description}
               </p>
             </div>
