@@ -1,6 +1,6 @@
 "use client";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
 import { signIn, signOut } from "next-auth/react";
@@ -10,19 +10,37 @@ import Link from "next/link";
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { data: session } = useSession();
+  const mobileDrawerRef = useRef(null);
 
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Keychain", href: "/keychain" },
     { label: "Magnet", href: "/magnet" },
+    { label: "Buy", href: "/buy" },
   ];
 
   const toggleNavbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
   };
 
+  const handleClickOutside = (event) => {
+    if (
+      mobileDrawerRef.current &&
+      !mobileDrawerRef.current.contains(event.target)
+    ) {
+      setMobileDrawerOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-50 w-screen lg:border-b lg:border-neutral-700/80 bg-neutral-900 py-3 backdrop-blur-lg">
+    <nav className="fixed z-50 mx-auto ml-[20px] mr-[20px] mt-[20px] grid w-[calc(100%-40px)] rounded-full bg-palate_1/20 py-2 shadow-xl md:backdrop-blur-2xl">
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -37,7 +55,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Nav */}
-          <ul className="hidden items-center space-x-12 text-xl font-extralight text-white lg:flex">
+          <ul className="hidden select-none items-center space-x-12 text-xl font-bold text-black lg:flex">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>{item.label}</Link>
@@ -50,14 +68,14 @@ const Navbar = () => {
             <ToggleMute />
             {session ? (
               <button
-                className="rounded-lg border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                className="rounded-md border border-black px-3 py-2 text-black hover:bg-black hover:text-white"
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className="rounded-lg border border-white px-3 py-2 text-white hover:bg-white hover:text-black"
+                className="rounded-md border border-black px-3 py-2 text-black hover:bg-black hover:text-white"
                 onClick={() => signIn("google")}
               >
                 Sign In
@@ -71,7 +89,7 @@ const Navbar = () => {
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
-              className="text-white focus:outline-none"
+              className="text-text_1 focus:outline-none"
             >
               {mobileDrawerOpen ? (
                 <X className="size-8" />
@@ -84,19 +102,20 @@ const Navbar = () => {
 
         {/* Mobile Drawer */}
         <div
-          className={`fixed right-0 top-0 z-20 flex h-svh w-full flex-col items-center justify-center bg-neutral-900 backdrop-blur-2xl transition-all duration-700 ease-in-out lg:hidden ${
+          ref={mobileDrawerRef}
+          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col items-center rounded-t-3xl bg-palate_1/50 transition-opacity duration-500 ease-in-out lg:hidden ${
             mobileDrawerOpen
-              ? "pointer-events-auto translate-y-16 opacity-100 visible"
-              : "pointer-events-none -translate-y-0 opacity-0 invisible"
+              ? "opacity-100 backdrop-blur-2xl"
+              : "pointer-events-none opacity-0"
           }`}
         >
           <ul
-            className={`flex flex-col items-center space-y-16 transition-transform duration-500 ease-out ${
+            className={`mt-16 flex transform flex-col items-center space-y-16 transition-transform duration-500 ease-out ${
               mobileDrawerOpen ? "translate-y-0" : "-translate-y-8"
             }`}
           >
             {navItems.map((item) => (
-              <li key={item.href} className="text-4xl font-bold text-white">
+              <li key={item.href} className="text-4xl font-bold text-text_1">
                 <Link href={item.href} onClick={toggleNavbar}>
                   {item.label}
                 </Link>
@@ -104,13 +123,13 @@ const Navbar = () => {
             ))}
           </ul>
           <div
-            className={`my-16 transition-transform duration-700 ease-out ${
-              mobileDrawerOpen ? "translate-y-0" : "translate-y-24"
+            className={`my-16 transition-transform duration-500 ease-out ${
+              mobileDrawerOpen ? "translate-y-0" : "translate-y-8"
             }`}
           >
             {session ? (
               <button
-                className="rounded-lg border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
+                className="rounded-md border border-text_1 px-6 py-4 text-4xl font-bold text-text_1 hover:bg-white hover:text-black"
                 onClick={() => signOut()}
               >
                 Sign Out
@@ -118,6 +137,7 @@ const Navbar = () => {
             ) : (
               <button
                 className="rounded-lg border border-white px-6 py-4 text-white hover:bg-white hover:text-black"
+                className="rounded-md border border-text_1 px-6 py-4 text-4xl font-bold text-text_1 hover:bg-white hover:text-black"
                 onClick={() => signIn("google")}
               >
                 Sign In
