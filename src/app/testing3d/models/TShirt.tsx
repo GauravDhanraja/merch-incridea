@@ -117,17 +117,25 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   useEffect(() => {
     if (!scene || !nodes) return;
 
+    // Ensure this runs only once unless scene/nodes change
+    const shadowedNodes = new Set(); // To avoid redundant updates
+
+    // Apply shadow-casting only once per mesh
     scene.traverse((node) => {
-      if (node.isMesh) {
+      if (node.isMesh && !shadowedNodes.has(node)) {
         node.castShadow = true;
+        shadowedNodes.add(node);
       }
     });
 
-    ["Bone"].forEach((rootBone) => {
-      if (!nodes[rootBone]) return;
-
-      nodes[rootBone].traverse((bone: any) => {
-        if (bone.isBone) {
+    // Apply WiggleBone only to the "Root" and its child bones
+    const rootBoneName = "Root"; // Assuming your armature's root bone is named "Root"
+    if (nodes[rootBoneName]) {
+      nodes[rootBoneName].traverse((bone: any) => {
+        if (
+          bone.isBone &&
+          !wiggleBones.current.some((wb) => wb.bone === bone)
+        ) {
           const wiggleBone = new WiggleBone(bone, {
             damping: 30,
             stiffness: 30,
@@ -135,22 +143,21 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
           wiggleBones.current.push(wiggleBone);
         }
       });
-    });
+    }
 
+    // Cleanup: Dispose of WiggleBones and reset them safely
     return () => {
-      if (wiggleBones.current?.length > 0) {
-        wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
-          if (
-            wiggleBone &&
-            typeof wiggleBone.dispose === "function" &&
-            wiggleBone.parent // Ensure the parent exists before calling dispose
-          ) {
-            wiggleBone.reset?.(); // Safely call reset if available
-            wiggleBone.dispose();
-          }
-        });
-        wiggleBones.current = []; // Clear the array to avoid dangling references
-      }
+      wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
+        if (
+          wiggleBone &&
+          typeof wiggleBone.dispose === "function" &&
+          wiggleBone.parent // Ensure the parent exists before calling dispose
+        ) {
+          wiggleBone.reset?.(); // Safely call reset if available
+          wiggleBone.dispose();
+        }
+      });
+      wiggleBones.current = []; // Clear the array to avoid dangling references
     };
   }, [nodes, scene]);
 
