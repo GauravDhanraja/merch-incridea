@@ -8,9 +8,9 @@ const ToggleMute = () => {
   return (
     <div>
       {isMusicPlaying ? (
-        <GoMute className="h-8 w-8 text-white" onClick={toggleMusic} />
+        <GoMute className="h-8 w-8 text-black cursor-pointer" onClick={toggleMusic} />
       ) : (
-        <GoUnmute className="h-8 w-8 text-white" onClick={toggleMusic} />
+        <GoUnmute className="h-8 w-8 text-black cursor-pointer" onClick={toggleMusic} />
       )}
     </div>
   );
