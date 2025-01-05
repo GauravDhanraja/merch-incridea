@@ -164,10 +164,8 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
           scale={[0.174, 0.174, 0.174]}
           // position={[-14, -0.5, -0.5]}
           position={[0,0,0]}
-          rotation-x={
-              audioSpring.rotationX.get() + mouseRotation.x + gyroRotation.x
-          }
-          rotation-y={mouseRotation.y + gyroRotation.y}
+          rotation-x={audioSpring.rotationX.get() + mouseSpring.rotationX.get()}
+          rotation-y={mouseSpring.rotationY.get()}
       >
         <skinnedMesh
             geometry={nodes.Male_TshirtMesh.geometry}
