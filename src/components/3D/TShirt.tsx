@@ -37,17 +37,6 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     setGyroRotation({ x: beta, y: gamma });
   };
 
-  // Attach Event Listeners
-  // useEffect(() => {
-  //   window.addEventListener("mousemove", handleMouseMove);
-  //   window.addEventListener("deviceorientation", handleDeviceOrientation);
-  //
-  //   return () => {
-  //     window.removeEventListener("mousemove", handleMouseMove);
-  //     window.removeEventListener("deviceorientation", handleDeviceOrientation);
-  //   };
-  // }, []);
-
   // Audio Setup and Processing
   useEffect(() => {
     const audioContext = new window.AudioContext();
@@ -142,23 +131,24 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   }, [nodes, scene]);
 
   return (
-    <animated.group
-      ref={modelRef}
-      dispose={null}
-      scale={[0.174, 0.174, 0.174]}
-      position={[-14, -0.5, -0.5]}
-      rotation-x={
-        audioSpring.rotationX.get() + mouseRotation.x + gyroRotation.x
-      }
-      rotation-y={mouseRotation.y + gyroRotation.y}
-    >
-      <skinnedMesh
-        geometry={nodes.Male_TshirtMesh.geometry}
-        material={materials.lambert1}
-        skeleton={nodes.Male_TshirtMesh.skeleton}
-      />
-      <primitive object={nodes.Bone} />
-    </animated.group>
+      <animated.group
+          ref={modelRef}
+          dispose={null}
+          scale={[0.174, 0.174, 0.174]}
+          // position={[-14, -0.5, -0.5]}
+          position={[0,0,0]}
+          rotation-x={
+              audioSpring.rotationX.get() + mouseRotation.x + gyroRotation.x
+          }
+          rotation-y={mouseRotation.y + gyroRotation.y}
+      >
+        <skinnedMesh
+            geometry={nodes.Male_TshirtMesh.geometry}
+            material={materials.lambert1}
+            skeleton={nodes.Male_TshirtMesh.skeleton}
+        />
+        <primitive object={nodes.Bone}/>
+      </animated.group>
   );
 }
 
