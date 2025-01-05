@@ -46,12 +46,12 @@ const Navbar = () => {
   const navbarFgClass =
       pathname === "/"
           ? "text-palate_1/90"
-          : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
+          : "text-palate_1/90";// Replace `bg-palate_2/90` with your desired color for other routes.
 
 
   return (
     <nav
-      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2`}
+      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2 ${pathname==="/admin" ? "hidden" : ""}`}
     >
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">

@@ -1,120 +1,130 @@
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import React, {useEffect, useRef} from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import Hall from "~/components/3D/Hall";
-import { Effects } from "~/components/3D/Effects";
-import { PerspectiveCamera } from "@react-three/drei";
-import Rig from "~/components/3D/Rig";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import {
+  Bloom,
+  EffectComposer,
+  Noise,
+  Vignette,
+} from "@react-three/postprocessing";
 
 interface RenderModelProps {
-    children?: React.ReactNode;
-    className?: string;
+  children?: React.ReactNode;
+  className?: string;
 }
 
 const AnimatedCamera: React.FC = () => {
-    let gyroPresent = false;
-    window.addEventListener("devicemotion", function (event) {
-      if (
-        event.rotationRate.alpha ||
-        event.rotationRate.beta ||
-        event.rotationRate.gamma
-      )
-        gyroPresent = true;
-    });
-    
-    const cameraRef = useRef<any>(null); // Reference for the camera
-    const rotationRef = useRef({ alpha: 0, beta: 0, gamma: 0 }); // Store gyroscope values
+  let gyroPresent = false;
+  window.addEventListener("devicemotion", function (event) {
+    if (
+      event.rotationRate.alpha ||
+      event.rotationRate.beta ||
+      event.rotationRate.gamma
+    )
+      gyroPresent = true;
+  });
 
-    // Use the DeviceOrientation API
-    useEffect(() => {
-        const handleOrientation = (event: DeviceOrientationEvent) => {
-            // Get gyroscope data (alpha, beta, gamma)
-            const { alpha, beta, gamma } = event;
+  const cameraRef = useRef<any>(null); // Reference for the camera
+  const rotationRef = useRef({ alpha: 0, beta: 0, gamma: 0 }); // Store gyroscope values
 
-            if (alpha !== null && beta !== null && gamma !== null) {
-                rotationRef.current = { alpha, beta, gamma };
-            }
-        };
+  // Use the DeviceOrientation API
+  useEffect(() => {
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      // Get gyroscope data (alpha, beta, gamma)
+      const { alpha, beta, gamma } = event;
 
-        window.addEventListener("deviceorientation", handleOrientation);
+      if (alpha !== null && beta !== null && gamma !== null) {
+        rotationRef.current = { alpha, beta, gamma };
+      }
+    };
 
-        return () => {
-            window.removeEventListener("deviceorientation", handleOrientation);
-        };
-    }, []);
+    window.addEventListener("deviceorientation", handleOrientation);
 
-    // Update the camera's rotation based on gyroscope data
-    useFrame((state) => {
-        if (cameraRef.current) {
-            const { alpha, beta, gamma } = rotationRef.current;
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
+  }, []);
 
-            // Convert gyroscope data to radians and adjust sensitivity
-            if (gyroPresent) {
-                cameraRef.current.rotation.x = (beta * Math.PI) / 1000; // Up-down movement
-                cameraRef.current.rotation.y = (-gamma * Math.PI) / 1000; // Left-right movement
-            } else {
-                cameraRef.current.rotation.y = (state.pointer.x * Math.PI) / 20; // Adjust the multiplier for sensitivity
-                cameraRef.current.rotation.x = (state.pointer.y * Math.PI) / 10; // Adjust the multiplier for sensitivity
+  // Update the camera's rotation based on gyroscope data
+  useFrame((state) => {
+    if (cameraRef.current) {
+      const { alpha, beta, gamma } = rotationRef.current;
 
-            }
-            // cameraRef.current.rotation.z = (alpha * Math.PI) / 1000; // Roll (optional, usually not needed)
+      // Convert gyroscope data to radians and adjust sensitivity
+      if (gyroPresent) {
+        cameraRef.current.rotation.x = (beta * Math.PI) / 1000; // Up-down movement
+        cameraRef.current.rotation.y = (-gamma * Math.PI) / 1000; // Left-right movement
+      } else {
+        cameraRef.current.rotation.y = (state.pointer.x * Math.PI) / 20; // Adjust the multiplier for sensitivity
+        cameraRef.current.rotation.x = (state.pointer.y * Math.PI) / 10; // Adjust the multiplier for sensitivity
+      }
+      // cameraRef.current.rotation.z = (alpha * Math.PI) / 1000; // Roll (optional, usually not needed)
+    }
+  });
 
-
-        }
-    });
-
-    return (
-        <PerspectiveCamera
-            ref={cameraRef}
-            makeDefault
-            position={[-14, -0.25, 0.9]}
-            fov={60}
-        />
-    );
+  return (
+    <PerspectiveCamera
+      ref={cameraRef}
+      makeDefault
+      position={[0, 0.4, 1]}
+      fov={70}
+    />
+  );
 };
 
 const RenderModel: React.FC<RenderModelProps> = ({ children, className }) => {
   // if (window.innerWidth > 768) {
-    return (
-      <Canvas gl={{ antialias: false, stencil: false, pixelRatio: 0.3 }}>
-        <AnimatedCamera />
-        <Hall position={[1, 0, 0]} />
-        {/*<ambientLight intensity={1.6} color={"#088551"} />*/}
-        <spotLight
-          angle={180}
-          color={"#088551"}
-          position={[-15, 3, 1]}
-          intensity={100}
-          onUpdate={(self) => {
-            self.target.position.set(-10, 0, 0);
-            self.target.updateMatrixWorld();
-          }}
+  return (
+    <Canvas gl={{ antialias: false, stencil: false, pixelRatio: 0.3 }}>
+      <AnimatedCamera />
+      <Hall position={[15.4, 0.4, 0]} />
+      {/*<ambientLight intensity={} />*/}
+      <spotLight
+        angle={180}
+        color={"rgba(8,133,81,0.63)"}
+        position={[3, 3, 1]}
+        intensity={100}
+        onUpdate={(self) => {
+          self.target.position.set(0, 0, 0);
+          self.target.updateMatrixWorld();
+        }}
+      />
+      <spotLight
+        angle={180}
+        color={"rgba(8,133,81,0.69)"}
+        position={[-1, 3, 1]}
+        intensity={100}
+        onUpdate={(self) => {
+          self.target.position.set(0, 0, 0);
+          self.target.updateMatrixWorld();
+        }}
+      />
+      <spotLight
+        angle={180}
+        color={"rgba(8,133,81,0.6)"}
+        position={[-6, 3, 1]}
+        intensity={100}
+        onUpdate={(self) => {
+          self.target.position.set(0, 0, 0);
+          self.target.updateMatrixWorld();
+        }}
+      />
+      <Suspense fallback={null}>{children}</Suspense>
+      <EffectComposer disableNormalPass>
+        <Bloom
+          luminanceThreshold={0.5}
+          mipmapBlur
+          luminanceSmoothing={10}
+          intensity={0.04}
         />
-        <spotLight
-          angle={180}
-          color={"#088551"}
-          position={[-10, 3, 1]}
-          intensity={100}
-          onUpdate={(self) => {
-            self.target.position.set(-10, 0, 0);
-            self.target.updateMatrixWorld();
-          }}
-        />
-        <spotLight
-          angle={180}
-          color={"#088551"}
-          position={[-20, 3, 1]}
-          intensity={100}
-          onUpdate={(self) => {
-            self.target.position.set(-10, 0, 0);
-            self.target.updateMatrixWorld();
-          }}
-        />
-          {children}
-        <Effects />
-          {/*<Rig/>*/}
-      </Canvas>
-    );
+        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        <Noise opacity={0.02} />
+      </EffectComposer>
+      {/*<OrbitControls />*/}
+    </Canvas>
+  );
 };
 
 export default RenderModel;
