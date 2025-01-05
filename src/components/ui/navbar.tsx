@@ -44,9 +44,10 @@ const Navbar = () => {
       ? "bg-black/90"
       : "bg-palate_2/90";
   const navbarFgClass =
-    pathname === "/"
-      ? "text-palate_1/90"
-      : "text-palate_1/90";
+      pathname === "/"
+          ? "text-palate_1/90"
+          : "text-palate_1/90";// Replace `bg-palate_2/90` with your desired color for other routes.
+
 
   return (
     <nav

@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -9,6 +8,7 @@ import { WiggleBone } from "wiggle/spring";
 export function TShirt({ playAudio }: { playAudio: boolean }) {
   const { nodes, materials, scene } = useGLTF("/models/tshirt_new.glb");
   const modelRef = useRef();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [audioLevel, setAudioLevel] = useState(0);
   const wiggleBones = useRef<WiggleBone[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -18,25 +18,29 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     rotationX: audioLevel * 0.6,
     config: { mass: 1, tension: 120, friction: 2 },
   });
-
-  const [mouseRotation, setMouseRotation] = useState({ x: 0, y: 0 });
-  const [gyroRotation, setGyroRotation] = useState({ x: 0, y: 0 });
+  const mouseSpring = useSpring({
+    rotationX: mousePosition.y * 0.2,
+    rotationY: mousePosition.x * 0.7,
+    config: { mass: 1, tension: 120, friction: 7 },
+  });
 
   // Mouse Movement Handler
   const handleMouseMove = (event: MouseEvent) => {
     const { innerWidth, innerHeight } = window;
-    const x = (event.clientX / innerWidth) * 2 - 1;
-    const y = -(event.clientY / innerHeight) * 2 + 1;
-    setMouseRotation({ x: y * 0.2, y: x * 0.2 });
+    setMousePosition({
+      x: (event.clientX / innerWidth) * 2 - 1,
+      y: -(event.clientY / innerHeight) * 2 + 1,
+    });
   };
 
-  // Device Orientation Handler
-  const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
-    const beta = (event.beta || 0) * 0.5;
-    const gamma = (event.gamma || 0) * 0.5;
-    setGyroRotation({ x: beta, y: gamma });
-  };
-
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+      
   // Audio Setup and Processing
   useEffect(() => {
     const audioContext = new window.AudioContext();
@@ -93,39 +97,62 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   useEffect(() => {
     if (!scene || !nodes) return;
 
-    scene.traverse((node) => {
-      if (node.isMesh) {
-        node.castShadow = true;
+    const boneNames = [
+      "Bone", // Root Bone
+      "Bone001", // Child of Bone
+      "Bone002", // Child of Bone001
+      "Bone005", // Child of Bone002
+      "Bone006", // Child of Bone005
+      "Bone003", // Child of Bone002
+      "Bone004", // Child of Bone003
+    ];
+
+    const visited = new Set(); // Track visited bones to avoid duplicates
+
+    boneNames.forEach((boneName) => {
+      const bone = nodes[boneName];
+      if (!bone || visited.has(bone)) return;
+
+      visited.add(bone);
+
+      if (bone.isBone) {
+        const wiggleBone = new WiggleBone(bone, {
+          damping: 30,
+          stiffness: 30,
+        });
+        wiggleBones.current.push(wiggleBone);
       }
     });
 
-    ["Bone"].forEach((rootBone) => {
-      if (!nodes[rootBone]) return;
-
-      nodes[rootBone].traverse((bone: any) => {
-        if (bone.isBone) {
-          const wiggleBone = new WiggleBone(bone, {
-            damping: 30,
-            stiffness: 30,
-          });
-          wiggleBones.current.push(wiggleBone);
-        }
-      });
-    });
-
     return () => {
-      if (wiggleBones.current?.length > 0) {
-        wiggleBones.current.forEach((wiggleBone: WiggleBone) => {
-          if (
-            wiggleBone &&
-            typeof wiggleBone.dispose === "function" &&
-            wiggleBone.parent // Ensure the parent exists before calling dispose
-          ) {
-            wiggleBone.reset?.(); // Safely call reset if available
-            wiggleBone.dispose();
+      if (wiggleBones.current.length > 0) {
+        // Start cleanup from bottom-most bones
+        wiggleBones.current.reverse().forEach((wiggleBone: WiggleBone) => {
+          try {
+            if (wiggleBone) {
+              // Reset wiggle effect safely
+              wiggleBone.reset?.();
+
+              // Ensure the bone's parent exists before attempting removal
+              if (wiggleBone.bone?.parent) {
+                const parent = wiggleBone.bone.parent;
+
+                // Remove the bone from its parent
+                parent.remove(wiggleBone.bone);
+              }
+
+              // Dispose the wiggle bone safely
+              if (typeof wiggleBone.dispose === "function") {
+                wiggleBone.dispose();
+              }
+            }
+          } catch (error) {
+            console.error("Error during wiggle bone disposal:", error);
           }
         });
-        wiggleBones.current = []; // Clear the array to avoid dangling references
+
+        // Clear the array after cleanup
+        wiggleBones.current = [];
       }
     };
   }, [nodes, scene]);
