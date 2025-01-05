@@ -15,8 +15,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
-        palate_1: "#326032",
-        palate_2: "#FEFED8",
+        palate_2: "#004b3f",
+        palate_1: "#FEFED8",
         palate_3: "#feeed5",
         text_1: "#020201",
         background: "hsl(var(--background))",
