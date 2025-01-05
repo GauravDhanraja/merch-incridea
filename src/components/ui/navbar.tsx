@@ -1,17 +1,17 @@
 "use client";
-import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
-import { signIn, signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { data: session } = useSession();
-  const mobileDrawerRef = useRef(null);
+  const mobileDrawerRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
 
   const navItems = [
@@ -23,10 +23,10 @@ const Navbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
   };
 
-  const handleClickOutside = (event: { target: never }) => {
+  const handleClickOutside = (event: MouseEvent) => {
     if (
       mobileDrawerRef.current &&
-      !mobileDrawerRef.current.contains(event.target)
+      !mobileDrawerRef.current.contains(event.target as Node)
     ) {
       setMobileDrawerOpen(false);
     }
@@ -40,14 +40,13 @@ const Navbar = () => {
   }, []);
 
   const navbarBgClass =
-      pathname === "/"
-          ? "bg-black/90"
-          : "bg-palate_2/90";
+    pathname === "/"
+      ? "bg-black/90"
+      : "bg-palate_2/90";
   const navbarFgClass =
-      pathname === "/"
-          ? "text-palate_1/90"
-          : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
-
+    pathname === "/"
+      ? "text-palate_1/90"
+      : "text-palate_1/90";
 
   return (
     <nav
@@ -55,7 +54,6 @@ const Navbar = () => {
     >
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center">
             <Image
               className="mr-2"
@@ -73,6 +71,14 @@ const Navbar = () => {
                 <Link href={item.href}>{item.label}</Link>
               </li>
             ))}
+            {/* Profile link */}
+            {session && (
+              <li>
+                <Link href="/profile" className="text-xl font-bold">
+                  Profile
+                </Link>
+              </li>
+            )}
           </ul>
 
           {/* Desktop Actions */}
@@ -136,6 +142,16 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
+            {/* Profile link */}
+            {session && (
+              <li
+                className={`text-4xl font-bold ${navbarFgClass}`}
+              >
+                <Link href="/profile" onClick={toggleNavbar}>
+                  Profile
+                </Link>
+              </li>
+            )}
           </ul>
           <div
             className={`my-16 transition-transform duration-500 ease-out ${
