@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-const PurchaseMerchButton = ({ merchId, merchQuantity }: { merchId: string, merchQuantity: number }) => {
+const PurchaseMerchButton = ({
+  merchId,
+  merchQuantity,
+}: {
+  merchId: string;
+  merchQuantity: number;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const purchaseMerch = api.merchandise.purchaseMerch.useMutation();
 
   const handlePurchase = async () => {
     setIsLoading(true);
     try {
-      const paymentLink = await purchaseMerch.mutateAsync({ merchId, merchQuantity });
+      const paymentLink = await purchaseMerch.mutateAsync({
+        merchId,
+        merchQuantity,
+      });
       if (paymentLink?.short_url) {
         // Redirect to Razorpay payment link
         window.location.href = paymentLink.short_url;
@@ -18,7 +27,7 @@ const PurchaseMerchButton = ({ merchId, merchQuantity }: { merchId: string, merc
     } catch (error) {
       console.error("Error purchasing merchandise:", error);
       if (error.message == "UNAUTHORIZED") {
-        alert("Have you signed in?")
+        alert("Have you signed in?");
       }
     } finally {
       setIsLoading(false);
@@ -27,9 +36,9 @@ const PurchaseMerchButton = ({ merchId, merchQuantity }: { merchId: string, merc
 
   return (
     <button
+      className="mt-2 items-center rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
       onClick={handlePurchase}
-      disabled={isLoading}
-      className="mt-8 h-16 w-full cursor-pointer select-none justify-center rounded-full bg-palate_1 py-5 text-center font-bold text-palate_3      active:bg-white/80 md:active:bgactive:text-black md:hover:bg-palate_1/80 md:hover:text-text_1 shadow-2xl"
+      disabled={isLoading} // Replace with your buy function
     >
       {isLoading ? "Processing..." : "Buy Now"}
     </button>

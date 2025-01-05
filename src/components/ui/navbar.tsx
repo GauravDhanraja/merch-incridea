@@ -1,6 +1,7 @@
 "use client";
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import ToggleMute from "./toggle-mute";
 import { signIn, signOut } from "next-auth/react";
@@ -11,17 +12,18 @@ const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { data: session } = useSession();
   const mobileDrawerRef = useRef(null);
+  const pathname = usePathname();
 
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Buy", href: "/buy" },
+    { label: "Shop", href: "/shop" },
   ];
 
   const toggleNavbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event: { target: never }) => {
     if (
       mobileDrawerRef.current &&
       !mobileDrawerRef.current.contains(event.target)
@@ -37,8 +39,20 @@ const Navbar = () => {
     };
   }, []);
 
+  const navbarBgClass =
+      pathname === "/"
+          ? "bg-black/90"
+          : "bg-palate_2/90";
+  const navbarFgClass =
+      pathname === "/"
+          ? "text-palate_1/90"
+          : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
+
+
   return (
-    <nav className="fixed z-50 mx-auto ml-[20px] mr-[20px] mt-[20px] grid w-[calc(100%-40px)] rounded-full bg-palate_1/20 py-2 shadow-xl md:backdrop-blur-2xl">
+    <nav
+      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2`}
+    >
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -53,7 +67,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Nav */}
-          <ul className="hidden select-none items-center space-x-12 text-xl font-bold text-black lg:flex">
+          <ul className={`hidden select-none items-center space-x-12 text-xl font-bold md:flex ${navbarFgClass}`}>
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>{item.label}</Link>
@@ -62,18 +76,18 @@ const Navbar = () => {
           </ul>
 
           {/* Desktop Actions */}
-          <div className="hidden items-center space-x-4 lg:flex">
-            <ToggleMute />
+          <div className="hidden items-center space-x-4 md:flex">
+            <ToggleMute color={navbarFgClass}/>
             {session ? (
               <button
-                className="rounded-md border border-black px-3 py-2 text-black hover:bg-black hover:text-white"
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-black hover:text-white`}
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className="rounded-md border border-black px-3 py-2 text-black hover:bg-black hover:text-white"
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-black hover:text-white`}
                 onClick={() => signIn("google")}
               >
                 Sign In
@@ -82,12 +96,12 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="flex items-center justify-center gap-3 lg:hidden">
-            <ToggleMute />
+          <div className="flex items-center justify-center gap-3 md:hidden">
+            <ToggleMute color={navbarFgClass} />
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
-              className="text-text_1 focus:outline-none"
+              className={`${navbarFgClass} focus:outline-none`}
             >
               {mobileDrawerOpen ? (
                 <X className="size-8" />
@@ -101,7 +115,7 @@ const Navbar = () => {
         {/* Mobile Drawer */}
         <div
           ref={mobileDrawerRef}
-          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col items-center rounded-t-3xl bg-palate_1/50 transition-opacity duration-500 ease-in-out lg:hidden ${
+          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col items-center rounded-t-3xl ${navbarBgClass} backdrop-saturate-150 transition-opacity duration-500 ease-in-out lg:hidden ${
             mobileDrawerOpen
               ? "opacity-100 backdrop-blur-2xl"
               : "pointer-events-none opacity-0"
@@ -113,7 +127,10 @@ const Navbar = () => {
             }`}
           >
             {navItems.map((item) => (
-              <li key={item.href} className="text-4xl font-bold text-text_1">
+              <li
+                key={item.href}
+                className={`text-4xl font-bold ${navbarFgClass}`}
+              >
                 <Link href={item.href} onClick={toggleNavbar}>
                   {item.label}
                 </Link>
@@ -127,14 +144,14 @@ const Navbar = () => {
           >
             {session ? (
               <button
-                className="rounded-md border border-text_1 px-6 py-4 text-4xl font-bold text-text_1 hover:bg-white hover:text-black"
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-white hover:text-black`}
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className="rounded-md border border-text_1 px-6 py-4 text-4xl font-bold text-text_1 hover:bg-white hover:text-black"
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-white hover:text-black`}
                 onClick={() => signIn("google")}
               >
                 Sign In
