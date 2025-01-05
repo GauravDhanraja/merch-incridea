@@ -59,6 +59,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
+        image: user.image || session.user.image,
       },
     }),
   },
