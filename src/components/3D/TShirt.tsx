@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -33,6 +32,7 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       y: -(event.clientY / innerHeight) * 2 + 1,
     });
   };
+
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
 
@@ -110,7 +110,6 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     const visited = new Set(); // Track visited bones to avoid duplicates
 
     boneNames.forEach((boneName) => {
-      console.log("Visited: ", boneName);
       const bone = nodes[boneName];
       if (!bone || visited.has(bone)) return;
 
@@ -163,7 +162,6 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       ref={modelRef}
       dispose={null}
       scale={[0.174, 0.174, 0.174]}
-      // position={[-14, -0.5, -0.5]}
       position={[0, 0, 0]}
       rotation-x={audioSpring.rotationX.get() + mouseSpring.rotationX.get()}
       rotation-y={mouseSpring.rotationY.get()}
