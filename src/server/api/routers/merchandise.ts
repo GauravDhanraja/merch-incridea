@@ -154,6 +154,7 @@ export const merchandiseRouter = createTRPCRouter({
     .input(
       z.object({
         merchId: z.string(),
+        merchQuantity: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -175,7 +176,7 @@ export const merchandiseRouter = createTRPCRouter({
                 id: ctx.session.user.id,
               },
             },
-            quantity: 1,
+            quantity: input.merchQuantity,
             merchandise: {
               connect: {
                 id: merch.id,
@@ -189,8 +190,8 @@ export const merchandiseRouter = createTRPCRouter({
         });
         // generate payment link
         const paymentLink = await rpClient.paymentLink.create({
-          upi_link: true,
-          amount: merch.discountPrice * 100,
+          upi_link: false,
+          amount: merch.discountPrice * 100 * input.merchQuantity,
           currency: "INR",
           customer: {
             name: ctx.session.user.name,
@@ -202,7 +203,7 @@ export const merchandiseRouter = createTRPCRouter({
         //create payment order
         await ctx.db.paymentOrder.create({
           data: {
-            amount: merch.discountPrice,
+            amount: merch.discountPrice * input.merchQuantity,
             order: {
               connect: {
                 id: order.id,

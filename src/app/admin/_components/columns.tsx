@@ -1,4 +1,5 @@
 "use-client";
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
@@ -66,7 +67,7 @@ export const orderColumns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const delivered = row.getValue("delivered");
       return (
-        <div className="font-medium">{delivered ? "Done" : "Pending"}</div>
+          <div className="font-medium">{delivered ? "Done" : "Pending"}</div>
       );
     },
   },
@@ -95,17 +96,36 @@ export const orderColumns: ColumnDef<Order>[] = [
     accessorKey: "paymentId",
     header: "Refund",
     cell: ({ row }) => {
-      const initiateRefund = api.payment.initiateRefund.useMutation();
+      const [isRefunding, setIsRefunding] = useState(false);
+      const initiateRefund = api.payment.initiateRefund.useMutation({
+        onMutate: () => {
+          setIsRefunding(true);
+        },
+        onSuccess: () => {
+          // Update local state or refetch data
+          row.updateData("paymentStatus", "REFUNDED");
+        },
+        onSettled: () => {
+          setIsRefunding(false);
+        },
+      });
+
       const status = row.getValue("paymentStatus");
+      const paymentId = row.getValue("paymentId");
+
       return (
-        <Button
-          variant={"destructive"}
-          disabled={status !== "SUCCESS"}
-          onClick={() => initiateRefund.mutate(row.getValue("paymentId"))}
-          size={"sm"}
-        >
-          Refund
-        </Button>
+          <Button
+              variant={"destructive"}
+              disabled={status !== "SUCCESS" || isRefunding}
+              onClick={() => {
+                if (paymentId) {
+                  initiateRefund.mutate({ paymentId });
+                }
+              }}
+              size={"sm"}
+          >
+            {isRefunding ? "Processing..." : "Refund"}
+          </Button>
       );
     },
   },
