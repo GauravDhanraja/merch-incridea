@@ -1,52 +1,45 @@
 import { TRPCError } from "@trpc/server";
-import {
-    adminProcedure,
-    createTRPCRouter,
-    publicProcedure,
-} from "../trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const orderRouter = createTRPCRouter({
-    getAllUserOrders: publicProcedure.query(async ({ ctx }) => {
-        try {
-            const orders = await ctx.db.order.findMany({
-                include: {
-                    user: {
-                        select: {
-                            name: true,
-                            email: true
-                        }
-                    },
-                    paymentOrder: {
-                        select: {
-                            amount: true,
-                            id: true,
-                            status: true,
-                            razorpayOrderID: true,
-                        }
-                    },
-                    merchandise: {
-                        select: {
-                            name: true,
-                        }
-                    }
-                }
-            });
+  getAllUserOrders: adminProcedure.query(async ({ ctx }) => {
+    try {
+      return await ctx.db.order.findMany({
+        // include: {
+        //   User: {
+        //     select: {
+        //       name: true,
+        //       email: true,
+        //     },
+        //   },
+        //   PaymentOrder: {
+        //     select: {
+        //       amount: true,
+        //       id: true,
+        //       status: true,
+        //       razorpayOrderID: true,
+        //     },
+        //   },
+        //   Merchandise: {
+        //     select: {
+        //       name: true,
+        //     },
+        //   },
+        // },
+      });
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not get orders",
+      });
+    }
+  }),
 
-            return orders.map(order => ({
-                ...order,
-                username: order.user?.name,
-                email: order.user?.email,
-                totalAmount: order?.paymentOrder?.amount,
-                paymentStatus: order.paymentOrder?.status,
-                paymentId: order.paymentOrder?.id,
-                merchName: order.merchandise?.name
-            }));
-
-        } catch (error) {
-            throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
-                message: "Could not get orders",
-            });
-        }
-    }),
+  getUserOrders: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.order.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+  }),
 });

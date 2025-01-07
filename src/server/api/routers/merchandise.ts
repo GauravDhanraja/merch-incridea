@@ -9,20 +9,12 @@ import {
 } from "../trpc";
 import Razorpay from "razorpay";
 import { env } from "~/env";
+import { createMerchZ, purchaseMerchZ, updateMerchZ } from "~/zod/merchandiseZ";
+import { idZ } from "~/zod/generalZ";
 
 export const merchandiseRouter = createTRPCRouter({
   createMerch: adminProcedure
-    .input(
-      z.object({
-        name: z.string().min(3),
-        description: z.string(),
-        image: z.string(),
-        originalPrice: z.number(),
-        discountPrice: z.number(),
-        available: z.boolean(),
-        stock: z.number(),
-      }),
-    )
+    .input(createMerchZ)
     .mutation(async ({ ctx, input }) => {
       try {
         return ctx.db.merchandise.create({
@@ -38,6 +30,7 @@ export const merchandiseRouter = createTRPCRouter({
         });
       }
     }),
+
   getAllMerch: publicProcedure.query(async ({ ctx }) => {
     try {
       return ctx.db.merchandise.findMany({});
@@ -48,30 +41,53 @@ export const merchandiseRouter = createTRPCRouter({
       });
     }
   }),
-  getMerchSales: publicProcedure.query(async ({ ctx }) => {
+
+  getMerchSales: adminProcedure.query(async ({ ctx }) => {
     try {
-      return ctx.db.merchandise.findMany({
+      return ctx.db.merchandise
+        .findMany({
+          where: {
+            Order: {
+              some: {
+                PaymentOrder: {
+                  status: "SUCCESS",
+                },
+              },
+            },
+          },
+          include: {
+            Order: {
+              select: {
+                quantity: true,
+              },
+            },
+          },
+        })
+        .then((merchandise) => {
+          return merchandise.map((item) => ({
+            ...item,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+            totalSales: item.Order.reduce(
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+              (acc, curr) => acc + curr.quantity,
+              0,
+            ),
+          }));
+        });
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not get merchandise",
+      });
+    }
+  }),
+
+  getMerchById: protectedProcedure.input(idZ).query(async ({ ctx, input }) => {
+    try {
+      return ctx.db.merchandise.findUnique({
         where: {
-          order: {
-            some: {
-              paymentOrder: {
-                status: "SUCCESS"
-              }
-            }
-          }
+          id: input.id,
         },
-        include: {
-          order: {
-            select: {
-              quantity: true
-            }
-          }
-        }
-      }).then(merchandise => {
-        return merchandise.map(item => ({
-          ...item,
-          totalSales: item.order.reduce((sum, order) => sum + order.quantity, 0)
-        }));
       });
     } catch (error) {
       throw new TRPCError({
@@ -80,39 +96,9 @@ export const merchandiseRouter = createTRPCRouter({
       });
     }
   }),
-  getMerchById: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      try {
-        return ctx.db.merchandise.findUnique({
-          where: {
-            id: input.id,
-          },
-        });
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not get merchandise",
-        });
-      }
-    }),
+
   updateMerch: adminProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        name: z.string().min(3),
-        description: z.string(),
-        image: z.string(),
-        originalPrice: z.number(),
-        discountPrice: z.number(),
-        available: z.boolean(),
-        stock: z.number(),
-      }),
-    )
+    .input(updateMerchZ)
     .mutation(async ({ ctx, input }) => {
       try {
         return ctx.db.merchandise.update({
@@ -130,33 +116,24 @@ export const merchandiseRouter = createTRPCRouter({
         });
       }
     }),
-  deleteMerch: adminProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      try {
-        return ctx.db.merchandise.delete({
-          where: {
-            id: input.id,
-          },
-        });
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not delete merchandise",
-        });
-      }
-    }),
+
+  deleteMerch: adminProcedure.input(idZ).mutation(async ({ ctx, input }) => {
+    try {
+      return ctx.db.merchandise.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not delete merchandise",
+      });
+    }
+  }),
+
   purchaseMerch: protectedProcedure
-    .input(
-      z.object({
-        merchId: z.string(),
-        merchQuantity: z.number(),
-      }),
-    )
+    .input(purchaseMerchZ)
     .mutation(async ({ ctx, input }) => {
       try {
         const merch = await ctx.db.merchandise.findUnique({
@@ -171,13 +148,13 @@ export const merchandiseRouter = createTRPCRouter({
         // create order
         const order = await ctx.db.order.create({
           data: {
-            user: {
+            User: {
               connect: {
                 id: ctx.session.user.id,
               },
             },
             quantity: input.merchQuantity,
-            merchandise: {
+            Merchandise: {
               connect: {
                 id: merch.id,
               },
@@ -194,8 +171,8 @@ export const merchandiseRouter = createTRPCRouter({
           amount: merch.discountPrice * 100 * input.merchQuantity,
           currency: "INR",
           customer: {
-            name: ctx.session.user.name,
-            email: ctx.session.user.email,
+            name: ctx.session.user.name || undefined,
+            email: ctx.session.user.email || undefined,
           },
           description: "Payment for " + merch.name,
           callback_url: env.HOME_URL,
@@ -204,7 +181,7 @@ export const merchandiseRouter = createTRPCRouter({
         await ctx.db.paymentOrder.create({
           data: {
             amount: merch.discountPrice * input.merchQuantity,
-            order: {
+            Order: {
               connect: {
                 id: order.id,
               },
