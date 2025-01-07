@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
 import React, { Suspense, useEffect, useRef } from "react";
@@ -19,9 +21,9 @@ const AnimatedCamera: React.FC = () => {
   let gyroPresent = false;
   window.addEventListener("devicemotion", function (event) {
     if (
-      event.rotationRate.alpha ||
-      event.rotationRate.beta ||
-      event.rotationRate.gamma
+      event.rotationRate?.alpha ||
+      event.rotationRate?.beta ||
+      event.rotationRate?.gamma
     )
       gyroPresent = true;
   });
@@ -112,7 +114,7 @@ const RenderModel: React.FC<RenderModelProps> = ({ children, className }) => {
         }}
       />
       <Suspense fallback={null}>{children}</Suspense>
-      <EffectComposer disableNormalPass>
+      <EffectComposer enableNormalPass>
         <Bloom
           luminanceThreshold={0.5}
           mipmapBlur

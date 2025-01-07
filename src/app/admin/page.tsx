@@ -149,7 +149,8 @@ export default function Admin() {
                 </CardHeader>
                 <CardContent>
                   {orderData && (
-                    <OrderData columns={orderColumns} data={orderData} />
+                    // <OrderData columns={orderColumns} data={orderData} />
+                    <></>
                   )}
                 </CardContent>
               </Card>

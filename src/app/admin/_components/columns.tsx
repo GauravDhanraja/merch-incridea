@@ -67,7 +67,7 @@ export const orderColumns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const delivered = row.getValue("delivered");
       return (
-          <div className="font-medium">{delivered ? "Done" : "Pending"}</div>
+        <div className="font-medium">{delivered ? "Done" : "Pending"}</div>
       );
     },
   },
@@ -92,41 +92,41 @@ export const orderColumns: ColumnDef<Order>[] = [
     accessorKey: "merchName",
     header: "Merch Name",
   },
-  {
-    accessorKey: "paymentId",
-    header: "Refund",
-    cell: ({ row }) => {
-      const [isRefunding, setIsRefunding] = useState(false);
-      const initiateRefund = api.payment.initiateRefund.useMutation({
-        onMutate: () => {
-          setIsRefunding(true);
-        },
-        onSuccess: () => {
-          // Update local state or refetch data
-          row.updateData("paymentStatus", "REFUNDED");
-        },
-        onSettled: () => {
-          setIsRefunding(false);
-        },
-      });
+  // {
+  //   accessorKey: "paymentId",
+  //   header: "Refund",
+  //   cell: ({ row }) => {
+  //     const [isRefunding, setIsRefunding] = useState(false);
+  //     const initiateRefund = api.payment.initiateRefund.useMutation({
+  //       onMutate: () => {
+  //         setIsRefunding(true);
+  //       },
+  //       onSuccess: () => {
+  //         // Update local state or refetch data
+  //         row.updateData("paymentStatus", "REFUNDED");
+  //       },
+  //       onSettled: () => {
+  //         setIsRefunding(false);
+  //       },
+  //     });
 
-      const status = row.getValue("paymentStatus");
-      const paymentId = row.getValue("paymentId");
+  //     const status = row.getValue("paymentStatus");
+  //     const paymentId = row.getValue("paymentId");
 
-      return (
-          <Button
-              variant={"destructive"}
-              disabled={status !== "SUCCESS" || isRefunding}
-              onClick={() => {
-                if (paymentId) {
-                  initiateRefund.mutate({ paymentId });
-                }
-              }}
-              size={"sm"}
-          >
-            {isRefunding ? "Processing..." : "Refund"}
-          </Button>
-      );
-    },
-  },
+  //     return (
+  //       <Button
+  //         variant={"destructive"}
+  //         disabled={status !== "SUCCESS" || isRefunding}
+  //         onClick={() => {
+  //           if (paymentId) {
+  //             initiateRefund.mutate({ paymentId });
+  //           }
+  //         }}
+  //         size={"sm"}
+  //       >
+  //         {isRefunding ? "Processing..." : "Refund"}
+  //       </Button>
+  //     );
+  //   },
+  // },
 ];

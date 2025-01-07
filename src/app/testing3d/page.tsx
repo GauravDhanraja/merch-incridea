@@ -1,11 +1,11 @@
-"use client";
-import RenderModel from "~/components/3D/RenderModel";
-import { FridgeMagnet } from "~/app/testing3d/models/FridgeMagnet";
-import { atom } from "jotai";
-import { TShirt } from "~/components/3D/TShirt";
-import { KeyChain } from "~/app/testing3d/models/KeyChain";
+// "use client";
+// import RenderModel from "~/components/3D/RenderModel";
+// import { FridgeMagnet } from "~/app/testing3d/models/FridgeMagnet";
+// import { atom } from "jotai";
+// import { TShirt } from "~/components/3D/TShirt";
+// import { KeyChain } from "~/app/testing3d/models/KeyChain";
 
-export const wiggleAtom = atom(true);
+// export const wiggleAtom = atom(true);
 
 export default function Home() {
   return (

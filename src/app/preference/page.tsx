@@ -15,7 +15,7 @@ export default function Preference() {
       setIsLoading(true);
       router.push("/");
     }
-  }, [isMusicPlaying]);
+  }, [isMusicPlaying, router]);
 
   const handleMusicChoice = (play: boolean) => {
     // Set the cookie explicitly
