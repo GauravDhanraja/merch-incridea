@@ -7,6 +7,8 @@ import { api } from "~/trpc/react";
 import Image from "next/image";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import BuyButton from "~/components/ui/buyButton";
+import { Button } from "~/components/ui/button";
+import Cart from "~/components/cart";
 
 export default function Shop() {
   const { data: allMerchData, isLoading } =
@@ -15,6 +17,27 @@ export default function Shop() {
   const [merchData, setMerchData] = useState<
     (Merchandise & { count: number })[]
   >([]);
+
+  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
+
+  const {
+    data: userCartData,
+    isLoading: cartLoading,
+    refetch: cartRefecth,
+  } = api.cart.getUserCart.useQuery();
+
+  const addItemToCart = api.cart.addItemToCart.useMutation();
+
+  const handlePaymentSuccess = async (razorpayOrderId: string) => {
+    try {
+      await rzpWebhook.mutateAsync({
+        razorpayOrderId,
+        status: "SUCCESS",
+      });
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+    }
+  };
 
   useEffect(() => {
     allMerchData?.map((it) => {
@@ -112,7 +135,23 @@ export default function Shop() {
                       <FaPlus className="mx-auto text-palate_2" />
                     </button>
                   </div>
-                  <BuyButton merchId={item.id} merchQuantity={item.count} />
+                  <div className="mt-2 flex w-full items-center justify-center gap-4">
+                    <BuyButton
+                      merch={[{ id: item.id, quantity: item.count }]}
+                      total={item.discountPrice * item.count}
+                    />
+                    <Button
+                      onClick={async () => {
+                        await addItemToCart.mutateAsync({
+                          id: item.id,
+                          quantity: item.count,
+                        });
+                        await cartRefecth();
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -124,6 +163,8 @@ export default function Shop() {
           </p>
         </div>
       </div>
+
+      <Cart isLoading={cartLoading} cartItems={userCartData ?? []} />
     </main>
   );
 }

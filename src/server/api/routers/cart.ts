@@ -1,6 +1,7 @@
 import { idZ } from "~/zod/generalZ";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const cartRouter = createTRPCRouter({
   getUserCart: protectedProcedure.query(async ({ ctx }) => {
@@ -8,11 +9,19 @@ export const cartRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      include: {
+        Merchandise: true,
+      },
     });
   }),
 
   addItemToCart: protectedProcedure
-    .input(idZ)
+    .input(
+      z.object({
+        id: z.string(),
+        quantity: z.number(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const item = await ctx.db.cart.findFirst({
         where: {
@@ -26,10 +35,19 @@ export const cartRouter = createTRPCRouter({
           data: {
             merchandiseId: input.id,
             userId: ctx.session.user.id,
-            quantity: 1,
+            quantity: input.quantity,
           },
         });
       }
+
+      return await ctx.db.cart.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          quantity: item.quantity + input.quantity,
+        },
+      });
     }),
 
   removeItemFromCart: protectedProcedure

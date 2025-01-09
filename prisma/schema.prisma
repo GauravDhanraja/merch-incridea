@@ -71,25 +71,41 @@ model Merchandise {
   available     Boolean
   stock         Int
 
-  Order Order[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderItem OrderItem[]
+  Cart      Cart[]
+}
+
+model OrderItem {
+  id            String @id @default(cuid())
+  orderId       String
+  merchandiseId String
+  quantity      Int
+  total         Float
+
+  Order       Order       @relation(fields: [orderId], references: [id])
+  Merchandise Merchandise @relation(fields: [merchandiseId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Order {
-  id            String  @id @default(cuid())
-  userId        String
-  merchandiseId String
-  quantity      Int
-  delivered     Boolean @default(false)
+  id     String @id @default(cuid())
+  userId String
 
-  User         User          @relation(fields: [userId], references: [id])
-  Merchandise  Merchandise   @relation(fields: [merchandiseId], references: [id])
+  total     Float
+  delivered Boolean @default(false)
+
+  User User @relation(fields: [userId], references: [id])
+
   PaymentOrder PaymentOrder?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now())
+  OrderItem     OrderItem[]
+  merchandiseId String?
 }
 
 model PaymentOrder {
@@ -108,15 +124,16 @@ model PaymentOrder {
 }
 
 model Cart {
-  id            String @id @default(cuid())
-  merchandiseId String
-  quantity      Int
+  id          String      @id @default(cuid())
+  Merchandise Merchandise @relation(fields: [merchandiseId], references: [id])
+  quantity    Int
 
   User   User   @relation(fields: [userId], references: [id])
   userId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  merchandiseId String
 }
 
 enum Role {

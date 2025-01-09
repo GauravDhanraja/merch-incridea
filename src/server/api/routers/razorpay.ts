@@ -10,7 +10,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
-import { JsonObject } from "next-auth/adapters";
+import type { JsonObject } from "next-auth/adapters";
 
 export const razorpayRouter = createTRPCRouter({
   initiateRefund: adminProcedure
@@ -130,6 +130,43 @@ export const razorpayRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not get merchandise",
+        });
+      }
+    }),
+  handleWebhook: publicProcedure
+    .input(
+      z.object({
+        razorpayOrderId: z.string(),
+        status: z.nativeEnum(Status),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const paymentOrder = await ctx.db.paymentOrder.findUnique({
+          where: {
+            razorpayOrderID: input.razorpayOrderId,
+          },
+        });
+        if (!paymentOrder) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Payment order not found",
+          });
+        }
+
+        return ctx.db.paymentOrder.update({
+          where: {
+            razorpayOrderID: input.razorpayOrderId,
+          },
+          data: {
+            status: input.status,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not update payment status",
         });
       }
     }),

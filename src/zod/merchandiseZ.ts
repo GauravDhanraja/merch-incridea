@@ -22,6 +22,11 @@ export const updateMerchZ = z.object({
 });
 
 export const purchaseMerchZ = z.object({
-  merchId: z.string(),
-  merchQuantity: z.number(),
+  merch: z
+    .object({
+      id: z.string(),
+      quantity: z.number(),
+    })
+    .array(),
+  total: z.number(),
 });

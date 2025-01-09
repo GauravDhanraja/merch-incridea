@@ -14,6 +14,7 @@ export const appRouter = createTRPCRouter({
   payment: razorpayRouter,
   order: orderRouter,
   cart: cartRouter,
+  razorpay: razorpayRouter,
 });
 
 // export type definition of API
