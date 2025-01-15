@@ -1,9 +1,11 @@
 "use client";
 import { Merchandise, type Cart } from "@prisma/client";
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { api } from "~/trpc/react";
+import PurchaseMerchButton from "~/components/ui/buyButton";
+import { useSession } from "next-auth/react";
 
 interface Props {
   cartItems: (Cart & {
@@ -12,60 +14,138 @@ interface Props {
   isLoading: boolean;
 }
 
-export default function Cart({ cartItems, isLoading }: Props) {
+export default function Cart({ cartItems: initialCartItems, isLoading }: Props) {
+  const { data: session } = useSession();
+  const [cartItems, setCartItems] = useState(initialCartItems);
   const [isOpen, setIsOpen] = useState(false);
 
   const addItemToCart = api.cart.addItemToCart.useMutation();
   const removeItemFromCart = api.cart.removeItemFromCart.useMutation();
   const clearCart = api.cart.clearCart.useMutation();
 
+  // Calculate total price
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.quantity * item.Merchandise.discountPrice,
+    0
+  );
+
+  // Prepare data for the PurchaseMerchButton
+  const merchData = cartItems.map((item) => ({
+    id: item.Merchandise.id,
+    quantity: item.quantity,
+  }));
+
+  // Update cartItems on removal
+  const handleRemoveItem = async (id: string) => {
+    await removeItemFromCart.mutateAsync({ id });
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.Merchandise.id !== id)
+    );
+  };
+
+  // Clear all items in cart
+  const handleClearCart = async () => {
+    await clearCart.mutateAsync();
+    setCartItems([]);
+  };
+
+  useEffect(() => {
+    setCartItems(initialCartItems);
+  }, [initialCartItems]);
+
   return (
     <div className="fixed bottom-4 right-4">
+      {/* Floating Cart Button */}
       <button
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
-        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white shadow-lg"
       >
-        <FaShoppingCart />
-        {cartItems.length > -1 && (
-          <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white">
+        <FaShoppingCart size={20} />
+        {cartItems.length > 0 && (
+          <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm font-semibold text-white">
             {cartItems.length}
           </div>
         )}
       </button>
+
+      {/* Cart Popup */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 h-[40rem] w-[30rem] rounded-lg bg-white p-5 shadow-lg">
-          <div className="flex h-full flex-col items-center justify-between">
-            <div className="flex w-full items-center justify-between">
-              <h1>
-                <span className="font-semibold">Merch</span>Cart
-              </h1>
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-                className="flex size-12 items-center justify-center rounded-full bg-white"
-              >
-                <X />
-              </button>
-            </div>
-
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : (
-              <div>
-                {cartItems?.map((item) => (
-                  <div key={item.id}>
-                    <div>{item.Merchandise.name}</div>
-                    <div>{item.quantity}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div> </div>
+        <div className="absolute bottom-16 right-0 w-80 rounded-lg bg-gradient-to-tr from-emerald-600 to-emerald-400 p-4 shadow-lg">
+          {/* Cart Header */}
+          <div className="flex items-center justify-between border-b border-white/20 pb-2">
+            <h1 className="text-lg font-semibold text-white">
+              <span className="font-bold">Merch</span> Cart
+            </h1>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="rounded-full p-1 text-white hover:bg-white/20"
+            >
+              <X size={18} />
+            </button>
           </div>
+
+          {/* Check if user is logged in */}
+          {!session?.user ? (
+            <div className="mt-4 text-center text-white">
+              Login to Use Cart
+            </div>
+          ) : isLoading ? (
+            <div className="mt-4 text-center text-white">Loading...</div>
+          ) : cartItems.length === 0 ? (
+            <div className="mt-4 text-center text-white">
+              Your cart is empty.
+            </div>
+          ) : (
+            <div className="mt-4 max-h-56 space-y-4 overflow-y-auto">
+              {cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between rounded-lg bg-white p-3 shadow"
+                >
+                  <div>
+                    <p className="text-sm font-bold text-gray-700">
+                      {item.Merchandise.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Quantity: {item.quantity}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Price: ₹{item.Merchandise.discountPrice}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveItem(item.Merchandise.id)}
+                    className="rounded-full bg-red-500 px-2 py-1 text-xs text-white shadow hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Footer */}
+          {cartItems.length > 0 && (
+            <div className="mt-4 border-t border-white/20 pt-4">
+              <div className="flex justify-between text-white">
+                <span className="font-bold">Total:</span>
+                <span className="font-bold">₹{total.toFixed(2)}</span>
+              </div>
+              <div className="mt-4 flex justify-between">
+                <button
+                  onClick={handleClearCart}
+                  className="rounded-full bg-red-500 px-3 py-1 text-sm text-white shadow hover:bg-red-600"
+                >
+                  Clear Cart
+                </button>
+                <PurchaseMerchButton
+                  merch={merchData}
+                  total={total}
+                  className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-emerald-600 shadow hover:bg-gray-100"
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
