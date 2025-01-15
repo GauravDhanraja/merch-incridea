@@ -1,32 +1,83 @@
 "use client";
 
 import { type Merchandise } from "@prisma/client";
-import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
 import { api } from "~/trpc/react";
 import Image from "next/image";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaPlus, FaMinus } from "react-icons/fa";
 import BuyButton from "~/components/ui/buyButton";
-import { Button } from "~/components/ui/button";
 import Cart from "~/components/cart";
 
 export default function Shop() {
   const { data: allMerchData, isLoading } =
     api.merchandise.getAllMerch.useQuery();
-
   const [merchData, setMerchData] = useState<
     (Merchandise & { count: number })[]
   >([]);
-
+  type Sizes = {
+    [key: string]: number; // Key is a string (e.g., size) and value is a number (quantity)
+  };
   const rzpWebhook = api.razorpay.handleWebhook.useMutation();
-
+  const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
     isLoading: cartLoading,
-    refetch: cartRefecth,
+    refetch: cartRefetch,
   } = api.cart.getUserCart.useQuery();
-
   const addItemToCart = api.cart.addItemToCart.useMutation();
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [emailExists, setEmailExists] = useState<boolean>(false);
+  const [showBulkOrderForm, setShowBulkOrderForm] = useState(false);
+  const [sizes, setSizes] = useState<Sizes>({});
+  const [bulkTotalCost, setBulkTotalCost] = useState(0);
+  const [bulkTotalQty, setBulkTotalQty] = useState(0)
+  const { data: session } = useSession(); 
+  const [name, setName] = useState('');
+  const [branch, setBranch] = useState('');
+  const [semester, setSemester] = useState('');
+  const handleSizeChange = (size: string, quantity: number): void => {
+    setSizes((prev: Sizes) => {
+      const updatedSizes: Sizes = { ...prev, [size]: Math.max(0, quantity) };
+      calculateBulkTotalCost(updatedSizes);
+      return updatedSizes;
+    });
+  };
+
+  const calculateBulkTotalCost = (updatedSizes: Sizes): void => {
+    const totalQuantity: number = Object.values(updatedSizes).reduce(
+      (total: number, qty: number) => total + qty,
+      0,
+    );
+
+    // Ensure merchData[0] exists and has a valid discountPrice
+    const discountPrice: number =
+      merchData?.[0]?.discountPrice !== undefined
+        ? merchData[0].discountPrice
+        : 0;
+    setBulkTotalQty(totalQuantity)
+    setBulkTotalCost(totalQuantity * discountPrice);
+  };
+
+  useEffect(() => {
+    if (allMerchData) {
+      setMerchData(
+        allMerchData.map((item) => ({
+          ...item,
+          count: 1,
+        })),
+      );
+    }
+
+    const checkEmail = async () => {
+      const email = `user1@example.com`; // Replace with actual user email
+      const emailList = ["user1@example.com", "test@example.com"]; // Placeholder for database query result
+      setEmailExists(emailList.includes(email));
+    };
+
+    checkEmail();
+  }, [allMerchData]);
 
   const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
@@ -38,132 +89,426 @@ export default function Shop() {
       console.error("Error updating payment status:", error);
     }
   };
-
-  useEffect(() => {
-    allMerchData?.map((it) => {
-      setMerchData((prev) => {
-        const index = prev.findIndex((item) => item.id === it.id);
-        if (index === -1) {
-          return [...prev, { ...it, count: 1 }];
-        } else {
-          return prev;
-        }
+  const handleNextCard = () => {
+    setActiveCard((prev) => {
+      const nextCard = (prev + 1) % merchData.length;
+      cardRefs.current[nextCard]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
       });
+      return nextCard;
     });
-  }, [allMerchData]);
+  };
+
+  const handlePreviousCard = () => {
+    setActiveCard((prev) => {
+      const prevCard = (prev - 1 + merchData.length) % merchData.length;
+      cardRefs.current[prevCard]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return prevCard;
+    });
+  };
 
   return (
-    <main className="flex min-h-full w-screen flex-col">
-      <div className="scrollable flex h-screen w-screen flex-col justify-between scroll-smooth bg-palate_2 pt-16 md:h-screen">
-        <section id="2" className="snap-align-start">
-          <div className="mx-auto my-8 flex w-[calc(100%-32px)] flex-col items-center gap-4 rounded-2xl bg-transparent md:w-[90vw] md:flex-row">
-            {merchData.map((item, index) => (
+    <main className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-gradient-to-bl from-emerald-950 to-emerald-800 pt-24 md:overflow-y-hidden md:pt-20">
+      {isLoading ? (
+        <CircleLoader />
+      ) : (
+        <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
+          <div className="flex flex-wrap justify-center gap-14">
+            {/* Special Handling for merchData[0] */}
+            {merchData[0] && (
               <div
-                key={item.id}
-                className="flex w-full flex-row items-center rounded-xl bg-palate_1 p-2 shadow-md"
+                key={merchData[0].id}
+                ref={(el) => {
+                  if (el) cardRefs.current[0] = el;
+                }}
+                data-index={0}
+                onClick={() => setActiveCard(0)}
+                className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                  activeCard === 0
+                    ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
+                    : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
+                }`}
               >
-                <div className="relative h-60 w-40 overflow-hidden rounded-lg shadow-md">
-                  {isLoading ? (
-                    <CircleLoader />
-                  ) : (
+                {activeCard === 0 && (
+                  <button
+                    className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePreviousCard();
+                    }}
+                  >
+                    <FaChevronLeft size={24} />
+                  </button>
+                )}
+                {activeCard === 0 && (
+                  <button
+                    className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNextCard();
+                    }}
+                  >
+                    <FaChevronRight size={24} />
+                  </button>
+                )}
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
+                  <div className="h-36 w-36 md:h-48 md:w-48">
                     <Image
-                      src={item.image}
-                      alt={item.name}
+                      src={merchData[0].image}
+                      alt={merchData[0].name}
                       layout="fill"
                       objectFit="cover"
-                      className="border-palette_2 rounded-lg border"
+                      className="rounded-full"
                     />
-                  )}
+                  </div>
                 </div>
-                <div className="ml-4 flex flex-1 flex-col">
-                  {isLoading ? (
-                    <div className="loading-bar mb-4"></div>
-                  ) : (
-                    <>
-                      <p className="text-2xl font-bold text-black">
-                        {item.name}
-                      </p>
-                      <p className="text-xl font-bold text-gray-600">
-                        <span className="text-red-600">
-                          ₹{item.discountPrice}
-                        </span>
-                      </p>
-                      <p className="mt-2 text-sm text-gray-500">
-                        {item.description}
-                      </p>
-                    </>
-                  )}
-                  <div className="mt-4 flex flex-row items-center justify-between">
-                    <button
-                      className="w-full items-center rounded-lg bg-white/20 px-4 py-2 font-bold text-white"
-                      onClick={() => {
-                        setMerchData((prev) => {
-                          const newCount = prev[index]!.count - 1;
-                          if (newCount < 0) {
-                            return prev;
-                          }
-                          const newMerchData = [...prev];
-                          //@ts-expect-error nothing
-                          newMerchData[index] = {
-                            ...prev[index],
-                            count: newCount,
-                          };
-                          return newMerchData;
-                        });
-                      }}
-                    >
-                      <FaMinus className="mx-auto text-palate_2" />
-                    </button>
-                    <div className="font-lg w-full text-center">
-                      {item.count}
+                <div className="mt-24 text-center md:mt-28">
+                  <h2
+                    className={
+                      activeCard === 0
+                        ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
+                        : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                    }
+                  >
+                    {merchData[0].name}
+                  </h2>
+                  <p
+                    className={
+                      activeCard === 0
+                        ? "text-sm font-semibold text-palate_1/90 md:text-base"
+                        : "text-xs font-normal text-palate_1/60 md:text-sm"
+                    }
+                  >
+                    {merchData[0].description}
+                  </p>
+                  <p
+                    className={
+                      activeCard === 0
+                        ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
+                        : "text-base font-medium text-palate_1/60 md:text-lg"
+                    }
+                  >
+                    ₹{merchData[0].discountPrice}
+                  </p>
+                  {activeCard === 0 && (
+                    <div className="mt-6">
+                      {emailExists ? (
+                        <button
+                          className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                          onClick={() => setShowBulkOrderForm(true)}
+                        >
+                          Bulk Order
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                        >
+                          Buy through CR
+                        </button>
+                      )}
                     </div>
-                    <button
-                      className="w-full items-center rounded-lg bg-white/20 px-4 py-2 font-bold text-white"
-                      onClick={() => {
-                        setMerchData((prev) => {
-                          const newCount = prev[index]!.count + 1;
-                          const newMerchData = [...prev];
-                          //@ts-expect-error nothing
-                          newMerchData[index] = {
-                            ...prev[index],
-                            count: newCount,
-                          };
-                          return newMerchData;
-                        });
-                      }}
-                    >
-                      <FaPlus className="mx-auto text-palate_2" />
-                    </button>
-                  </div>
-                  <div className="mt-2 flex w-full items-center justify-center gap-4">
-                    <BuyButton
-                      merch={[{ id: item.id, quantity: item.count }]}
-                      total={item.discountPrice * item.count}
-                    />
-                    <Button
-                      onClick={async () => {
-                        await addItemToCart.mutateAsync({
-                          id: item.id,
-                          quantity: item.count,
-                        });
-                        await cartRefecth();
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                  </div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-        <div className="mx-auto flex w-[calc(100vw-32px)] flex-col rounded-t-2xl bg-palate_1 p-4 shadow-2xl md:h-[15vh] md:w-[90vw] md:flex-row md:justify-between">
-          <p className="m-4 text-4xl font-black text-palate_2">
-            Merch Incridea
-          </p>
-        </div>
-      </div>
+            )}
 
+            {/* Remaining merchandise */}
+            <div className="flex flex-wrap justify-center gap-14">
+              {merchData.slice(1).map((item, index) => (
+                <div
+                  key={item.id}
+                  ref={(el) => {
+                    if (el) cardRefs.current[index + 1] = el;
+                  }}
+                  onClick={() => setActiveCard(index + 1)}
+                  className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                    activeCard === index + 1
+                      ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
+                      : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
+                  }`}
+                >
+                  {activeCard === index + 1 && (
+                    <button
+                      className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePreviousCard();
+                      }}
+                    >
+                      <FaChevronLeft size={24} color="white" />
+                    </button>
+                  )}
+                  {activeCard === index + 1 && (
+                    <button
+                      className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNextCard();
+                      }}
+                    >
+                      <FaChevronRight size={24} color="white" />
+                    </button>
+                  )}
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
+                    <div className="h-36 w-36 md:h-48 md:w-48">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-24 text-center md:mt-28">
+                    <h2
+                      className={
+                        activeCard === index + 1
+                          ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
+                          : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                      }
+                    >
+                      {item.name}
+                    </h2>
+                    <p
+                      className={
+                        activeCard === index + 1
+                          ? "text-sm font-semibold text-palate_1/90 md:text-base"
+                          : "text-xs font-normal text-palate_1/60 md:text-sm"
+                      }
+                    >
+                      {item.description}
+                    </p>
+                    <p
+                      className={
+                        activeCard === index + 1
+                          ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
+                          : "text-base font-medium text-palate_1/60 md:text-lg"
+                      }
+                    >
+                      ₹{item.discountPrice}
+                    </p>
+                    <div
+                      className={`mt-6 flex items-center justify-center gap-3 ${
+                        activeCard !== index + 1 ? "hidden" : ""
+                      }`}
+                    >
+                      <button
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMerchData((prev) =>
+                            prev.map((prod, idx) =>
+                              idx === index + 1
+                                ? {
+                                    ...prod,
+                                    count: Math.max(prod.count - 1, 1),
+                                  }
+                                : prod,
+                            ),
+                          );
+                        }}
+                      >
+                        <FaMinus className="text-gray-700" />
+                      </button>
+                      <span className="px-3 text-lg font-medium text-white md:px-4 md:text-xl">
+                        {item.count}
+                      </span>
+                      <button
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMerchData((prev) =>
+                            prev.map((prod, idx) =>
+                              idx === index + 1
+                                ? { ...prod, count: prod.count + 1 }
+                                : prod,
+                            ),
+                          );
+                        }}
+                      >
+                        <FaPlus className="text-gray-700" />
+                      </button>
+                    </div>
+                    {activeCard === index + 1 && (
+                      <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
+                        <BuyButton
+                          merch={[{ id: item.id, quantity: item.count }]}
+                          total={item.discountPrice * item.count}
+                          className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                        />
+                        {session?.user ? (
+                          <button
+                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                            onClick={async () => {
+                              await addItemToCart.mutateAsync({
+                                id: item.id,
+                                quantity: item.count,
+                              });
+                              await cartRefetch();
+                            }}
+                          >
+                            Add to Cart
+                          </button>
+                        ) : (
+                          <button
+                            className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                          >
+                            Login for Cart
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal for Bulk Order */}
+      {showBulkOrderForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
+          <div className="relative w-full max-w-lg rounded-lg bg-gradient-to-tr from-emerald-700 to-emerald-500 p-6 shadow-lg">
+            <button
+              onClick={() => setShowBulkOrderForm(false)}
+              className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+            >
+              ✕
+            </button>
+            <h2 className="mb-4 text-xl font-bold text-white">
+              Bulk Order Request
+            </h2>
+            <form className="space-y-4">
+              {/* Name Field */}
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block font-semibold text-white"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
+                  placeholder="Enter your name"
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Branch Field */}
+              <div>
+                <label
+                  htmlFor="branch"
+                  className="block font-semibold text-white"
+                >
+                  Branch
+                </label>
+                <input
+                  type="text"
+                  id="branch"
+                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
+                  placeholder="Enter your branch"
+                  onChange={(e) => setBranch(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Semester Field */}
+              <div>
+                <label
+                  htmlFor="semester"
+                  className="block font-semibold text-white"
+                >
+                  Semester
+                </label>
+                <input
+                  type="text"
+                  id="semester"
+                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
+                  placeholder="Enter your semester"
+                  onChange={(e) => setSemester(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Sizes and Quantities */}
+              <div>
+                <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
+                {[
+                  "Small",
+                  "Medium",
+                  "Large",
+                  "XL",
+                  "XXL",
+                ].map((size, index) => (
+                  <div
+                    key={index}
+                    className="mb-2 flex items-center justify-between"
+                  >
+                    <label
+                      htmlFor={`size-${index}`}
+                      className="font-semibold text-white"
+                    >
+                      {size}
+                    </label>
+                    <input
+                      type="number"
+                      id={`size-${index}`}
+                      className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
+                      placeholder="Qty"
+                      min={0}
+                      value={sizes[size]}
+                      onChange={(e) =>
+                        handleSizeChange(size, parseInt(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Total Cost */}
+              <div className="mt-4 flex items-center justify-between text-lg font-bold text-white">
+                <span>Total Cost:</span>
+                <span>₹{bulkTotalCost}</span>
+              </div>
+
+              {/* Buy Button */}
+              <div className="mt-6 text-center">
+                {merchData[0] && (
+                  <BuyButton
+                    // name={name}          // Pass name state
+                    // branch={branch}      // Pass branch state
+                    // sem={semester} 
+                    // merch={[
+                    //   {
+                    //     id: merchData[0].id,
+                    //     sizes: {
+                    //       S: sizes.S ?? 0,
+                    //       M: sizes.M ?? 0,
+                    //       L: sizes.L ?? 0,
+                    //       XL: sizes.XL ?? 0,
+                    //       XXL: sizes.XXL ?? 0,
+                    //     },
+                    //   },
+                    // ]}
+                    merch={[{ id: merchData[0].id, quantity: bulkTotalQty}]}
+                    total={merchData[0].discountPrice * bulkTotalQty}
+                    className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                  />
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <Cart isLoading={cartLoading} cartItems={userCartData ?? []} />
     </main>
   );
