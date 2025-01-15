@@ -16,9 +16,7 @@ export default function Shop() {
   const [merchData, setMerchData] = useState<
     (Merchandise & { count: number })[]
   >([]);
-  type Sizes = {
-    [key: string]: number; // Key is a string (e.g., size) and value is a number (quantity)
-  };
+  type Sizes = Record<string, number>;
   const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
@@ -28,15 +26,14 @@ export default function Shop() {
   } = api.cart.getUserCart.useQuery();
   const addItemToCart = api.cart.addItemToCart.useMutation();
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [emailExists, setEmailExists] = useState<boolean>(false);
   const [showBulkOrderForm, setShowBulkOrderForm] = useState(false);
   const [sizes, setSizes] = useState<Sizes>({});
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
-  const [bulkTotalQty, setBulkTotalQty] = useState(0)
-  const { data: session } = useSession(); 
-  const [name, setName] = useState('');
-  const [branch, setBranch] = useState('');
-  const [semester, setSemester] = useState('');
+  const [bulkTotalQty, setBulkTotalQty] = useState(0);
+  const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
+
+  const { data: session } = useSession();
+
   const handleSizeChange = (size: string, quantity: number): void => {
     setSizes((prev: Sizes) => {
       const updatedSizes: Sizes = { ...prev, [size]: Math.max(0, quantity) };
@@ -56,7 +53,7 @@ export default function Shop() {
       merchData?.[0]?.discountPrice !== undefined
         ? merchData[0].discountPrice
         : 0;
-    setBulkTotalQty(totalQuantity)
+    setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
   };
 
@@ -68,15 +65,8 @@ export default function Shop() {
           count: 1,
         })),
       );
+      setTshirtData(allMerchData.filter((item) => item.bulkOrder));
     }
-
-    const checkEmail = async () => {
-      const email = `user1@example.com`; // Replace with actual user email
-      const emailList = ["user1@example.com", "test@example.com"]; // Placeholder for database query result
-      setEmailExists(emailList.includes(email));
-    };
-
-    checkEmail();
   }, [allMerchData]);
 
   const handlePaymentSuccess = async (razorpayOrderId: string) => {
@@ -118,255 +108,254 @@ export default function Shop() {
       ) : (
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
-            {/* Special Handling for merchData[0] */}
-            {merchData[0] && (
-              <div
-                key={merchData[0].id}
-                ref={(el) => {
-                  if (el) cardRefs.current[0] = el;
-                }}
-                data-index={0}
-                onClick={() => setActiveCard(0)}
-                className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                  activeCard === 0
-                    ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
-                    : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
-                }`}
-              >
-                {activeCard === 0 && (
-                  <button
-                    className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePreviousCard();
-                    }}
-                  >
-                    <FaChevronLeft size={24} />
-                  </button>
-                )}
-                {activeCard === 0 && (
-                  <button
-                    className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNextCard();
-                    }}
-                  >
-                    <FaChevronRight size={24} />
-                  </button>
-                )}
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
-                  <div className="h-36 w-36 md:h-48 md:w-48">
-                    <Image
-                      src={merchData[0].image}
-                      alt={merchData[0].name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  </div>
-                </div>
-                <div className="mt-24 text-center md:mt-28">
-                  <h2
-                    className={
-                      activeCard === 0
-                        ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
-                        : "text-lg font-semibold text-palate_1/60 md:text-xl"
-                    }
-                  >
-                    {merchData[0].name}
-                  </h2>
-                  <p
-                    className={
-                      activeCard === 0
-                        ? "text-sm font-semibold text-palate_1/90 md:text-base"
-                        : "text-xs font-normal text-palate_1/60 md:text-sm"
-                    }
-                  >
-                    {merchData[0].description}
-                  </p>
-                  <p
-                    className={
-                      activeCard === 0
-                        ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
-                        : "text-base font-medium text-palate_1/60 md:text-lg"
-                    }
-                  >
-                    ₹{merchData[0].discountPrice}
-                  </p>
-                  {activeCard === 0 && (
-                    <div className="mt-6">
-                      {emailExists ? (
-                        <button
-                          className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                          onClick={() => setShowBulkOrderForm(true)}
-                        >
-                          Bulk Order
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                        >
-                          Buy through CR
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
             {/* Remaining merchandise */}
             <div className="flex flex-wrap justify-center gap-14">
-              {merchData.slice(1).map((item, index) => (
-                <div
-                  key={item.id}
-                  ref={(el) => {
-                    if (el) cardRefs.current[index + 1] = el;
-                  }}
-                  onClick={() => setActiveCard(index + 1)}
-                  className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                    activeCard === index + 1
-                      ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
-                      : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
-                  }`}
-                >
-                  {activeCard === index + 1 && (
-                    <button
-                      className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePreviousCard();
-                      }}
-                    >
-                      <FaChevronLeft size={24} color="white" />
-                    </button>
-                  )}
-                  {activeCard === index + 1 && (
-                    <button
-                      className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleNextCard();
-                      }}
-                    >
-                      <FaChevronRight size={24} color="white" />
-                    </button>
-                  )}
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
-                    <div className="h-36 w-36 md:h-48 md:w-48">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-full"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-24 text-center md:mt-28">
-                    <h2
-                      className={
-                        activeCard === index + 1
-                          ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
-                          : "text-lg font-semibold text-palate_1/60 md:text-xl"
-                      }
-                    >
-                      {item.name}
-                    </h2>
-                    <p
-                      className={
-                        activeCard === index + 1
-                          ? "text-sm font-semibold text-palate_1/90 md:text-base"
-                          : "text-xs font-normal text-palate_1/60 md:text-sm"
-                      }
-                    >
-                      {item.description}
-                    </p>
-                    <p
-                      className={
-                        activeCard === index + 1
-                          ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
-                          : "text-base font-medium text-palate_1/60 md:text-lg"
-                      }
-                    >
-                      ₹{item.discountPrice}
-                    </p>
+              {merchData.map((item, index) =>
+                item.bulkOrder ? (
+                  <>
                     <div
-                      className={`mt-6 flex items-center justify-center gap-3 ${
-                        activeCard !== index + 1 ? "hidden" : ""
+                      key={item.id}
+                      ref={(el) => {
+                        if (el) cardRefs.current[0] = el;
+                      }}
+                      data-index={0}
+                      onClick={() => setActiveCard(0)}
+                      className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                        activeCard === 0
+                          ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
+                          : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
                       }`}
                     >
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMerchData((prev) =>
-                            prev.map((prod, idx) =>
-                              idx === index + 1
-                                ? {
-                                    ...prod,
-                                    count: Math.max(prod.count - 1, 1),
-                                  }
-                                : prod,
-                            ),
-                          );
-                        }}
-                      >
-                        <FaMinus className="text-gray-700" />
-                      </button>
-                      <span className="px-3 text-lg font-medium text-white md:px-4 md:text-xl">
-                        {item.count}
-                      </span>
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMerchData((prev) =>
-                            prev.map((prod, idx) =>
-                              idx === index + 1
-                                ? { ...prod, count: prod.count + 1 }
-                                : prod,
-                            ),
-                          );
-                        }}
-                      >
-                        <FaPlus className="text-gray-700" />
-                      </button>
-                    </div>
-                    {activeCard === index + 1 && (
-                      <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
-                        <BuyButton
-                          merch={[{ id: item.id, quantity: item.count }]}
-                          total={item.discountPrice * item.count}
-                          className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                        />
-                        {session?.user ? (
-                          <button
-                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                            onClick={async () => {
-                              await addItemToCart.mutateAsync({
-                                id: item.id,
-                                quantity: item.count,
-                              });
-                              await cartRefetch();
-                            }}
-                          >
-                            Add to Cart
-                          </button>
-                        ) : (
-                          <button
-                            className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                          >
-                            Login for Cart
-                          </button>
+                      {activeCard === 0 && (
+                        <button
+                          className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePreviousCard();
+                          }}
+                        >
+                          <FaChevronLeft size={24} />
+                        </button>
+                      )}
+                      {activeCard === 0 && (
+                        <button
+                          className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleNextCard();
+                          }}
+                        >
+                          <FaChevronRight size={24} />
+                        </button>
+                      )}
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
+                        <div className="h-36 w-36 md:h-48 md:w-48">
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-24 text-center md:mt-28">
+                        <h2
+                          className={
+                            activeCard === 0
+                              ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
+                              : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                          }
+                        >
+                          {item.name}
+                        </h2>
+                        <p
+                          className={
+                            activeCard === 0
+                              ? "text-sm font-semibold text-palate_1/90 md:text-base"
+                              : "text-xs font-normal text-palate_1/60 md:text-sm"
+                          }
+                        >
+                          {item.description}
+                        </p>
+                        <p
+                          className={
+                            activeCard === 0
+                              ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
+                              : "text-base font-medium text-palate_1/60 md:text-lg"
+                          }
+                        >
+                          ₹{item.discountPrice}
+                        </p>
+                        {activeCard === 0 && (
+                          <div className="mt-6">
+                            {session?.user.role === "CLASS_REP" ? (
+                              <button
+                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                                onClick={() => setShowBulkOrderForm(true)}
+                              >
+                                Bulk Order
+                              </button>
+                            ) : (
+                              <button
+                                disabled
+                                className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              >
+                                Buy through CR
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    key={item.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current[index + 1] = el;
+                    }}
+                    onClick={() => setActiveCard(index + 1)}
+                    className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                      activeCard === index + 1
+                        ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
+                        : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
+                    }`}
+                  >
+                    {activeCard === index + 1 && (
+                      <button
+                        className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePreviousCard();
+                        }}
+                      >
+                        <FaChevronLeft size={24} color="white" />
+                      </button>
                     )}
+                    {activeCard === index + 1 && (
+                      <button
+                        className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNextCard();
+                        }}
+                      >
+                        <FaChevronRight size={24} color="white" />
+                      </button>
+                    )}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
+                      <div className="h-36 w-36 md:h-48 md:w-48">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-full"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-24 text-center md:mt-28">
+                      <h2
+                        className={
+                          activeCard === index + 1
+                            ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
+                            : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                        }
+                      >
+                        {item.name}
+                      </h2>
+                      <p
+                        className={
+                          activeCard === index + 1
+                            ? "text-sm font-semibold text-palate_1/90 md:text-base"
+                            : "text-xs font-normal text-palate_1/60 md:text-sm"
+                        }
+                      >
+                        {item.description}
+                      </p>
+                      <p
+                        className={
+                          activeCard === index + 1
+                            ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
+                            : "text-base font-medium text-palate_1/60 md:text-lg"
+                        }
+                      >
+                        ₹{item.discountPrice}
+                      </p>
+                      <div
+                        className={`mt-6 flex items-center justify-center gap-3 ${
+                          activeCard !== index + 1 ? "hidden" : ""
+                        }`}
+                      >
+                        <button
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMerchData((prev) =>
+                              prev.map((prod, idx) =>
+                                idx === index + 1
+                                  ? {
+                                      ...prod,
+                                      count: Math.max(prod.count - 1, 1),
+                                    }
+                                  : prod,
+                              ),
+                            );
+                          }}
+                        >
+                          <FaMinus className="text-gray-700" />
+                        </button>
+                        <span className="px-3 text-lg font-medium text-white md:px-4 md:text-xl">
+                          {item.count}
+                        </span>
+                        <button
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMerchData((prev) =>
+                              prev.map((prod, idx) =>
+                                idx === index + 1
+                                  ? { ...prod, count: prod.count + 1 }
+                                  : prod,
+                              ),
+                            );
+                          }}
+                        >
+                          <FaPlus className="text-gray-700" />
+                        </button>
+                      </div>
+                      {activeCard === index + 1 && (
+                        <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
+                          <BuyButton
+                            merch={[{ id: item.id, quantity: item.count }]}
+                            total={item.discountPrice * item.count}
+                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                          />
+                          {session?.user ? (
+                            <button
+                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              onClick={async () => {
+                                await addItemToCart.mutateAsync({
+                                  id: item.id,
+                                  quantity: item.count,
+                                });
+                                await cartRefetch();
+                              }}
+                            >
+                              Add to Cart
+                            </button>
+                          ) : (
+                            <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3">
+                              Login for Cart
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -385,93 +374,35 @@ export default function Shop() {
               Bulk Order Request
             </h2>
             <form className="space-y-4">
-              {/* Name Field */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block font-semibold text-white"
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
-                  placeholder="Enter your name"
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Branch Field */}
-              <div>
-                <label
-                  htmlFor="branch"
-                  className="block font-semibold text-white"
-                >
-                  Branch
-                </label>
-                <input
-                  type="text"
-                  id="branch"
-                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
-                  placeholder="Enter your branch"
-                  onChange={(e) => setBranch(e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Semester Field */}
-              <div>
-                <label
-                  htmlFor="semester"
-                  className="block font-semibold text-white"
-                >
-                  Semester
-                </label>
-                <input
-                  type="text"
-                  id="semester"
-                  className="w-full rounded-md bg-emerald-200 p-2 text-gray-800"
-                  placeholder="Enter your semester"
-                  onChange={(e) => setSemester(e.target.value)}
-                  required
-                />
-              </div>
-
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
-                {[
-                  "Small",
-                  "Medium",
-                  "Large",
-                  "XL",
-                  "XXL",
-                ].map((size, index) => (
-                  <div
-                    key={index}
-                    className="mb-2 flex items-center justify-between"
-                  >
-                    <label
-                      htmlFor={`size-${index}`}
-                      className="font-semibold text-white"
+                {["Small", "Medium", "Large", "XL", "XXL"].map(
+                  (size, index) => (
+                    <div
+                      key={index}
+                      className="mb-2 flex items-center justify-between"
                     >
-                      {size}
-                    </label>
-                    <input
-                      type="number"
-                      id={`size-${index}`}
-                      className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
-                      placeholder="Qty"
-                      min={0}
-                      value={sizes[size]}
-                      onChange={(e) =>
-                        handleSizeChange(size, parseInt(e.target.value) || 0)
-                      }
-                    />
-                  </div>
-                ))}
+                      <label
+                        htmlFor={`size-${index}`}
+                        className="font-semibold text-white"
+                      >
+                        {size}
+                      </label>
+                      <input
+                        type="number"
+                        id={`size-${index}`}
+                        className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
+                        placeholder="Qty"
+                        min={0}
+                        value={sizes[size]}
+                        onChange={(e) =>
+                          handleSizeChange(size, parseInt(e.target.value) || 0)
+                        }
+                      />
+                    </div>
+                  ),
+                )}
               </div>
 
               {/* Total Cost */}
@@ -486,7 +417,7 @@ export default function Shop() {
                   <BuyButton
                     // name={name}          // Pass name state
                     // branch={branch}      // Pass branch state
-                    // sem={semester} 
+                    // sem={semester}
                     // merch={[
                     //   {
                     //     id: merchData[0].id,
@@ -499,7 +430,7 @@ export default function Shop() {
                     //     },
                     //   },
                     // ]}
-                    merch={[{ id: merchData[0].id, quantity: bulkTotalQty}]}
+                    merch={[{ id: merchData[0].id, quantity: bulkTotalQty }]}
                     total={merchData[0].discountPrice * bulkTotalQty}
                     className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
                   />
