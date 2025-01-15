@@ -48,10 +48,9 @@ export default function Shop() {
       0,
     );
 
-    // Ensure merchData[0] exists and has a valid discountPrice
     const discountPrice: number =
-      merchData?.[0]?.discountPrice !== undefined
-        ? merchData[0].discountPrice
+      tshirtData[0]?.discountPrice !== undefined
+        ? tshirtData[0].discountPrice
         : 0;
     setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
@@ -65,7 +64,8 @@ export default function Shop() {
           count: 1,
         })),
       );
-      setTshirtData(allMerchData.filter((item) => item.bulkOrder));
+      const tshirt = allMerchData.filter((item) => item.bulkOrder);
+      setTshirtData(tshirt);
     }
   }, [allMerchData]);
 
@@ -413,14 +413,14 @@ export default function Shop() {
 
               {/* Buy Button */}
               <div className="mt-6 text-center">
-                {merchData[0] && (
+                {tshirtData[0] && (
                   <BuyButton
                     // name={name}          // Pass name state
                     // branch={branch}      // Pass branch state
                     // sem={semester}
                     // merch={[
                     //   {
-                    //     id: merchData[0].id,
+                    //     id: tshirtData[0].id,
                     //     sizes: {
                     //       S: sizes.S ?? 0,
                     //       M: sizes.M ?? 0,
@@ -430,8 +430,8 @@ export default function Shop() {
                     //     },
                     //   },
                     // ]}
-                    merch={[{ id: merchData[0].id, quantity: bulkTotalQty }]}
-                    total={merchData[0].discountPrice * bulkTotalQty}
+                    merch={[{ id: tshirtData[0].id, quantity: bulkTotalQty }]}
+                    total={tshirtData[0].discountPrice * bulkTotalQty}
                     className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
                   />
                 )}
