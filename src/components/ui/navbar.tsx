@@ -42,7 +42,7 @@ const Navbar = () => {
   const navbarBgClass =
     pathname === "/"
       ? "bg-black/90"
-      : "bg-palate_2/90";
+      : "bg-transparent";
   const navbarFgClass =
       pathname === "/"
           ? "text-palate_1/90"

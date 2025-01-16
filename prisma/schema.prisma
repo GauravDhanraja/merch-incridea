@@ -68,8 +68,8 @@ model Merchandise {
   image         String
   originalPrice Float
   discountPrice Float
-  available     Boolean
   stock         Int
+  bulkOrder     Boolean @default(false)
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt

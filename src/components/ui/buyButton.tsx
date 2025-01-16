@@ -6,12 +6,14 @@ import { api } from "~/trpc/react";
 const PurchaseMerchButton = ({
   merch,
   total,
+  className
 }: {
   merch: {
     id: string;
     quantity: number;
   }[];
   total: number;
+  className?: string;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const purchaseMerch = api.merchandise.purchaseMerch.useMutation();
@@ -43,7 +45,7 @@ const PurchaseMerchButton = ({
 
   return (
     <button
-      className="items-center rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+      className={`btn-default-styles ${className}`}
       onClick={handlePurchase}
       disabled={isLoading} // Replace with your buy function
     >
