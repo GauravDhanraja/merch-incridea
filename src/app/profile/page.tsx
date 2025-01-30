@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react"; 
+import items from "razorpay/dist/types/items";
+import { MerchData } from "../admin/_components/merchData";
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -56,7 +58,7 @@ const Orders = () => {
               >
                 <div className="flex items-center mb-4 md:mb-0">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-palate_1/90">Product: </span> {/*product name to be put */}
+                    <span className="font-semibold text-palate_1/90">Product:{MerchData.name} </span> {/*product name to be put */}
                     <span className="text-sm text-palate_1/90">
                       Date: {new Date(order.createdAt).toLocaleDateString()}
                     </span>
