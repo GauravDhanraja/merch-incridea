@@ -91,8 +91,8 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   useFrame(() => {
     const scaledAudioLevel = Math.pow(audioLevel, 2);
     wiggleBones.current.forEach((wiggleBone) => {
-      wiggleBone.options.stiffness = 300 + scaledAudioLevel * 1001;
-      wiggleBone.options.damping = 20 + scaledAudioLevel * 50;
+      wiggleBone.options.stiffness = 300 + scaledAudioLevel * 1000;
+      wiggleBone.options.damping = 20 + scaledAudioLevel * 10;
       wiggleBone.update();
     });
   });
@@ -167,9 +167,9 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       //@ts-expect-error blah
       ref={modelRef}
       dispose={null}
-      scale={[0.174, 0.174, 0.174]}
+      scale={[1, 1, 1]}
       // position={[-14, -0.5, -0.5]}
-      position={[0, 0, 0]}
+      position={[0, -2, 0]}
       rotation-x={audioSpring.rotationX.get() + mouseSpring.rotationX.get()}
       rotation-y={mouseSpring.rotationY.get()}
     >

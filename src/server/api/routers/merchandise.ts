@@ -34,6 +34,7 @@ export const merchandiseRouter = createTRPCRouter({
     try {
       return ctx.db.merchandise.findMany({});
     } catch (error) {
+      console.log(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not get merchandise",
@@ -41,32 +42,35 @@ export const merchandiseRouter = createTRPCRouter({
     }
   }),
 
-  // getMerchSales: adminProcedure.query(async ({ ctx }) => {
-  //   try {
-  //     return ctx.db.merchandise
-  //       .findMany({
-  //         where: {
-  //           Order: {
-  //             some: {
-  //               paymentOrder: {
-  //                 status: "SUCCESS",
-  //               },
-  //             },
-  //           },
-  //         },
-  //       })
-  //       .then((merchandise) => {
-  //         return merchandise.map((item) => ({
-  //           ...item,
-  //         }));
-  //       });
-  //   } catch (error) {
-  //     throw new TRPCError({
-  //       code: "INTERNAL_SERVER_ERROR",
-  //       message: "Could not get merchandise",
-  //     });
-  //   }
-  // }),
+  getMerchSales: adminProcedure.query(async ({ ctx }) => {
+    try {
+      return ctx.db.merchandise
+        .findMany({
+          where: {
+            OrderItem: {
+              some: {
+                Order: {
+                  PaymentOrder: {
+                    status: "SUCCESS",
+                  },
+                },
+              },
+            },
+          },
+        })
+        .then((merchandise) => {
+          return merchandise.map((item) => ({
+            ...item,
+          }));
+        });
+    } catch (error) {
+      console.log(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not get merchandise",
+      });
+    }
+  }),
 
   getMerchById: protectedProcedure.input(idZ).query(async ({ ctx, input }) => {
     try {
@@ -76,6 +80,7 @@ export const merchandiseRouter = createTRPCRouter({
         },
       });
     } catch (error) {
+      console.log(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not get merchandise",
@@ -96,6 +101,7 @@ export const merchandiseRouter = createTRPCRouter({
           },
         });
       } catch (error) {
+        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not update merchandise",
@@ -111,6 +117,7 @@ export const merchandiseRouter = createTRPCRouter({
         },
       });
     } catch (error) {
+      console.log(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not delete merchandise",

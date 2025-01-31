@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
@@ -59,7 +59,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
-        image: user.image || session.user.image,
+        image: user.image ?? session.user.image,
       },
     }),
   },

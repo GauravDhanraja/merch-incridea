@@ -75,6 +75,7 @@ model Merchandise {
   updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
   Cart      Cart[]
+  
 }
 
 model OrderItem {

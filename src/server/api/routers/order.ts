@@ -5,29 +5,32 @@ export const orderRouter = createTRPCRouter({
   getAllUserOrders: adminProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.db.order.findMany({
-        // include: {
-        //   User: {
-        //     select: {
-        //       name: true,
-        //       email: true,
-        //     },
-        //   },
-        //   PaymentOrder: {
-        //     select: {
-        //       amount: true,
-        //       id: true,
-        //       status: true,
-        //       razorpayOrderID: true,
-        //     },
-        //   },
-        //   Merchandise: {
-        //     select: {
-        //       name: true,
-        //     },
-        //   },
-        // },
+        include: {
+          User: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+          PaymentOrder: {
+            select: {
+              amount: true,
+              id: true,
+              status: true,
+              razorpayOrderID: true,
+            },
+          },
+          OrderItem: {
+            select: {
+              Merchandise: {
+                select: { name: true },
+              },
+            },
+          },
+        },
       });
-    } catch (error) {
+    } catch (e) {
+      console.log(e);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not get orders",
