@@ -1,4 +1,5 @@
 "use client";
+import { type Sizes } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { api } from "~/trpc/react";
@@ -6,11 +7,12 @@ import { api } from "~/trpc/react";
 const PurchaseMerchButton = ({
   merch,
   total,
-  className
+  className,
 }: {
   merch: {
     id: string;
     quantity: number;
+    size: Sizes;
   }[];
   total: number;
   className?: string;
