@@ -1,19 +1,8 @@
 "use-client";
-import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "~/components/ui/button";
-import { api } from "~/trpc/react";
-import { inferProcedureOutput } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { inferProcedureOutput } from "@trpc/server";
+import type { AppRouter } from "~/server/api/root";
 
-
-type A = number[] & {length:3}
-
-const a :A =[ 1, 2,  4, 3]
-
-const b = ["a", "a", "d"]  as const
-
-const c = b[100]
 
 type Merch = inferProcedureOutput<AppRouter["merchandise"]["getAllMerch"]>[number]
 

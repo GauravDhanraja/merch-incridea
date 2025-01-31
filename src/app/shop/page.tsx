@@ -1,6 +1,6 @@
 "use client";
 
-import { Sizes, type Merchandise } from "@prisma/client";
+import type { Sizes, Merchandise } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
@@ -17,7 +17,7 @@ export default function Shop() {
     (Merchandise & { count: number })[]
   >([]);
   type sizeType = Record<Sizes, number>;
-  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
+  //const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
@@ -36,7 +36,6 @@ export default function Shop() {
     FREE_SIZE: 0,
   });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
-  const [bulkTotalQty, setBulkTotalQty] = useState(0);
   const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
 
   const { data: session } = useSession();
@@ -60,7 +59,6 @@ export default function Shop() {
       merchData?.[0]?.discountPrice !== undefined
         ? merchData[0].discountPrice
         : 0;
-    setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
   };
 
@@ -76,7 +74,7 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  {/*const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
       await rzpWebhook.mutateAsync({
         razorpayOrderId,
@@ -85,7 +83,8 @@ export default function Shop() {
     } catch (error) {
       console.error("Error updating payment status:", error);
     }
-  };
+  };*/}
+
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;

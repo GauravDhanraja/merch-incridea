@@ -4,19 +4,10 @@ import { useRouter } from "next/navigation";
 import { TShirt } from "~/components/3D/TShirt";
 import RenderModel from "~/components/3D/RenderModel";
 import { useMusic } from "~/components/ui/MusicContext"; // Import the useMusic hook
-import { useSession } from "next-auth/react"; // Import the useSession hook for getting the user's session
-import { api } from "~/trpc/react";
 
 export default function HomePage() {
   const router = useRouter();
   const { isMusicPlaying } = useMusic(); // Use context for the music state
-  const { data: session } = useSession(); // Use session to get user information
-
-  const {
-    data: merchData,
-    isLoading,
-    isError,
-  } = api.merchandise.getAllMerch.useQuery();
 
   useEffect(() => {
     if (isMusicPlaying === undefined) {
@@ -34,8 +25,6 @@ export default function HomePage() {
     );
   }
 
-  // Get the user's name from the session (if available)
-  const userName = session?.user?.name ?? "Guest";
 
   return (
     <main className="flex h-screen w-screen flex-col overflow-hidden bg-neutral-900 text-white lg:h-screen lg:min-h-max lg:flex-row">

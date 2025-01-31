@@ -1,5 +1,5 @@
 "use client";
-import { Merchandise, Sizes, type Cart } from "@prisma/client";
+import type { Merchandise, Sizes, Cart } from "@prisma/client";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
@@ -22,7 +22,6 @@ export default function Cart({
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItemToCart = api.cart.addItemToCart.useMutation();
   const removeItemFromCart = api.cart.removeItemFromCart.useMutation();
   const clearCart = api.cart.clearCart.useMutation();
 

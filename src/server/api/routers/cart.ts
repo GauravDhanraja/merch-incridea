@@ -2,7 +2,6 @@ import { idZ } from "~/zod/generalZ";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { Sizes } from "@prisma/client";
 
 export const cartRouter = createTRPCRouter({
   getUserCart: protectedProcedure.query(async ({ ctx }) => {
@@ -62,6 +61,7 @@ export const cartRouter = createTRPCRouter({
           },
         });
       } catch (e) {
+        console.log(e);
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Item not found in cart",

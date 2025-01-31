@@ -29,7 +29,8 @@ export const orderRouter = createTRPCRouter({
           },
         },
       });
-    } catch (error) {
+    } catch (e) {
+      console.log(e);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not get orders",

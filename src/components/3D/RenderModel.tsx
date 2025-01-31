@@ -8,6 +8,7 @@ import {
   Vignette,
 } from "@react-three/postprocessing";
 import Parallax from "parallax-js";
+import type * as THREE from "three";
 import Image from "next/image";
 import { Color, PointLight, SpotLight } from "three";
 
@@ -26,8 +27,8 @@ const RenderModel: React.FC<RenderModelProps> = ({ children }) => {
     if (sceneRef.current) {
       parallaxInstance.current = new Parallax(sceneRef.current, {
         relativeInput: true,
-        limitX: true,
-        limitY: true,
+        //limitX: true,
+        //limitY: true,
         scalarX: 10,
         scalarY: 2,
       });

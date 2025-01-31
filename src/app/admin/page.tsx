@@ -1,7 +1,6 @@
 "use client";
 
 import PageContainer from "~/components/layout/page-container";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,26 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Tabs, TabsContent} from "~/components/ui/tabs";
 import { api } from "~/trpc/react";
 import { MerchData } from "./_components/merchData";
 import { merchColumns, orderColumns } from "./_components/columns";
 import { OrderData } from "./_components/orderData";
-import { inferProcedureOutput } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
-
-// type MerchSalesData = inferProcedureOutput<AppRouter["merchandise"]["getMerchSales"]>;
-// type UserOrdersData = inferProcedureOutput<AppRouter["order"]["getAllUserOrders"]>;
 
 export default function Admin() {
 
   const { data: merchData = [], isLoading: merchLoading } = api.merchandise.getMerchSales.useQuery();
   const { data: orderData = [], isLoading: orderLoading } = api.order.getAllUserOrders.useQuery();
   const { data: transactionData = [], isLoading: transactionLoading } = api.razorpay.getAllTransactions.useQuery();
-  const createMerch=api.merchandise.createMerch.useMutation();
-
-
- 
 
   const totalRevenue = transactionData.reduce((acc, item) => acc + (item.amount || 0), 0).toFixed(2);
   const totalSales = merchData.reduce((acc, item) => acc + (item.stock  || 0), 0);

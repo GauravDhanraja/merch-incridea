@@ -5,12 +5,7 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
-import items from "razorpay/dist/types/items";
 import { MerchData } from "../admin/_components/merchData";
-import { Card } from "~/components/ui/card";
-import { Merchandise,type OrderItem } from "@prisma/client";
-
-
 
 const Orders = () => {
   const { data: session, status } = useSession();
