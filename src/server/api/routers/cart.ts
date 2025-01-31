@@ -2,6 +2,7 @@ import { idZ } from "~/zod/generalZ";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { Sizes } from "@prisma/client";
 
 export const cartRouter = createTRPCRouter({
   getUserCart: protectedProcedure.query(async ({ ctx }) => {
