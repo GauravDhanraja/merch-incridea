@@ -71,17 +71,17 @@ const Orders = () => {
                 >
                   <div className="mb-4 h-full flex lg:mb-0">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-palate_1/90">
+                      <span className="font-semibold text-2xl text-palate_1/90">
                         {MerchData.name}{" "}
                       </span>{" "}
                       {/*product name to be put */}
-                      <span className="text-sm text-palate_1/90">
+                      <span className="text-xl text-palate_1/90">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <div className="w-20 h-20 bg-gray-300 rounded-md flex items-center justify-center">
-                  <QRCodeCanvas value={`${order.id}`} size={140} />
+                  <div className="rounded-md flex items-center justify-center">
+                  <QRCodeCanvas bgColor="rgba(0,0,0,0)" fgColor="#FEFED8" value={`${order.id}`} size={140} />
                 </div>
                 </div>
               ))}
