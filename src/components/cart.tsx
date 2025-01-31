@@ -1,5 +1,5 @@
 "use client";
-import { Merchandise, type Cart } from "@prisma/client";
+import { Merchandise, Sizes, type Cart } from "@prisma/client";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
@@ -14,7 +14,10 @@ interface Props {
   isLoading: boolean;
 }
 
-export default function Cart({ cartItems: initialCartItems, isLoading }: Props) {
+export default function Cart({
+  cartItems: initialCartItems,
+  isLoading,
+}: Props) {
   const { data: session } = useSession();
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,20 +29,25 @@ export default function Cart({ cartItems: initialCartItems, isLoading }: Props) 
   // Calculate total price
   const total = cartItems.reduce(
     (sum, item) => sum + item.quantity * item.Merchandise.discountPrice,
-    0
+    0,
   );
 
   // Prepare data for the PurchaseMerchButton
-  const merchData = cartItems.map((item) => ({
+  const merchData: {
+    id: string;
+    quantity: number;
+    size: Sizes;
+  }[] = cartItems.map((item) => ({
     id: item.Merchandise.id,
     quantity: item.quantity,
+    size: "FREE_SIZE",
   }));
 
   // Update cartItems on removal
   const handleRemoveItem = async (id: string) => {
     await removeItemFromCart.mutateAsync({ id });
     setCartItems((prevItems) =>
-      prevItems.filter((item) => item.Merchandise.id !== id)
+      prevItems.filter((item) => item.Merchandise.id !== id),
     );
   };
 
@@ -86,9 +94,7 @@ export default function Cart({ cartItems: initialCartItems, isLoading }: Props) 
 
           {/* Check if user is logged in */}
           {!session?.user ? (
-            <div className="mt-4 text-center text-white">
-              Login to Use Cart
-            </div>
+            <div className="mt-4 text-center text-white">Login to Use Cart</div>
           ) : isLoading ? (
             <div className="mt-4 text-center text-white">Loading...</div>
           ) : cartItems.length === 0 ? (

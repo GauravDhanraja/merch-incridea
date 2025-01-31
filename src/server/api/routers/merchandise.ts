@@ -131,6 +131,7 @@ export const merchandiseRouter = createTRPCRouter({
                 data: input.merch.map((id) => ({
                   merchandiseId: id.id,
                   quantity: id.quantity,
+                  size: id.size,
                   total: input.total,
                 })),
               },
