@@ -3,27 +3,19 @@ import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
+import { inferProcedureOutput } from "@trpc/server";
+import { AppRouter } from "~/server/api/root";
 
-export type Merch = {
-  name: string;
-  description: string;
-  image: string;
-  originalPrice: number;
-  discountPrice: number;
-  available: boolean;
-  stock: number;
-};
 
-export type Order = {
-  username: string;
-  email: string;
-  quantity: number;
-  delivered: boolean;
-  totalAmount: number | undefined;
-  paymentStatus: "SUCCESS" | "FAILED" | "PENDING" | "REFUNDED" | undefined;
-  merchName: string;
-  paymentId: string | undefined;
-};
+type A = number[] & {length:3}
+
+const a :A =[ 1, 2,  4, 3]
+
+const b = ["a", "a", "d"]  as const
+
+const c = b[100]
+
+type Merch = inferProcedureOutput<AppRouter["merchandise"]["getAllMerch"]>[number]
 
 export const merchColumns: ColumnDef<Merch>[] = [
   {
@@ -47,6 +39,8 @@ export const merchColumns: ColumnDef<Merch>[] = [
     header: "Sales",
   },
 ];
+
+type Order = inferProcedureOutput<AppRouter["order"]["getAllUserOrders"]>[number]
 
 export const orderColumns: ColumnDef<Order>[] = [
   {

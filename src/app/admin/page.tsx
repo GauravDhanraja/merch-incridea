@@ -26,14 +26,13 @@ export default function Admin() {
   const { data: orderData = [], isLoading: orderLoading } = api.order.getAllUserOrders.useQuery();
   const { data: transactionData = [], isLoading: transactionLoading } = api.razorpay.getAllTransactions.useQuery();
 
-  // Calculate total revenue and sales
-  const totalRevenue = merchData.reduce((acc, item) => acc + (item.originalPrice || 0), 0).toFixed(2);
-  const totalSales = merchData.reduce((acc, item) => acc + (item.stock || 0), 0);
+
+  const totalRevenue = transactionData.reduce((acc, item) => acc + (item.amount || 0), 0).toFixed(2);
+  const totalSales = merchData.reduce((acc, item) => acc + (item.stock  || 0), 0);
 
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h2>
           <div className="hidden items-center space-x-2 md:flex">
@@ -42,63 +41,47 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Tabs Section */}
+   
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics" disabled>Analytics</TabsTrigger>
           </TabsList>
 
-          {/* Overview Content */}
+       
           <TabsContent value="overview" className="space-y-4">
-            {/* Cards Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {/* Total Revenue */}
+            <div className="grid gap-3 md:grid-cols-1 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{merchLoading ? "Loading..." : `₹${totalRevenue}`}</div>
-                  <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                  <div className="text-2xl font-bold">{transactionLoading ? "Loading..." : `₹${totalRevenue}`}</div>
                 </CardContent>
               </Card>
 
-              {/* Total Sales */}
+
               <Card>
                 <CardHeader className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{merchLoading ? "Loading..." : totalSales}</div>
-                  <p className="text-xs text-muted-foreground">+180.1% from last month</p>
                 </CardContent>
               </Card>
 
-              {/* Sales Growth (Placeholder) */}
+             
               <Card>
                 <CardHeader className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">Sales</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">+12,234</div>
-                  <p className="text-xs text-muted-foreground">+19% from last month</p>
-                </CardContent>
-              </Card>
-
-              {/* Active Users (Placeholder) */}
-              <Card>
-                <CardHeader className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">+201 since last hour</p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Order & Merchandise Data Tables */}
+       
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               {/* Order Data */}
               <Card className="col-span-5 md:col-span-4">
@@ -115,7 +98,7 @@ export default function Admin() {
                 </CardContent>
               </Card>
 
-              {/* Merchandise Data */}
+         
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
                   <CardTitle>Merchandise Wise Data</CardTitle>
@@ -130,7 +113,7 @@ export default function Admin() {
                 </CardContent>
               </Card>
 
-              {/* Placeholder for Graphs */}
+          
               <div className="col-span-4">{/* <PieGraph /> */}</div>
               <div className="col-span-4 md:col-span-3">{/* <PieGraph /> */}</div>
             </div>

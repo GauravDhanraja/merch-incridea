@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react"; 
 import items from "razorpay/dist/types/items";
 import { MerchData } from "../admin/_components/merchData";
+import { Card } from "~/components/ui/card";
+import { Merchandise,type OrderItem } from "@prisma/client";
+
+
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -52,22 +56,25 @@ const Orders = () => {
         ) : (
           <div className="mt-4 space-y-4">
             {orders?.map((order) => (
-              <div
+              <Card className="bg-#fceed4">
+                <div
                 key={order.id}
                 className="flex flex-col md:flex-row items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm"
               >
                 <div className="flex items-center mb-4 md:mb-0">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-palate_1/90">Product:{MerchData.name} </span> {/*product name to be put */}
+                    <span className="text-sm text-truncate font-semibold text-palate_1/90">ORDER ID:{orders?.map((order)=>(order.id))} </span> 
                     <span className="text-sm text-palate_1/90">
                       Date: {new Date(order.createdAt).toLocaleDateString()}
                     </span>
+                    
                   </div>
                 </div>
                 <div className="w-20 h-20 bg-gray-300 rounded-md flex items-center justify-center">
                   <QRCodeCanvas value={`https://grimaceshake.com/order/${order.id}`} size={80} />
                 </div>
               </div>
+              </Card>
             ))}
           </div>
         )}
