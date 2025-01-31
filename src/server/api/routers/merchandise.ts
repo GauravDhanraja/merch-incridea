@@ -48,11 +48,11 @@ export const merchandiseRouter = createTRPCRouter({
           where: {
             OrderItem: {
               some: {
-Order:{
-PaymentOrder:{
-  status:"SUCCESS"
-}
-  }
+                Order: {
+                  PaymentOrder: {
+                    status: "SUCCESS",
+                  },
+                },
               },
             },
           },

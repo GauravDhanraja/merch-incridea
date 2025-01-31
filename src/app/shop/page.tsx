@@ -109,7 +109,7 @@ export default function Shop() {
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
             {/* Remaining merchandise */}
-            <div className="flex flex-wrap justify-center gap-14">
+            <div className="flex flex-wrap justify-center gap-14 pb-16">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
                   <>

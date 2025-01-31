@@ -39,19 +39,13 @@ const Navbar = () => {
     };
   }, []);
 
-  const navbarBgClass =
-    pathname === "/"
-      ? "bg-black/90"
-      : "bg-transparent";
+  const navbarBgClass = pathname === "/" ? "bg-black/90" : "bg-palate_2/0";
   const navbarFgClass =
-      pathname === "/"
-          ? "text-palate_1/90"
-          : "text-palate_1/90";// Replace `bg-palate_2/90` with your desired color for other routes.
-
+    pathname === "/" ? "text-palate_1/90" : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
 
   return (
     <nav
-      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2 ${pathname==="/admin" ? "hidden" : ""}`}
+      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2 ${pathname === "/admin" ? "hidden" : ""}`}
     >
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
@@ -66,7 +60,9 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Nav */}
-          <ul className={`hidden select-none items-center space-x-12 text-xl font-bold md:flex ${navbarFgClass}`}>
+          <ul
+            className={`hidden select-none items-center space-x-12 text-xl font-bold md:flex ${navbarFgClass}`}
+          >
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>{item.label}</Link>
@@ -80,11 +76,17 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
+            {/* Admin Dashboard link */}
+            {session?.user.role === "ADMIN" && (
+              <li>
+                <Link href="/admin">Admin</Link>
+              </li>
+            )}
           </ul>
 
           {/* Desktop Actions */}
           <div className="hidden items-center space-x-4 md:flex">
-            <ToggleMute color={navbarFgClass}/>
+            <ToggleMute color={navbarFgClass} />
             {session ? (
               <button
                 className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-black hover:text-white`}
@@ -145,11 +147,17 @@ const Navbar = () => {
             ))}
             {/* Profile link */}
             {session && (
-              <li
-                className={`text-4xl font-bold ${navbarFgClass}`}
-              >
+              <li className={`text-4xl font-bold ${navbarFgClass}`}>
                 <Link href="/profile" onClick={toggleNavbar}>
                   Profile
+                </Link>
+              </li>
+            )}
+            {/* Admin Dashboard link */}
+            {session?.user.role === "ADMIN" && (
+              <li className={`text-4xl font-bold ${navbarFgClass}`}>
+                <Link href="/admin" onClick={toggleNavbar}>
+                  Admin
                 </Link>
               </li>
             )}
@@ -161,14 +169,14 @@ const Navbar = () => {
           >
             {session ? (
               <button
-                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-white hover:text-black`}
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-palate_1 hover:text-black`}
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-white hover:text-black`}
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] ${navbarFgClass} px-6 py-4 text-4xl font-bold hover:bg-palate_1 hover:text-black`}
                 onClick={() => signIn("google")}
               >
                 Sign In

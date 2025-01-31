@@ -20,7 +20,7 @@ const Orders = () => {
   useEffect(() => {
     if (status === "loading") return; 
     if (!session) {
-      router.push("/"); 
+      router.push("/");
     }
   }, [session, status, router]);
 
@@ -35,7 +35,7 @@ const Orders = () => {
   return (
     <div className="min-h-screen flex flex-col pt-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-bl from-emerald-950 to-emerald-800">
       {/* Profile Section */}
-      <div className="flex flex-col items-center md:flex-row md:justify-between mt-10 md:space-x-12 md:items-center">
+      <div className="mt-10 flex flex-col items-center md:flex-row md:items-center md:justify-between md:space-x-12">
         <div className="flex items-center justify-center">
           <div className="text-center md:text-left mt-8 md:mt-0">
             <h1 className="text-3xl font-bold text-palate_1/90">{session?.user?.name}</h1>
