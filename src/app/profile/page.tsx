@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
 import items from "razorpay/dist/types/items";
 import { MerchData } from "../admin/_components/merchData";
+import { Card } from "~/components/ui/card";
+import { Merchandise,type OrderItem } from "@prisma/client";
+
+
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -47,6 +51,8 @@ const Orders = () => {
           </div>
         </div>
 
+        
+        
         {/* Orders Section */}
         <div className="mt-8 flex-grow overflow-y-auto">
           <h2 className="text-4xl font-semibold text-palate_1/90 px-2">
@@ -74,12 +80,9 @@ const Orders = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center rounded-md bg-gray-300">
-                    <QRCodeCanvas
-                      value={`https://grimaceshake.com/order/${order.id}`}
-                      size={140}
-                    />
-                  </div>
+                  <div className="w-20 h-20 bg-gray-300 rounded-md flex items-center justify-center">
+                  <QRCodeCanvas value={`${order.id}`} size={140} />
+                </div>
                 </div>
               ))}
             </div>
