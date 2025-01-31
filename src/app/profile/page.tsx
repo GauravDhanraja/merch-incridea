@@ -4,7 +4,7 @@ import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { QRCodeCanvas } from "qrcode.react"; 
+import { QRCodeCanvas } from "qrcode.react";
 import items from "razorpay/dist/types/items";
 import { MerchData } from "../admin/_components/merchData";
 
@@ -18,7 +18,7 @@ const Orders = () => {
   });
 
   useEffect(() => {
-    if (status === "loading") return; 
+    if (status === "loading") return;
     if (!session) {
       router.push("/");
     }
@@ -26,55 +26,68 @@ const Orders = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <p className="text-red-500">Error: {error.message}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-bl from-emerald-950 to-emerald-800">
+    <div className="flex min-h-screen overflow-auto flex-col items-center bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="mt-10 flex flex-col items-center md:flex-row md:items-center md:justify-between md:space-x-12">
-        <div className="flex items-center justify-center">
-          <div className="text-center md:text-left mt-8 md:mt-0">
-            <h1 className="text-3xl font-bold text-palate_1/90">{session?.user?.name}</h1>
-            <p className="text-xl text-palate_1/90">{session?.user?.email}</p>
+      <div className="flex flex-col w-full px-4 py-4 lg:w-[60%] mt-16 shadow-lg rounded-2xl lg:py-10 lg:px-16 bg-gradient-to-tr from-emerald-700 to-emerald-600">
+        <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
+          <div className="flex items-center justify-center">
+            <div className="mt-8 text-center lg:mt-0 lg:text-left">
+              <h1 className="text-3xl font-bold text-palate_1/90">
+                {session?.user?.name}
+              </h1>
+              <p className="text-xl text-palate_1/90">{session?.user?.email}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Orders Section */}
-      <div className="flex-grow mt-8 overflow-y-auto">
-        <h2 className="text-2xl font-semibold text-palate_1/90">Your Orders</h2>
-        {orders?.length === 0 ? (
-          <p className="mt-4 text-gray-500 text-palate_1/90">You have no orders yet.</p>
-        ) : (
-          <div className="mt-4 space-y-4">
-            {orders?.map((order) => (
-              <div
-                key={order.id}
-                className="flex flex-col md:flex-row items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm"
-              >
-                <div className="flex items-center mb-4 md:mb-0">
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-palate_1/90">Product:{MerchData.name} </span> {/*product name to be put */}
-                    <span className="text-sm text-palate_1/90">
-                      Date: {new Date(order.createdAt).toLocaleDateString()}
-                    </span>
+        {/* Orders Section */}
+        <div className="mt-8 flex-grow overflow-y-auto">
+          <h2 className="text-4xl font-semibold text-palate_1/90 px-2">
+            Orders
+          </h2>
+          {orders?.length === 0 ? (
+            <p className="mt-4 text-2xl text-gray-500 text-palate_1/90">
+              You have no orders yet.
+            </p>
+          ) : (
+            <div className="mt-4 space-y-6">
+              {orders?.map((order) => (
+                <div
+                  key={order.id}
+                  className="flex flex-row justify-between bg-palate_2 rounded-lg border border-gray-200 p-4 shadow-sm"
+                >
+                  <div className="mb-4 h-full flex lg:mb-0">
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-palate_1/90">
+                        {MerchData.name}{" "}
+                      </span>{" "}
+                      {/*product name to be put */}
+                      <span className="text-sm text-palate_1/90">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center rounded-md bg-gray-300">
+                    <QRCodeCanvas
+                      value={`https://grimaceshake.com/order/${order.id}`}
+                      size={140}
+                    />
                   </div>
                 </div>
-                <div className="w-20 h-20 bg-gray-300 rounded-md flex items-center justify-center">
-                  <QRCodeCanvas value={`https://grimaceshake.com/order/${order.id}`} size={80} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default Orders;
-

@@ -124,7 +124,7 @@ const Navbar = () => {
         {/* Mobile Drawer */}
         <div
           ref={mobileDrawerRef}
-          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col items-center rounded-t-3xl ${navbarBgClass} backdrop-saturate-150 transition-opacity duration-500 ease-in-out lg:hidden ${
+          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col bg-palate_2 items-center rounded-t-3xl ${navbarBgClass} transition-opacity duration-500 ease-in-out lg:hidden ${
             mobileDrawerOpen
               ? "opacity-100 backdrop-blur-2xl"
               : "pointer-events-none opacity-0"
