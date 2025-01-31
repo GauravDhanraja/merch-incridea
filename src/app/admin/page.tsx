@@ -17,40 +17,36 @@ import { OrderData } from "./_components/orderData";
 import { inferProcedureOutput } from "@trpc/server";
 import { AppRouter } from "~/server/api/root";
 
-type MerchSalesData = inferProcedureOutput<AppRouter["merchandise"]["getMerchSales"]>;
-type UserOrdersData = inferProcedureOutput<AppRouter["order"]["getAllUserOrders"]>;
+// type MerchSalesData = inferProcedureOutput<AppRouter["merchandise"]["getMerchSales"]>;
+// type UserOrdersData = inferProcedureOutput<AppRouter["order"]["getAllUserOrders"]>;
 
 export default function Admin() {
-  // Fetching data from API
+
   const { data: merchData = [], isLoading: merchLoading } = api.merchandise.getMerchSales.useQuery();
   const { data: orderData = [], isLoading: orderLoading } = api.order.getAllUserOrders.useQuery();
   const { data: transactionData = [], isLoading: transactionLoading } = api.razorpay.getAllTransactions.useQuery();
+  const createMerch=api.merchandise.createMerch.useMutation();
 
+
+ 
 
   const totalRevenue = transactionData.reduce((acc, item) => acc + (item.amount || 0), 0).toFixed(2);
   const totalSales = merchData.reduce((acc, item) => acc + (item.stock  || 0), 0);
+
+
+  
 
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h2>
-          <div className="hidden items-center space-x-2 md:flex">
-            <Button className="text-white">Create Merch</Button>
-            <Button className="text-white">Download</Button>
-          </div>
         </div>
 
    
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>Analytics</TabsTrigger>
-          </TabsList>
-
-       
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-1 lg:grid-cols-3">
+            <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2">
               <Card>
                 <CardHeader className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -67,16 +63,6 @@ export default function Admin() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{merchLoading ? "Loading..." : totalSales}</div>
-                </CardContent>
-              </Card>
-
-             
-              <Card>
-                <CardHeader className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
                 </CardContent>
               </Card>
             </div>
@@ -113,9 +99,6 @@ export default function Admin() {
                 </CardContent>
               </Card>
 
-          
-              <div className="col-span-4">{/* <PieGraph /> */}</div>
-              <div className="col-span-4 md:col-span-3">{/* <PieGraph /> */}</div>
             </div>
           </TabsContent>
         </Tabs>

@@ -71,7 +71,7 @@ const Orders = () => {
                   </div>
                 </div>
                 <div className="w-20 h-20 bg-gray-300 rounded-md flex items-center justify-center">
-                  <QRCodeCanvas value={`https://grimaceshake.com/order/${order.id}`} size={80} />
+                  <QRCodeCanvas value={`${order.id}`} size={80} />
                 </div>
               </div>
               </Card>
