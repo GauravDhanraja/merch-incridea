@@ -23,15 +23,15 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
   }, [audioLevel]);
 
   const audioSpring = useSpring({
-    rotationX: direction * audioLevel * 0.3,
-    rotationY: direction * audioLevel * (Math.PI / 2),
-    config: { mass: 1, tension: 50, friction: 3 }, // Smooth transition
+    rotationX: direction * audioLevel * 0.8,
+    rotationY: direction * audioLevel * 2,
+    config: { mass: 1, tension: 50, friction: 5 }, // Smooth transition
   });
 
   const mouseSpring = useSpring({
-    rotationX: mousePosition.y * 0.15,
-    rotationY: mousePosition.x * 0.4,
-    config: { mass: 1, tension: 120, friction: 7 },
+    rotationX: mousePosition.y * 0.01,
+    rotationY: mousePosition.x * 1,
+    config: { mass: 1, tension: 120, friction: 40 },
   });
 
   // Mouse Movement Handler
@@ -108,12 +108,21 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     if (!scene || !nodes) return;
 
     const boneNames = [
-      "Bone", // Root Bone
-      "Bone001", // Child of Bone
-      "Bone004", // Child of Bone003
-      "Bone005", // Child of Bone002
-      "Bone006", // Child of Bone005
-      "Bone007", // Child of Bone006
+      //"Root",
+      "Bone002",
+      "Bone003",
+      "Bone004",
+      "Bone005",
+      "Bone006",
+      "Bone007",
+      "Bone008",
+      "Bone009",
+      "Bone010",
+      "Bone011",
+      "Bone012",
+      "Bone013",
+      "Bone014",
+      "Bone015",
     ];
 
     const visited = new Set(); // Track visited bones to avoid duplicates
@@ -172,7 +181,7 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       //@ts-expect-error blah
       ref={modelRef}
       dispose={null}
-      scale={[0.8, 0.8, 0.8]}
+      scale={[0.7, 0.7, 0.7]}
       position={[0, -2, 0]}
       rotation-x={mouseSpring.rotationX.to(
         (mouseX) => audioSpring.rotationX.get() + mouseX,
