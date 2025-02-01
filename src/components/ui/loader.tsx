@@ -44,7 +44,8 @@ function AnimatedLogo({ onComplete }: { onComplete: () => void }) {
         id="animated-logo"
         src="/icon.png" // Ensure this path points to your image
         alt="Incridea Logo"
-        className="h-24 w-24"
+        width={108}
+        height={108}
         style={{ transform: "translateY(100%)" }} // Start off-screen
       />
     </div>

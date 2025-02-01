@@ -69,8 +69,7 @@ export default function Shop() {
           count: 1,
         })),
       );
-      const tshirt = allMerchData.filter((item) => item.bulkOrder);
-      setTshirtData(tshirt);
+      setTshirtData(allMerchData.filter((item) => item.bulkOrder));
     }
   }, [allMerchData]);
 
@@ -335,30 +334,32 @@ export default function Shop() {
                       </div>
                       {activeCard === index && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
-                          <BuyButton
-                            merch={[
-                              {
-                                id: item.id,
-                                quantity: item.count,
-                                size: "FREE_SIZE",
-                              },
-                            ]}
-                            total={item.discountPrice * item.count}
-                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                          />
                           {session?.user ? (
-                            <button
-                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                              onClick={async () => {
-                                await addItemToCart.mutateAsync({
-                                  id: item.id,
-                                  quantity: item.count,
-                                });
-                                await cartRefetch();
-                              }}
-                            >
-                              Add to Cart
-                            </button>
+                            <>
+                              <BuyButton
+                                merch={[
+                                  {
+                                    id: item.id,
+                                    quantity: item.count,
+                                    size: "FREE_SIZE",
+                                  },
+                                ]}
+                                total={item.discountPrice * item.count}
+                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              />
+                              <button
+                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                                onClick={async () => {
+                                  await addItemToCart.mutateAsync({
+                                    id: item.id,
+                                    quantity: item.count,
+                                  });
+                                  await cartRefetch();
+                                }}
+                              >
+                                Add to Cart
+                              </button>
+                            </>
                           ) : (
                             <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3">
                               Login to Buy
@@ -376,15 +377,15 @@ export default function Shop() {
       )}
       {/* Modal for Bulk Order */}
       {showBulkOrderForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-lg bg-gradient-to-tr from-emerald-700 to-emerald-500 p-6 shadow-lg sm:w-96">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
+          <div className="relative w-full max-w-lg rounded-lg bg-gradient-to-tr from-emerald-700 to-emerald-500 p-6 shadow-lg">
             <button
               onClick={() => setShowBulkOrderForm(false)}
-              className="absolute right-2 top-2 rounded bg-red-500 p-2 text-white hover:bg-red-600"
+              className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
             >
               ✕
             </button>
-            <h2 className="mb-4 text-lg font-bold text-white sm:text-xl">
+            <h2 className="mb-4 text-xl font-bold text-white">
               Bulk Order Request
             </h2>
             <form className="space-y-4">
