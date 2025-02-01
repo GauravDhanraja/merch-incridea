@@ -61,6 +61,7 @@ export const cartRouter = createTRPCRouter({
           },
         });
       } catch (e) {
+        console.log(e);
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Item not found in cart",

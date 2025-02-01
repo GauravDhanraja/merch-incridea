@@ -1,6 +1,6 @@
 "use client";
 
-import { type Merchandise } from "@prisma/client";
+import type { Sizes, Merchandise } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
@@ -16,8 +16,8 @@ export default function Shop() {
   const [merchData, setMerchData] = useState<
     (Merchandise & { count: number })[]
   >([]);
-  type Sizes = Record<string, number>;
-  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
+  type sizeType = Record<Sizes, number>;
+  //const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
@@ -27,22 +27,28 @@ export default function Shop() {
   const addItemToCart = api.cart.addItemToCart.useMutation();
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showBulkOrderForm, setShowBulkOrderForm] = useState(false);
-  const [sizes, setSizes] = useState<Sizes>({});
+  const [sizes, setSizes] = useState<sizeType>({
+    S: 0,
+    M: 0,
+    L: 0,
+    XL: 0,
+    XXL: 0,
+    FREE_SIZE: 0,
+  });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
-  const [bulkTotalQty, setBulkTotalQty] = useState(0);
   const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
 
   const { data: session } = useSession();
 
   const handleSizeChange = (size: string, quantity: number): void => {
-    setSizes((prev: Sizes) => {
-      const updatedSizes: Sizes = { ...prev, [size]: Math.max(0, quantity) };
+    setSizes((prev: sizeType) => {
+      const updatedSizes: sizeType = { ...prev, [size]: Math.max(0, quantity) };
       calculateBulkTotalCost(updatedSizes);
       return updatedSizes;
     });
   };
 
-  const calculateBulkTotalCost = (updatedSizes: Sizes): void => {
+  const calculateBulkTotalCost = (updatedSizes: sizeType): void => {
     const totalQuantity: number = Object.values(updatedSizes).reduce(
       (total: number, qty: number) => total + qty,
       0,
@@ -52,7 +58,6 @@ export default function Shop() {
       tshirtData[0]?.discountPrice !== undefined
         ? tshirtData[0].discountPrice
         : 0;
-    setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
   };
 
@@ -69,7 +74,8 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  {
+    /*const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
       await rzpWebhook.mutateAsync({
         razorpayOrderId,
@@ -78,7 +84,9 @@ export default function Shop() {
     } catch (error) {
       console.error("Error updating payment status:", error);
     }
-  };
+  };*/
+  }
+
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;
@@ -109,7 +117,7 @@ export default function Shop() {
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
             {/* Remaining merchandise */}
-            <div className="flex flex-wrap justify-center gap-14">
+            <div className="flex flex-wrap justify-center gap-14 pb-16">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
                   <>
@@ -327,26 +335,30 @@ export default function Shop() {
                       </div>
                       {activeCard === index && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
+                          <BuyButton
+                            merch={[
+                              {
+                                id: item.id,
+                                quantity: item.count,
+                                size: "FREE_SIZE",
+                              },
+                            ]}
+                            total={item.discountPrice * item.count}
+                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                          />
                           {session?.user ? (
-                            <>
-                              <BuyButton
-                                merch={[{ id: item.id, quantity: item.count }]}
-                                total={item.discountPrice * item.count}
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                              />
-                              <button
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                                onClick={async () => {
-                                  await addItemToCart.mutateAsync({
-                                    id: item.id,
-                                    quantity: item.count,
-                                  });
-                                  await cartRefetch();
-                                }}
-                              >
-                                Add to Cart
-                              </button>
-                            </>
+                            <button
+                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              onClick={async () => {
+                                await addItemToCart.mutateAsync({
+                                  id: item.id,
+                                  quantity: item.count,
+                                });
+                                await cartRefetch();
+                              }}
+                            >
+                              Add to Cart
+                            </button>
                           ) : (
                             <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3">
                               Login to Buy
@@ -379,32 +391,30 @@ export default function Shop() {
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
-                {["Small", "Medium", "Large", "XL", "XXL"].map(
-                  (size, index) => (
-                    <div
-                      key={index}
-                      className="mb-2 flex items-center justify-between gap-2"
+                {["S", "M", "L", "XL", "XXL"].map((size, index) => (
+                  <div
+                    key={index}
+                    className="mb-2 flex items-center justify-between"
+                  >
+                    <label
+                      htmlFor={`size-${index}`}
+                      className="font-semibold text-white"
                     >
-                      <label
-                        htmlFor={`size-${index}`}
-                        className="font-semibold text-white"
-                      >
-                        {size}
-                      </label>
-                      <input
-                        type="number"
-                        id={`size-${index}`}
-                        className="w-20 rounded-md bg-emerald-200 p-2 text-gray-800 sm:w-24"
-                        placeholder="Qty"
-                        min={0}
-                        value={sizes[size]}
-                        onChange={(e) =>
-                          handleSizeChange(size, parseInt(e.target.value) || 0)
-                        }
-                      />
-                    </div>
-                  ),
-                )}
+                      {size}
+                    </label>
+                    <input
+                      type="number"
+                      id={`size-${index}`}
+                      className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
+                      placeholder="Qty"
+                      min={0}
+                      value={sizes[size as Sizes]}
+                      onChange={(e) =>
+                        handleSizeChange(size, parseInt(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                ))}
               </div>
 
               {/* Total Cost */}
@@ -417,24 +427,15 @@ export default function Shop() {
               <div className="mt-6 text-center">
                 {tshirtData[0] && (
                   <BuyButton
-                    // name={name}          // Pass name state
-                    // branch={branch}      // Pass branch state
-                    // sem={semester}
-                    // merch={[
-                    //   {
-                    //     id: tshirtData[0].id,
-                    //     sizes: {
-                    //       S: sizes.S ?? 0,
-                    //       M: sizes.M ?? 0,
-                    //       L: sizes.L ?? 0,
-                    //       XL: sizes.XL ?? 0,
-                    //       XXL: sizes.XXL ?? 0,
-                    //     },
-                    //   },
-                    // ]}
-                    merch={[{ id: tshirtData[0].id, quantity: bulkTotalQty }]}
-                    total={tshirtData[0].discountPrice * bulkTotalQty}
-                    className="w-full rounded-full bg-white px-4 py-2 font-bold tracking-wide text-black sm:w-auto sm:px-8 sm:py-3"
+                    merch={Object.entries(sizes)
+                      .filter(([_, quantity]) => quantity > 0)
+                      .map(([size, quantity]) => ({
+                        id: tshirtData[0]?.id ?? "",
+                        quantity: quantity,
+                        size: size as Sizes,
+                      }))}
+                    total={bulkTotalCost}
+                    className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
                   />
                 )}
               </div>

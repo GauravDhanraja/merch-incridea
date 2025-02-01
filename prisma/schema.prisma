@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["omitApi"]
+  provider = "prisma-client-js"
+  plugin   = ["omitApi"]
 }
 
 datasource db {
@@ -75,6 +75,7 @@ model Merchandise {
   updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
   Cart      Cart[]
+  
 }
 
 model OrderItem {
@@ -82,6 +83,7 @@ model OrderItem {
   orderId       String
   merchandiseId String
   quantity      Int
+  size          Sizes  @default(FREE_SIZE)
   total         Float
 
   Order       Order       @relation(fields: [orderId], references: [id])
@@ -148,4 +150,13 @@ enum Status {
   SUCCESS
   FAILED
   REFUNDED
+}
+
+enum Sizes {
+  S
+  M
+  L
+  XL
+  XXL
+  FREE_SIZE
 }

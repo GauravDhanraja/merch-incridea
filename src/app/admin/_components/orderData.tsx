@@ -1,7 +1,7 @@
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
-  ColumnFiltersState,
+  type ColumnFiltersState,
   getFilteredRowModel,
   getCoreRowModel,
   useReactTable,

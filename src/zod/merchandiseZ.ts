@@ -1,3 +1,4 @@
+import { Sizes } from "@prisma/client";
 import { z } from "zod";
 
 export const createMerchZ = z.object({
@@ -26,6 +27,7 @@ export const purchaseMerchZ = z.object({
     .object({
       id: z.string(),
       quantity: z.number(),
+      size: z.nativeEnum(Sizes),
     })
     .array(),
   total: z.number(),

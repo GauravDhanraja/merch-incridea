@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 function AnimatedLogo({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
@@ -39,7 +40,7 @@ function AnimatedLogo({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <img
+      <Image
         id="animated-logo"
         src="/icon.png" // Ensure this path points to your image
         alt="Incridea Logo"
