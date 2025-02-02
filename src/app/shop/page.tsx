@@ -125,15 +125,15 @@ export default function Shop() {
                       ref={(el) => {
                         if (el) cardRefs.current[0] = el;
                       }}
-                      data-index={0}
-                      onClick={() => setActiveCard(0)}
+                      data-index={index}
+                      onClick={() => setActiveCard(index)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                        activeCard === 0
+                        activeCard === index
                           ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
                           : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
                       }`}
                     >
-                      {activeCard === 0 && (
+                      {activeCard === index && (
                         <button
                           className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
                           onClick={(e) => {
@@ -144,7 +144,7 @@ export default function Shop() {
                           <FaChevronLeft size={24} />
                         </button>
                       )}
-                      {activeCard === 0 && (
+                      {activeCard === index && (
                         <button
                           className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
                           onClick={(e) => {
@@ -169,7 +169,7 @@ export default function Shop() {
                       <div className="mt-24 text-center md:mt-28">
                         <h2
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
                               : "text-lg font-semibold text-palate_1/60 md:text-xl"
                           }
@@ -178,7 +178,7 @@ export default function Shop() {
                         </h2>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-sm font-semibold text-palate_1/90 md:text-base"
                               : "text-xs font-normal text-palate_1/60 md:text-sm"
                           }
@@ -187,14 +187,14 @@ export default function Shop() {
                         </p>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
                               : "text-base font-medium text-palate_1/60 md:text-lg"
                           }
                         >
                           ₹{item.discountPrice}
                         </p>
-                        {activeCard === 0 && (
+                        {activeCard === index && (
                           <div className="mt-6">
                             {session?.user.role === "CLASS_REP" ? (
                               <button
@@ -220,16 +220,16 @@ export default function Shop() {
                   <div
                     key={item.id}
                     ref={(el) => {
-                      if (el) cardRefs.current[index + 1] = el;
+                      if (el) cardRefs.current[index] = el;
                     }}
-                    onClick={() => setActiveCard(index + 1)}
+                    onClick={() => setActiveCard(index)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                      activeCard === index + 1
+                      activeCard === index
                         ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
                         : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
                     }`}
                   >
-                    {activeCard === index + 1 && (
+                    {activeCard === index && (
                       <button
                         className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
                         onClick={(e) => {
@@ -240,7 +240,7 @@ export default function Shop() {
                         <FaChevronLeft size={24} color="white" />
                       </button>
                     )}
-                    {activeCard === index + 1 && (
+                    {activeCard === index && (
                       <button
                         className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
                         onClick={(e) => {
@@ -265,7 +265,7 @@ export default function Shop() {
                     <div className="mt-24 text-center md:mt-28">
                       <h2
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
                             : "text-lg font-semibold text-palate_1/60 md:text-xl"
                         }
@@ -274,7 +274,7 @@ export default function Shop() {
                       </h2>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-sm font-semibold text-palate_1/90 md:text-base"
                             : "text-xs font-normal text-palate_1/60 md:text-sm"
                         }
@@ -283,7 +283,7 @@ export default function Shop() {
                       </p>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
                             : "text-base font-medium text-palate_1/60 md:text-lg"
                         }
@@ -292,7 +292,7 @@ export default function Shop() {
                       </p>
                       <div
                         className={`mt-6 flex items-center justify-center gap-3 ${
-                          activeCard !== index + 1 ? "hidden" : ""
+                          activeCard !== index ? "hidden" : ""
                         }`}
                       >
                         <button
@@ -301,7 +301,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index + 1
+                                idx === index
                                   ? {
                                       ...prod,
                                       count: Math.max(prod.count - 1, 1),
@@ -322,7 +322,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index + 1
+                                idx === index
                                   ? { ...prod, count: prod.count + 1 }
                                   : prod,
                               ),
@@ -332,7 +332,7 @@ export default function Shop() {
                           <FaPlus className="text-gray-700" />
                         </button>
                       </div>
-                      {activeCard === index + 1 && (
+                      {activeCard === index && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
                           <BuyButton
                             merch={[
