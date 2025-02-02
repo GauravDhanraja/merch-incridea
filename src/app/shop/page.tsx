@@ -54,10 +54,9 @@ export default function Shop() {
       0,
     );
 
-    // Ensure merchData[0] exists and has a valid discountPrice
     const discountPrice: number =
-      merchData?.[0]?.discountPrice !== undefined
-        ? merchData[0].discountPrice
+      tshirtData[0]?.discountPrice !== undefined
+        ? tshirtData[0].discountPrice
         : 0;
     setBulkTotalCost(totalQuantity * discountPrice);
   };
@@ -74,7 +73,8 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  {/*const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  {
+    /*const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
       await rzpWebhook.mutateAsync({
         razorpayOrderId,
@@ -83,7 +83,8 @@ export default function Shop() {
     } catch (error) {
       console.error("Error updating payment status:", error);
     }
-  };*/}
+  };*/
+  }
 
   const handleNextCard = () => {
     setActiveCard((prev) => {
@@ -122,7 +123,7 @@ export default function Shop() {
                     <div
                       key={item.id}
                       ref={(el) => {
-                        if (el) cardRefs.current[0] = el;
+                        if (el) cardRefs.current[index] = el;
                       }}
                       data-index={0}
                       onClick={() => setActiveCard(0)}
@@ -132,7 +133,7 @@ export default function Shop() {
                           : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 lg:h-[400px] lg:w-72"
                       }`}
                     >
-                      {activeCard === 0 && (
+                      {activeCard === index && (
                         <button
                           className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
                           onClick={(e) => {
@@ -143,7 +144,7 @@ export default function Shop() {
                           <FaChevronLeft size={24} />
                         </button>
                       )}
-                      {activeCard === 0 && (
+                      {activeCard === index && (
                         <button
                           className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
                           onClick={(e) => {
@@ -193,7 +194,7 @@ export default function Shop() {
                         >
                           ₹{item.discountPrice}
                         </p>
-                        {activeCard === 0 && (
+                        {activeCard === index && (
                           <div className="mt-6">
                             {session?.user.role === "CLASS_REP" ? (
                               <button
@@ -219,7 +220,7 @@ export default function Shop() {
                   <div
                     key={item.id}
                     ref={(el) => {
-                      if (el) cardRefs.current[index + 1] = el;
+                      if (el) cardRefs.current[index] = el;
                     }}
                     onClick={() => setActiveCard(index + 1)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
@@ -228,7 +229,7 @@ export default function Shop() {
                         : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 lg:h-[400px] lg:w-72"
                     }`}
                   >
-                    {activeCard === index + 1 && (
+                    {activeCard === index && (
                       <button
                         className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
                         onClick={(e) => {
@@ -239,7 +240,7 @@ export default function Shop() {
                         <FaChevronLeft size={24} color="white" />
                       </button>
                     )}
-                    {activeCard === index + 1 && (
+                    {activeCard === index && (
                       <button
                         className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
                         onClick={(e) => {
@@ -291,7 +292,7 @@ export default function Shop() {
                       </p>
                       <div
                         className={`mt-6 flex items-center justify-center gap-3 ${
-                          activeCard !== index + 1 ? "hidden" : ""
+                          activeCard !== index ? "hidden" : ""
                         }`}
                       >
                         <button
@@ -300,7 +301,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index + 1
+                                idx === index
                                   ? {
                                       ...prod,
                                       count: Math.max(prod.count - 1, 1),
@@ -321,7 +322,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index + 1
+                                idx === index
                                   ? { ...prod, count: prod.count + 1 }
                                   : prod,
                               ),
@@ -416,14 +417,14 @@ export default function Shop() {
               </div>
 
               {/* Total Cost */}
-              <div className="mt-4 flex items-center justify-between text-lg font-bold text-white">
+              <div className="mt-4 flex items-center justify-between text-base font-bold text-white sm:text-lg">
                 <span>Total Cost:</span>
                 <span>₹{bulkTotalCost}</span>
               </div>
 
               {/* Buy Button */}
               <div className="mt-6 text-center">
-                {merchData[0] && (
+                {tshirtData[0] && (
                   <BuyButton
                     merch={Object.entries(sizes)
                       .filter(([_, quantity]) => quantity > 0)

@@ -10,22 +10,28 @@ import { animated, useSpring } from "@react-spring/three";
 import { WiggleBone } from "wiggle/spring";
 
 export function TShirt({ playAudio }: { playAudio: boolean }) {
-  const { nodes, materials, scene } = useGLTF("/models/tshirt_new.glb");
+  const { nodes, materials, scene } = useGLTF("/models/tshirt.glb");
   const modelRef = useRef();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [audioLevel, setAudioLevel] = useState(0);
   const wiggleBones = useRef<WiggleBone[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const [direction, setDirection] = useState(1);
 
-  // React Spring Animations
+  useEffect(() => {
+    setDirection((prev) => -prev);
+  }, [audioLevel]);
+
   const audioSpring = useSpring({
-    rotationX: audioLevel * 0.6,
-    config: { mass: 1, tension: 120, friction: 2 },
+    rotationX: direction * audioLevel * 0.8,
+    rotationY: direction * audioLevel * 2,
+    config: { mass: 1, tension: 50, friction: 5 }, // Smooth transition
   });
+
   const mouseSpring = useSpring({
-    rotationX: mousePosition.y * 0.2,
-    rotationY: mousePosition.x * 0.7,
-    config: { mass: 1, tension: 120, friction: 7 },
+    rotationX: mousePosition.y * 0.01,
+    rotationY: mousePosition.x * 1,
+    config: { mass: 1, tension: 120, friction: 40 },
   });
 
   // Mouse Movement Handler
@@ -102,13 +108,21 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
     if (!scene || !nodes) return;
 
     const boneNames = [
-      "Bone", // Root Bone
-      "Bone001", // Child of Bone
-      "Bone002", // Child of Bone001
-      "Bone005", // Child of Bone002
-      "Bone006", // Child of Bone005
-      "Bone003", // Child of Bone002
-      "Bone004", // Child of Bone003
+      //"Root",
+      "Bone002",
+      "Bone003",
+      "Bone004",
+      "Bone005",
+      "Bone006",
+      "Bone007",
+      "Bone008",
+      "Bone009",
+      "Bone010",
+      "Bone011",
+      "Bone012",
+      "Bone013",
+      "Bone014",
+      "Bone015",
     ];
 
     const visited = new Set(); // Track visited bones to avoid duplicates
@@ -167,18 +181,21 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       //@ts-expect-error blah
       ref={modelRef}
       dispose={null}
-      scale={[1, 1, 1]}
-      // position={[-14, -0.5, -0.5]}
+      scale={[0.7, 0.7, 0.7]}
       position={[0, -2, 0]}
-      rotation-x={audioSpring.rotationX.get() + mouseSpring.rotationX.get()}
-      rotation-y={mouseSpring.rotationY.get()}
+      rotation-x={mouseSpring.rotationX.to(
+        (mouseX) => audioSpring.rotationX.get() + mouseX,
+      )}
+      rotation-y={mouseSpring.rotationY.to(
+        (mouseY) => audioSpring.rotationY.get() + mouseY,
+      )}
     >
       <skinnedMesh
         //@ts-expect-error blah
-        geometry={nodes.Male_TshirtMesh.geometry}
-        material={materials.lambert1}
+        geometry={nodes.BROCKCREATIVE_SHIRT.geometry}
+        material={materials["1"]}
         //@ts-expect-error blah
-        skeleton={nodes.Male_TshirtMesh.skeleton}
+        skeleton={nodes.BROCKCREATIVE_SHIRT.skeleton}
       />
 
       {nodes.Bone && <primitive object={nodes.Bone} />}

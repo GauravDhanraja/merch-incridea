@@ -1,8 +1,10 @@
+"use client";
 import { Canvas } from "@react-three/fiber";
 import React, { Suspense, useLayoutEffect, useRef } from "react";
 import { OrbitControls } from "@react-three/drei";
 import {
-  Bloom, ChromaticAberration,
+  Bloom,
+  ChromaticAberration,
   EffectComposer,
   Noise,
   Vignette,
