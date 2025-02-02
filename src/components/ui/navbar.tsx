@@ -17,6 +17,7 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
+    { label: "Team", href: "/team" },
   ];
 
   const toggleNavbar = () => {
