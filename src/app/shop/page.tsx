@@ -1,6 +1,6 @@
 "use client";
 
-import type { Sizes, Merchandise } from "@prisma/client";
+import { Sizes, type Merchandise } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
@@ -17,7 +17,7 @@ export default function Shop() {
     (Merchandise & { count: number })[]
   >([]);
   type sizeType = Record<Sizes, number>;
-  //const rzpWebhook = api.razorpay.handleWebhook.useMutation();
+  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
@@ -36,6 +36,7 @@ export default function Shop() {
     FREE_SIZE: 0,
   });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
+  const [bulkTotalQty, setBulkTotalQty] = useState(0);
   const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
 
   const { data: session } = useSession();
@@ -54,10 +55,12 @@ export default function Shop() {
       0,
     );
 
+    // Ensure merchData[0] exists and has a valid discountPrice
     const discountPrice: number =
-      tshirtData[0]?.discountPrice !== undefined
-        ? tshirtData[0].discountPrice
+      merchData?.[0]?.discountPrice !== undefined
+        ? merchData[0].discountPrice
         : 0;
+    setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
   };
 
@@ -73,8 +76,7 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  {
-    /*const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
       await rzpWebhook.mutateAsync({
         razorpayOrderId,
@@ -83,9 +85,7 @@ export default function Shop() {
     } catch (error) {
       console.error("Error updating payment status:", error);
     }
-  };*/
-  }
-
+  };
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;
@@ -116,24 +116,24 @@ export default function Shop() {
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
             {/* Remaining merchandise */}
-            <div className="flex flex-wrap justify-center gap-14 pb-16">
+            <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
                   <>
                     <div
                       key={item.id}
                       ref={(el) => {
-                        if (el) cardRefs.current[index] = el;
+                        if (el) cardRefs.current[0] = el;
                       }}
-                      data-index={index}
-                      onClick={() => setActiveCard(index)}
+                      data-index={0}
+                      onClick={() => setActiveCard(0)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                        activeCard === index
+                        activeCard === 0
                           ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
                           : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
                       }`}
                     >
-                      {activeCard === index && (
+                      {activeCard === 0 && (
                         <button
                           className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
                           onClick={(e) => {
@@ -144,7 +144,7 @@ export default function Shop() {
                           <FaChevronLeft size={24} />
                         </button>
                       )}
-                      {activeCard === index && (
+                      {activeCard === 0 && (
                         <button
                           className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
                           onClick={(e) => {
@@ -169,7 +169,7 @@ export default function Shop() {
                       <div className="mt-24 text-center md:mt-28">
                         <h2
                           className={
-                            activeCard === index
+                            activeCard === 0
                               ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
                               : "text-lg font-semibold text-palate_1/60 md:text-xl"
                           }
@@ -178,7 +178,7 @@ export default function Shop() {
                         </h2>
                         <p
                           className={
-                            activeCard === index
+                            activeCard === 0
                               ? "text-sm font-semibold text-palate_1/90 md:text-base"
                               : "text-xs font-normal text-palate_1/60 md:text-sm"
                           }
@@ -187,14 +187,14 @@ export default function Shop() {
                         </p>
                         <p
                           className={
-                            activeCard === index
+                            activeCard === 0
                               ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
                               : "text-base font-medium text-palate_1/60 md:text-lg"
                           }
                         >
                           ₹{item.discountPrice}
                         </p>
-                        {activeCard === index && (
+                        {activeCard === 0 && (
                           <div className="mt-6">
                             {session?.user.role === "CLASS_REP" ? (
                               <button
@@ -220,16 +220,16 @@ export default function Shop() {
                   <div
                     key={item.id}
                     ref={(el) => {
-                      if (el) cardRefs.current[index] = el;
+                      if (el) cardRefs.current[index + 1] = el;
                     }}
-                    onClick={() => setActiveCard(index)}
+                    onClick={() => setActiveCard(index + 1)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
-                      activeCard === index
+                      activeCard === index + 1
                         ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
                         : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
                     }`}
                   >
-                    {activeCard === index && (
+                    {activeCard === index + 1 && (
                       <button
                         className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
                         onClick={(e) => {
@@ -240,7 +240,7 @@ export default function Shop() {
                         <FaChevronLeft size={24} color="white" />
                       </button>
                     )}
-                    {activeCard === index && (
+                    {activeCard === index + 1 && (
                       <button
                         className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
                         onClick={(e) => {
@@ -265,7 +265,7 @@ export default function Shop() {
                     <div className="mt-24 text-center md:mt-28">
                       <h2
                         className={
-                          activeCard === index
+                          activeCard === index + 1
                             ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
                             : "text-lg font-semibold text-palate_1/60 md:text-xl"
                         }
@@ -274,7 +274,7 @@ export default function Shop() {
                       </h2>
                       <p
                         className={
-                          activeCard === index
+                          activeCard === index + 1
                             ? "text-sm font-semibold text-palate_1/90 md:text-base"
                             : "text-xs font-normal text-palate_1/60 md:text-sm"
                         }
@@ -283,7 +283,7 @@ export default function Shop() {
                       </p>
                       <p
                         className={
-                          activeCard === index
+                          activeCard === index + 1
                             ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
                             : "text-base font-medium text-palate_1/60 md:text-lg"
                         }
@@ -292,7 +292,7 @@ export default function Shop() {
                       </p>
                       <div
                         className={`mt-6 flex items-center justify-center gap-3 ${
-                          activeCard !== index ? "hidden" : ""
+                          activeCard !== index + 1 ? "hidden" : ""
                         }`}
                       >
                         <button
@@ -301,7 +301,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index
+                                idx === index + 1
                                   ? {
                                       ...prod,
                                       count: Math.max(prod.count - 1, 1),
@@ -322,7 +322,7 @@ export default function Shop() {
                             e.stopPropagation();
                             setMerchData((prev) =>
                               prev.map((prod, idx) =>
-                                idx === index
+                                idx === index + 1
                                   ? { ...prod, count: prod.count + 1 }
                                   : prod,
                               ),
@@ -332,37 +332,35 @@ export default function Shop() {
                           <FaPlus className="text-gray-700" />
                         </button>
                       </div>
-                      {activeCard === index && (
+                      {activeCard === index + 1 && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
+                          <BuyButton
+                            merch={[
+                              {
+                                id: item.id,
+                                quantity: item.count,
+                                size: "FREE_SIZE",
+                              },
+                            ]}
+                            total={item.discountPrice * item.count}
+                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                          />
                           {session?.user ? (
-                            <>
-                              <BuyButton
-                                merch={[
-                                  {
-                                    id: item.id,
-                                    quantity: item.count,
-                                    size: "FREE_SIZE",
-                                  },
-                                ]}
-                                total={item.discountPrice * item.count}
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                              />
-                              <button
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
-                                onClick={async () => {
-                                  await addItemToCart.mutateAsync({
-                                    id: item.id,
-                                    quantity: item.count,
-                                  });
-                                  await cartRefetch();
-                                }}
-                              >
-                                Add to Cart
-                              </button>
-                            </>
+                            <button
+                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              onClick={async () => {
+                                await addItemToCart.mutateAsync({
+                                  id: item.id,
+                                  quantity: item.count,
+                                });
+                                await cartRefetch();
+                              }}
+                            >
+                              Add to Cart
+                            </button>
                           ) : (
                             <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3">
-                              Login to Buy
+                              Login for Cart
                             </button>
                           )}
                         </div>
@@ -419,14 +417,14 @@ export default function Shop() {
               </div>
 
               {/* Total Cost */}
-              <div className="mt-4 flex items-center justify-between text-base font-bold text-white sm:text-lg">
+              <div className="mt-4 flex items-center justify-between text-lg font-bold text-white">
                 <span>Total Cost:</span>
                 <span>₹{bulkTotalCost}</span>
               </div>
 
               {/* Buy Button */}
               <div className="mt-6 text-center">
-                {tshirtData[0] && (
+                {merchData[0] && (
                   <BuyButton
                     merch={Object.entries(sizes)
                       .filter(([_, quantity]) => quantity > 0)
