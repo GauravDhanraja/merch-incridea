@@ -55,10 +55,9 @@ export default function Shop() {
       0,
     );
 
-    // Ensure merchData[0] exists and has a valid discountPrice
     const discountPrice: number =
-      merchData?.[0]?.discountPrice !== undefined
-        ? merchData[0].discountPrice
+      tshirtData[0]?.discountPrice !== undefined
+        ? tshirtData[0].discountPrice
         : 0;
     setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);

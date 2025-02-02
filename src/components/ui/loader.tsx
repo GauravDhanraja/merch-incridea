@@ -39,7 +39,7 @@ function AnimatedLogo({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-bl from-slate-900 to-emerald-900">
       <Image
         id="animated-logo"
         src="/icon.png" // Ensure this path points to your image
