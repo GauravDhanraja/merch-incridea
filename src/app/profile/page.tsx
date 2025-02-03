@@ -17,6 +17,8 @@ const Orders = () => {
     enabled: status === "authenticated",
   });
 
+  const paymentOrder = api.order.getUserOrders.useQuery();
+
   useEffect(() => {
     if (status === "loading") return;
     if (!session) {
@@ -48,33 +50,32 @@ const Orders = () => {
   return (
     <div className="flex min-h-screen flex-col items-center overflow-auto bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="mt-16 flex w-full flex-col rounded-2xl bg-gradient-to-tr from-emerald-700 to-emerald-600 px-2 py-4 shadow-lg lg:w-[60%] lg:px-16 lg:py-10">
+      <div className="mt-16 flex w-full flex-col rounded-2xl bg-palate_1 p-2 shadow-lg lg:w-[60%] lg:p-10">
         <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
           <div className="flex items-center justify-center">
             <div className="mt-8 text-center lg:mt-0 lg:text-left">
-              <h1 className="text-3xl font-bold text-palate_1/90">
+              <h1 className="text-3xl font-bold text-palate_2">
                 {session?.user?.name}
               </h1>
-              <p className="text-xl text-palate_1/90">{session?.user?.email}</p>
+              <p className="text-xl text-palate_2">{session?.user?.email}</p>
             </div>
           </div>
         </div>
 
         {/* Orders Section */}
         <div className="mt-8 flex-grow overflow-y-auto overflow-x-hidden">
-          <h2 className="px-2 text-4xl font-semibold text-palate_1/90">
-            Orders
-          </h2>
+          <h2 className="px-2 text-4xl font-semibold text-palate_2">Orders</h2>
+
           {orders?.length === 0 ? (
-            <p className="mt-4 text-2xl text-gray-500 text-palate_1/90">
+            <p className="mt-4 text-2xl text-palate_2">
               You have no orders yet.
             </p>
-          ) : (
+          ) : paymentOrder?.status === "success" ? (
             <div className="mt-4 space-y-6">
               {orders?.map((order) => (
                 <div
                   key={order.id}
-                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2 p-2 shadow-sm lg:p-4"
+                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2/90 p-2 shadow-2xl lg:p-4"
                 >
                   <div className="flex h-full overflow-x-scroll lg:mb-0">
                     <div className="flex flex-col gap-2">
@@ -95,17 +96,20 @@ const Orders = () => {
                       </div>
                       {order.OrderItem.map((item) => {
                         return (
-                          <span key={item.id} className="font-semibold text-palate_1 lg:text-xl">
+                          <span
+                            key={item.id}
+                            className="font-semibold text-palate_1 lg:text-xl"
+                          >
                             {item.Merchandise.name} x{item.quantity}
                           </span>
                         );
                       })}
-                      <span className="text-xl text-palate_1/90 py-2">
+                      <span className="py-2 text-xl text-palate_1/90">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center rounded-md">
+                  <div className="right-0 top-0 flex items-center justify-center rounded-md">
                     <QRCodeCanvas
                       bgColor="rgba(0,0,0,0)"
                       fgColor="#FEFED8"
@@ -115,6 +119,10 @@ const Orders = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div>
+              <p>Order Failed</p>
             </div>
           )}
         </div>
