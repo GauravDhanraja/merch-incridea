@@ -135,14 +135,17 @@ export const merchandiseRouter = createTRPCRouter({
             total: input.total,
             OrderItem: {
               createMany: {
-                data: input.merch.map((id) => ({
-                  merchandiseId: id.id,
-                  quantity: id.quantity,
-                  size: id.size,
+                data: input.merch.map((item) => ({
+                  merchandiseId: item.id,
+                  quantity: item.quantity,
+                  size: item.size,
                   total: input.total,
                 })),
               },
             },
+          },
+          include: {
+            OrderItem: true,
           },
         });
 
@@ -151,36 +154,35 @@ export const merchandiseRouter = createTRPCRouter({
           key_secret: env.RAZORPAY_KEY_SECRET,
         });
 
-        // generate payment link
-        const paymentLink = await rpClient.paymentLink.create({
-          upi_link: false,
+        const razorpayOrder = await rpClient.orders.create({
           amount: input.total * 100,
           currency: "INR",
-          customer: {
-            name: ctx.session.user.name || undefined,
-            email: ctx.session.user.email || undefined,
-          },
-          description: "Payment for " + order.id,
-          callback_url: env.HOME_URL,
+          receipt: order.id,
+          payment_capture: true,
         });
 
-        // create payment order
+        if (!razorpayOrder.id) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create Razorpay order",
+          });
+        }
+
         await ctx.db.paymentOrder.create({
           data: {
+            orderId: order.id,
+            razorpayOrderID: razorpayOrder.id,
             amount: input.total,
-            Order: {
-              connect: {
-                id: order.id,
-              },
-            },
-            razorpayOrderID: paymentLink.id,
             status: "PENDING",
           },
         });
 
-        return paymentLink;
+        return {
+          success: true,
+          orderId: razorpayOrder.id,
+        };
       } catch (error) {
-        console.log({ location: "purchaseMerch", error });
+        console.error({ location: "purchaseMerch", error });
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create order",

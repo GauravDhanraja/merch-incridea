@@ -8,7 +8,7 @@ import { db } from "~/server/db";
 
 export async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    throw new Error("Method not allowd");
+    throw new Error("Method not allowed");
   }
 
   const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET;
@@ -33,10 +33,10 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (status === "captured") {
-      // find payment order from two tables
+      // find payment order by razorpayOrderID instead of orderId
       const paymentOrder = await db.paymentOrder.findUnique({
         where: {
-          orderId: order_id,
+          razorpayOrderID: order_id,
         },
         include: {
           Order: {
@@ -54,7 +54,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       ) {
         const updatedPaymentOrder = await db.paymentOrder.update({
           where: {
-            orderId: order_id,
+            razorpayOrderID: order_id,
           },
           data: {
             status: "SUCCESS",
@@ -79,7 +79,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     } else {
       await db.paymentOrder.update({
         where: {
-          orderId: order_id,
+          razorpayOrderID: order_id,
         },
         data: {
           status: "FAILED",

@@ -19,22 +19,32 @@ const PurchaseMerchButton = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const purchaseMerch = api.merchandise.purchaseMerch.useMutation();
+  const getPaymentStatus = api.razorpay.getPaymentStatus.useQuery;
   const { data: session } = useSession();
 
   const handlePurchase = async () => {
     setIsLoading(true);
     try {
-      const paymentLink = await purchaseMerch.mutateAsync({
-        merch,
-        total,
-      });
-      if (paymentLink?.short_url) {
-        // Redirect to Razorpay payment link
-        window.location.href = paymentLink.short_url;
-        // Add event listener for payment success
-        // window.addEventListener("payment.success", async (event: any) => {
-        //   await handlePaymentSuccess(paymentLink.id);
-        // });
+      const paymentLink = await purchaseMerch.mutateAsync({ merch, total });
+
+      if (paymentLink?.success) {
+        window.location.href = `/checkout?orderId=${paymentLink.orderId}`;
+
+        const checkStatus = async () => {
+          const statusResponse = getPaymentStatus({
+            orderId: paymentLink.orderId,
+          });
+          if (statusResponse.status === "success") {
+            alert("Payment successful!");
+            window.location.reload();
+          } else {
+            setTimeout(() => {
+              checkStatus().catch(console.error);
+            }, 5000);
+          }
+        };
+
+        await checkStatus();
       } else {
         alert("Failed to generate payment link.");
       }
@@ -49,7 +59,7 @@ const PurchaseMerchButton = ({
     <button
       className={`btn-default-styles ${className}`}
       onClick={handlePurchase}
-      disabled={isLoading} // Replace with your buy function
+      disabled={isLoading}
     >
       {isLoading ? "Processing..." : session?.user ? "Buy Now" : "Login to Buy"}
     </button>
