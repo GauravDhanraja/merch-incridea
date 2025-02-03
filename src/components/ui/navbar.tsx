@@ -45,6 +45,8 @@ const Navbar = () => {
     pathname === "/" ? "text-palate_1/90" : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
 
   return (
+    <div>
+    <div className="fixed z-50 mx-4 h-[67px] mt-[16px] grid w-[calc(100%-32px)] lg:mx-[5%] lg:w-[90%] rounded-2xl backdrop-blur-2xl bg-palate_2/50 lg:bg-transparent py-2"></div>
     <nav
       className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] lg:mx-[5%] lg:w-[90%] rounded-2xl lg:backdrop-blur-xl py-2 ${pathname === "/" ? navbarBgClass : ""} ${pathname === "/admin" ? "hidden" : ""}`}
     >
@@ -187,6 +189,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+    </div>
   );
 };
 

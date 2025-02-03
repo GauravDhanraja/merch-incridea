@@ -5,8 +5,6 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
-import { MerchData } from "../admin/_components/merchData";
-import { OrderData } from "../admin/_components/orderData";
 import { FaCopy } from "react-icons/fa";
 import createToast from "~/components/ui/toast";
 
@@ -76,25 +74,33 @@ const Orders = () => {
               {orders?.map((order) => (
                 <div
                   key={order.id}
-                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2 p-2 lg:p-4 shadow-sm"
+                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2 p-2 shadow-sm lg:p-4"
                 >
-                  <div className="flex h-full lg:mb-0 overflow-x-scroll">
+                  <div className="flex h-full overflow-x-scroll lg:mb-0">
                     <div className="flex flex-col gap-2">
                       <div>
                         <div className="flex flex-row items-center">
-                          <span className="mr-4 text-center text-md md:text-xl font-semibold text-palate_1/90">
+                          <span className="text-md mr-4 text-center font-semibold text-palate_1/90 md:text-xl">
                             Copy Order ID:
                           </span>
-                          <button onClick={async () => await handleCopy(order.id)}>
+                          <button
+                            onClick={async () => await handleCopy(order.id)}
+                          >
                             <FaCopy className="size-6 items-center pb-1 text-palate_1" />
                           </button>
                         </div>
-                        <span className="text-xs lg:text-xl font-semibold text-palate_1/25 text-wrap">
+                        <span className="text-wrap text-xs font-semibold text-palate_1/25 lg:text-xl">
                           {order.id}
                         </span>
                       </div>
-                      {/*product name to be put */}
-                      <span className="text-xl text-palate_1/90">
+                      {order.OrderItem.map((item) => {
+                        return (
+                          <span key={item.id} className="font-semibold text-palate_1 lg:text-xl">
+                            {item.Merchandise.name} x{item.quantity}
+                          </span>
+                        );
+                      })}
+                      <span className="text-xl text-palate_1/90 py-2">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </span>
                     </div>

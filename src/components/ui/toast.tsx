@@ -10,7 +10,7 @@ const createToast = (
     promise,
     {
       loading: loadingText ?? "Loading...",
-      success: "All done!",
+      success: "Copied to Clipboard",
       error: errorMessage ?? `Error ${errorText} 🫤`,
     },
     {

@@ -43,6 +43,13 @@ export const orderRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      include:{
+        OrderItem : {
+          include: {
+            Merchandise: true
+          }
+        }
+      }
     });
   }),
 });
