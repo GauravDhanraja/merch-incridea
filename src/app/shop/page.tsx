@@ -114,7 +114,6 @@ export default function Shop() {
       ) : (
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 lg:justify-center lg:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
-            {/* Remaining merchandise */}
             <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
@@ -124,8 +123,8 @@ export default function Shop() {
                       ref={(el) => {
                         if (el) cardRefs.current[0] = el;
                       }}
-                      data-index={0}
-                      onClick={() => setActiveCard(0)}
+                      data-index={index}
+                      onClick={() => setActiveCard(index)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                         activeCard === 0
                           ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white lg:h-[450px] lg:w-80"
@@ -168,7 +167,7 @@ export default function Shop() {
                       <div className="mt-24 text-center lg:mt-28">
                         <h2
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
                               : "text-lg font-semibold text-palate_1/60 lg:text-xl"
                           }
@@ -177,7 +176,7 @@ export default function Shop() {
                         </h2>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-sm font-semibold text-palate_1/90 lg:text-base"
                               : "text-xs font-normal text-palate_1/60 lg:text-sm"
                           }
@@ -186,7 +185,7 @@ export default function Shop() {
                         </p>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
                               : "text-base font-medium text-palate_1/60 lg:text-lg"
                           }
@@ -221,7 +220,7 @@ export default function Shop() {
                     ref={(el) => {
                       if (el) cardRefs.current[index] = el;
                     }}
-                    onClick={() => setActiveCard(index + 1)}
+                    onClick={() => setActiveCard(index)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                       activeCard === index + 1
                         ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white lg:h-[450px] lg:w-80"
@@ -264,7 +263,7 @@ export default function Shop() {
                     <div className="mt-24 text-center lg:mt-28">
                       <h2
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
                             : "text-lg font-semibold text-palate_1/60 lg:text-xl"
                         }
@@ -273,7 +272,7 @@ export default function Shop() {
                       </h2>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-sm font-semibold text-palate_1/90 lg:text-base"
                             : "text-xs font-normal text-palate_1/60 lg:text-sm"
                         }
@@ -282,7 +281,7 @@ export default function Shop() {
                       </p>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
                             : "text-base font-medium text-palate_1/60 lg:text-lg"
                         }
@@ -331,7 +330,7 @@ export default function Shop() {
                           <FaPlus className="text-gray-700" />
                         </button>
                       </div>
-                      {activeCard === index + 1 && (
+                      {activeCard === index && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 lg:mt-6 lg:gap-3">
                           <BuyButton
                             merch={[
