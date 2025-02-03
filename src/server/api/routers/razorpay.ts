@@ -1,4 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
 import { z } from "zod";
 
 export const razorPayRouter = createTRPCRouter({
@@ -16,4 +20,10 @@ export const razorPayRouter = createTRPCRouter({
 
       return { status: payment.status };
     }),
+
+  getAllTransactions: adminProcedure.query(async ({ ctx }) => {
+    return ctx.db.paymentOrder.findMany({
+      select: { amount: true },
+    });
+  }),
 });

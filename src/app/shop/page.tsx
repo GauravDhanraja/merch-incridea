@@ -17,7 +17,6 @@ export default function Shop() {
     (Merchandise & { count: number })[]
   >([]);
   type sizeType = Record<Sizes, number>;
-  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
@@ -75,16 +74,16 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  const handlePaymentSuccess = async (razorpayOrderId: string) => {
-    try {
-      await rzpWebhook.mutateAsync({
-        razorpayOrderId,
-        status: "SUCCESS",
-      });
-    } catch (error) {
-      console.error("Error updating payment status:", error);
-    }
-  };
+  // const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  //   try {
+  //     await rzpWebhook.mutateAsync({
+  //       razorpayOrderId,
+  //       status: "SUCCESS",
+  //     });
+  //   } catch (error) {
+  //     console.error("Error updating payment status:", error);
+  //   }
+  // };
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;
