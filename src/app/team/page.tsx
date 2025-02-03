@@ -76,7 +76,7 @@ const Team = () => {
   ];
 
   return (
-    <div className="absolute flex min-h-screen w-full flex-col items-center bg-palate_2 py-20">
+    <div className="absolute flex min-h-screen w-full flex-col items-center bg-gradient-to-bl from-emerald-950 to-emerald-800 py-20">
       <div className="mt-10 flex flex-wrap justify-center gap-8 md:grid md:grid-cols-2 lg:grid-cols-4">
         {teamMembers.map((member, index) => (
           <TeamCard key={index} {...member} />

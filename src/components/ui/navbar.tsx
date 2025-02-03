@@ -17,6 +17,7 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
+    { label: "Team", href: "/team" },
   ];
 
   const toggleNavbar = () => {
@@ -39,8 +40,9 @@ const Navbar = () => {
     };
   }, []);
 
-  const navbarBgClass = pathname === "/" ? "bg-black/80" : "bg-palate_2/75";
-  const navbarFgClass = "text-palate_1/90";
+  const navbarBgClass = pathname === "/" ? "bg-black/90" : "bg-transparent";
+  const navbarFgClass =
+    pathname === "/" ? "text-palate_1/90" : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
 
   return (
     <nav
@@ -60,7 +62,7 @@ const Navbar = () => {
 
           {/* Desktop Nav */}
           <ul
-            className={`hidden select-none items-center space-x-12 text-xl font-bold lg:flex ${navbarFgClass}`}
+            className={`hidden select-none items-center space-x-12 text-xl font-bold md:flex ${navbarFgClass}`}
           >
             {navItems.map((item) => (
               <li key={item.href}>
@@ -75,11 +77,6 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            <li>
-              <Link href="/team" className="text-xl font-bold">
-                Team
-              </Link>
-            </li>
             {/* Admin Dashboard link */}
             {session?.user.role === "ADMIN" && (
               <li>
@@ -89,7 +86,7 @@ const Navbar = () => {
           </ul>
 
           {/* Desktop Actions */}
-          <div className="hidden items-center space-x-4 lg:flex">
+          <div className="hidden items-center space-x-4 md:flex">
             <ToggleMute color={navbarFgClass} />
             {session ? (
               <button
@@ -109,8 +106,8 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="flex items-center justify-center gap-3 lg:hidden">
-            <ToggleMute color={navbarFgClass} />
+          <div className="flex items-center justify-center gap-3 md:hidden">
+            <ToggleMute color={`${navbarFgClass}`}/>
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
@@ -157,11 +154,6 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            <li className={`text-4xl font-bold ${navbarFgClass}`}>
-              <Link href="/team" onClick={toggleNavbar}>
-                Team
-              </Link>
-            </li>
             {/* Admin Dashboard link */}
             {session?.user.role === "ADMIN" && (
               <li className={`text-4xl font-bold ${navbarFgClass}`}>
