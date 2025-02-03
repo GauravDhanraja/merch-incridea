@@ -62,5 +62,5 @@ export const authConfig = {
         image: user.image ?? session.user.image,
       },
     }),
-  },
+  },trustHost: true,
 } satisfies NextAuthConfig;
