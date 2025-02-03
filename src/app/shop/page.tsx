@@ -126,7 +126,7 @@ export default function Shop() {
                       data-index={index}
                       onClick={() => setActiveCard(index)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
-                        activeCard === 0
+                        activeCard === index
                           ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white lg:h-[450px] lg:w-80"
                           : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 lg:h-[400px] lg:w-72"
                       }`}
@@ -222,7 +222,7 @@ export default function Shop() {
                     }}
                     onClick={() => setActiveCard(index)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
-                      activeCard === index + 1
+                      activeCard === index
                         ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white lg:h-[450px] lg:w-80"
                         : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 lg:h-[400px] lg:w-72"
                     }`}
