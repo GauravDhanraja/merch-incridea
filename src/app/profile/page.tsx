@@ -50,7 +50,7 @@ const Orders = () => {
   return (
     <div className="flex min-h-screen flex-col items-center overflow-auto bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="mt-16 flex w-full flex-col rounded-2xl bg-palate_1 p-2 shadow-lg lg:w-[60%] lg:p-10 rounded-3xl mx-2">
+      <div className="mt-16 flex w-full flex-col bg-palate_3 p-2 shadow-lg lg:w-[60%] lg:p-10 rounded-3xl mx-2">
         <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
           <div className="flex items-center justify-center">
             <div className="mt-8 text-center lg:mt-0 lg:text-left">
@@ -75,7 +75,7 @@ const Orders = () => {
               {orders?.map((order) => (
                 <div
                   key={order.id}
-                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2/90 p-2 shadow-2xl lg:p-4"
+                  className="flex flex-row justify-between rounded-2xl border border-gray-200 bg-palate_2/90 p-2 shadow-2xl lg:p-4"
                 >
                   <div className="flex h-full overflow-x-scroll lg:mb-0">
                     <div className="flex flex-col gap-2">

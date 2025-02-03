@@ -47,7 +47,7 @@ const PurchaseMerchButton = ({
 
   return (
     <button
-      className={`btn-default-styles bg-palate_2 text-palate_1 p-2 ${className}`}
+      className={`btn-default-styles bg-[#004b3f] text-palate_1 ${className}`}
       onClick={handlePurchase}
       disabled={isLoading} // Replace with your buy function
     >

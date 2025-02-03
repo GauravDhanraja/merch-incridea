@@ -132,7 +132,7 @@ export default function Cart({
           {/* Footer */}
           {cartItems.length > 0 && (
             <div className="mt-4 border-t border-white/20 pt-4">
-              <div className="flex justify-between text-white">
+              <div className="flex justify-between text-palate_2">
                 <span className="font-bold">Total:</span>
                 <span className="font-bold">₹{total.toFixed(2)}</span>
               </div>
