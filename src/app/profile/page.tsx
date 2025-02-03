@@ -50,7 +50,7 @@ const Orders = () => {
   return (
     <div className="flex min-h-screen flex-col items-center overflow-auto bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="mt-16 flex w-full flex-col rounded-2xl bg-palate_1 p-2 shadow-lg lg:w-[60%] lg:p-10">
+      <div className="mt-16 flex w-full flex-col rounded-2xl bg-palate_1 p-2 shadow-lg lg:w-[60%] lg:p-10 rounded-3xl mx-2">
         <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
           <div className="flex items-center justify-center">
             <div className="mt-8 text-center lg:mt-0 lg:text-left">
@@ -64,11 +64,11 @@ const Orders = () => {
 
         {/* Orders Section */}
         <div className="mt-8 flex-grow overflow-y-auto overflow-x-hidden">
-          <h2 className="px-2 text-4xl font-semibold text-palate_2">Orders</h2>
+          <h2 className="px-2 text-2xl lg:text-4xl font-semibold text-palate_2">Orders</h2>
 
           {orders?.length === 0 ? (
-            <p className="mt-4 text-2xl text-palate_2">
-              You have no orders yet.
+            <p className="mt-4 text-xl lg:text-2xl px-2 text-palate_2">
+              You have no orders yet 🙁
             </p>
           ) : paymentOrder?.status === "success" ? (
             <div className="mt-4 space-y-6">
