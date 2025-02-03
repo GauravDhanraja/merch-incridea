@@ -6,6 +6,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
 import { MerchData } from "../admin/_components/merchData";
+import { OrderData } from "../admin/_components/orderData";
+import { FaCopy } from "react-icons/fa";
+import createToast from "~/components/ui/toast";
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -31,10 +34,23 @@ const Orders = () => {
     );
   }
 
+  const handleCopy = async (copyString: string) => {
+    try {
+      await navigator.clipboard.writeText(copyString);
+      await createToast(Promise.resolve(), "URL copied to clipboard");
+    } catch (error) {
+      console.log(error);
+      await createToast(
+        Promise.reject(new Error("Failed to copy URL to clipboard")),
+        "Failed to copy URL to clipboard",
+      );
+    }
+  };
+
   return (
-    <div className="flex min-h-screen overflow-auto flex-col items-center bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
+    <div className="flex min-h-screen flex-col items-center overflow-auto bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="flex flex-col w-full px-4 py-4 lg:w-[60%] mt-16 shadow-lg rounded-2xl lg:py-10 lg:px-16 bg-gradient-to-tr from-emerald-700 to-emerald-600">
+      <div className="mt-16 flex w-full flex-col rounded-2xl bg-gradient-to-tr from-emerald-700 to-emerald-600 px-2 py-4 shadow-lg lg:w-[60%] lg:px-16 lg:py-10">
         <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
           <div className="flex items-center justify-center">
             <div className="mt-8 text-center lg:mt-0 lg:text-left">
@@ -46,11 +62,9 @@ const Orders = () => {
           </div>
         </div>
 
-        
-        
         {/* Orders Section */}
-        <div className="mt-8 flex-grow overflow-y-auto">
-          <h2 className="text-4xl font-semibold text-palate_1/90 px-2">
+        <div className="mt-8 flex-grow overflow-y-auto overflow-x-hidden">
+          <h2 className="px-2 text-4xl font-semibold text-palate_1/90">
             Orders
           </h2>
           {orders?.length === 0 ? (
@@ -62,22 +76,37 @@ const Orders = () => {
               {orders?.map((order) => (
                 <div
                   key={order.id}
-                  className="flex flex-row justify-between bg-palate_2 rounded-lg border border-gray-200 p-4 shadow-sm"
+                  className="flex flex-row justify-between rounded-lg border border-gray-200 bg-palate_2 p-2 lg:p-4 shadow-sm"
                 >
-                  <div className="mb-4 h-full flex lg:mb-0">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-2xl text-palate_1/90">
-                        {MerchData.name}{" "}
-                      </span>{" "}
+                  <div className="flex h-full lg:mb-0 overflow-x-scroll">
+                    <div className="flex flex-col gap-2">
+                      <div>
+                        <div className="flex flex-row items-center">
+                          <span className="mr-4 text-center text-md md:text-xl font-semibold text-palate_1/90">
+                            Copy Order ID:
+                          </span>
+                          <button onClick={async () => await handleCopy(order.id)}>
+                            <FaCopy className="size-6 items-center pb-1 text-palate_1" />
+                          </button>
+                        </div>
+                        <span className="text-xs lg:text-xl font-semibold text-palate_1/25 text-wrap">
+                          {order.id}
+                        </span>
+                      </div>
                       {/*product name to be put */}
                       <span className="text-xl text-palate_1/90">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <div className="rounded-md flex items-center justify-center">
-                  <QRCodeCanvas bgColor="rgba(0,0,0,0)" fgColor="#FEFED8" value={`${order.id}`} size={140} />
-                </div>
+                  <div className="flex items-center justify-center rounded-md">
+                    <QRCodeCanvas
+                      bgColor="rgba(0,0,0,0)"
+                      fgColor="#FEFED8"
+                      value={`${order.id}`}
+                      size={140}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
