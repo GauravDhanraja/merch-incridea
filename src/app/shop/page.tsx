@@ -1,6 +1,6 @@
 "use client";
 
-import type { Sizes, Merchandise } from "@prisma/client";
+import { Sizes, type Merchandise } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
@@ -17,7 +17,7 @@ export default function Shop() {
     (Merchandise & { count: number })[]
   >([]);
   type sizeType = Record<Sizes, number>;
-  //const rzpWebhook = api.razorpay.handleWebhook.useMutation();
+  const rzpWebhook = api.razorpay.handleWebhook.useMutation();
   const [activeCard, setActiveCard] = useState<number>(0);
   const {
     data: userCartData,
@@ -36,6 +36,7 @@ export default function Shop() {
     FREE_SIZE: 0,
   });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
+  const [bulkTotalQty, setBulkTotalQty] = useState(0);
   const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
 
   const { data: session } = useSession();
@@ -58,6 +59,7 @@ export default function Shop() {
       tshirtData[0]?.discountPrice !== undefined
         ? tshirtData[0].discountPrice
         : 0;
+    setBulkTotalQty(totalQuantity);
     setBulkTotalCost(totalQuantity * discountPrice);
   };
 
@@ -73,8 +75,7 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  {
-    /*const handlePaymentSuccess = async (razorpayOrderId: string) => {
+  const handlePaymentSuccess = async (razorpayOrderId: string) => {
     try {
       await rzpWebhook.mutateAsync({
         razorpayOrderId,
@@ -83,9 +84,7 @@ export default function Shop() {
     } catch (error) {
       console.error("Error updating payment status:", error);
     }
-  };*/
-  }
-
+  };
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;
@@ -115,18 +114,17 @@ export default function Shop() {
       ) : (
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 lg:justify-center lg:pt-6">
           <div className="flex flex-wrap justify-center gap-14">
-            {/* Remaining merchandise */}
-            <div className="flex flex-wrap justify-center gap-14 pb-16">
+            <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
                   <>
                     <div
                       key={item.id}
                       ref={(el) => {
-                        if (el) cardRefs.current[index] = el;
+                        if (el) cardRefs.current[0] = el;
                       }}
-                      data-index={0}
-                      onClick={() => setActiveCard(0)}
+                      data-index={index}
+                      onClick={() => setActiveCard(index)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                         activeCard === 0
                           ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white lg:h-[450px] lg:w-80"
@@ -169,7 +167,7 @@ export default function Shop() {
                       <div className="mt-24 text-center lg:mt-28">
                         <h2
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
                               : "text-lg font-semibold text-palate_1/60 lg:text-xl"
                           }
@@ -178,7 +176,7 @@ export default function Shop() {
                         </h2>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-sm font-semibold text-palate_1/90 lg:text-base"
                               : "text-xs font-normal text-palate_1/60 lg:text-sm"
                           }
@@ -187,7 +185,7 @@ export default function Shop() {
                         </p>
                         <p
                           className={
-                            activeCard === 0
+                            activeCard === index
                               ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
                               : "text-base font-medium text-palate_1/60 lg:text-lg"
                           }
@@ -222,7 +220,7 @@ export default function Shop() {
                     ref={(el) => {
                       if (el) cardRefs.current[index] = el;
                     }}
-                    onClick={() => setActiveCard(index + 1)}
+                    onClick={() => setActiveCard(index)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                       activeCard === index + 1
                         ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white lg:h-[450px] lg:w-80"
@@ -265,7 +263,7 @@ export default function Shop() {
                     <div className="mt-24 text-center lg:mt-28">
                       <h2
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
                             : "text-lg font-semibold text-palate_1/60 lg:text-xl"
                         }
@@ -274,7 +272,7 @@ export default function Shop() {
                       </h2>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-sm font-semibold text-palate_1/90 lg:text-base"
                             : "text-xs font-normal text-palate_1/60 lg:text-sm"
                         }
@@ -283,7 +281,7 @@ export default function Shop() {
                       </p>
                       <p
                         className={
-                          activeCard === index + 1
+                          activeCard === index
                             ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
                             : "text-base font-medium text-palate_1/60 lg:text-lg"
                         }
@@ -332,7 +330,7 @@ export default function Shop() {
                           <FaPlus className="text-gray-700" />
                         </button>
                       </div>
-                      {activeCard === index + 1 && (
+                      {activeCard === index && (
                         <div className="mt-4 flex flex-wrap justify-center gap-2 lg:mt-6 lg:gap-3">
                           <BuyButton
                             merch={[
@@ -417,14 +415,14 @@ export default function Shop() {
               </div>
 
               {/* Total Cost */}
-              <div className="mt-4 flex items-center justify-between text-base font-bold text-white sm:text-lg">
+              <div className="mt-4 flex items-center justify-between text-lg font-bold text-white">
                 <span>Total Cost:</span>
                 <span>₹{bulkTotalCost}</span>
               </div>
 
               {/* Buy Button */}
               <div className="mt-6 text-center">
-                {tshirtData[0] && (
+                {merchData[0] && (
                   <BuyButton
                     merch={Object.entries(sizes)
                       .filter(([_, quantity]) => quantity > 0)

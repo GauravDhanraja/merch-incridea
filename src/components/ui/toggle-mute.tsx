@@ -2,7 +2,7 @@
 import { GoUnmute, GoMute } from "react-icons/go";
 import { useMusic } from "~/components/ui/MusicContext";
 
-const ToggleMute = ({color} : {color: string}) => {
+const ToggleMute = ({ color }: { color: string }) => {
   const { isMusicPlaying, toggleMusic } = useMusic();
 
   return (

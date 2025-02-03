@@ -38,9 +38,20 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
         where: {
           orderId: order_id,
         },
+        include: {
+          Order: {
+            select: {
+              merchandiseId: true,
+            },
+          },
+        },
       });
 
-      if (paymentOrder) {
+      if (
+        paymentOrder &&
+        paymentOrder.status === "PENDING" &&
+        paymentOrder.Order.merchandiseId
+      ) {
         const updatedPaymentOrder = await db.paymentOrder.update({
           where: {
             orderId: order_id,
@@ -48,6 +59,17 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             status: "SUCCESS",
             paymentData: req.body.payload.payment.entity.paymentData,
+          },
+        });
+
+        const stockUpdate = await db.merchandise.update({
+          where: {
+            id: paymentOrder.Order.merchandiseId,
+          },
+          data: {
+            stock: {
+              decrement: 1,
+            },
           },
         });
 
