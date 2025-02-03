@@ -113,7 +113,7 @@ export default function Shop() {
         <CircleLoader />
       ) : (
         <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 lg:justify-center lg:pt-6">
-          <div className="flex flex-wrap justify-center gap-14">
+          <div className="flex flex-wrap justify-center gap-14 pb-12">
             <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
@@ -127,8 +127,8 @@ export default function Shop() {
                       onClick={() => setActiveCard(index)}
                       className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                         activeCard === index
-                          ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white lg:h-[450px] lg:w-80"
-                          : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 lg:h-[400px] lg:w-72"
+                          ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
+                          : "h-[350px] w-64 scale-95 bg-palate_3 text-gray-300 lg:h-[400px] lg:w-72"
                       }`}
                     >
                       {activeCard === index && (
@@ -168,8 +168,8 @@ export default function Shop() {
                         <h2
                           className={
                             activeCard === index
-                              ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
-                              : "text-lg font-semibold text-palate_1/60 lg:text-xl"
+                              ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
+                              : "text-lg font-semibold text-palate_2/60 lg:text-xl"
                           }
                         >
                           {item.name}
@@ -177,8 +177,8 @@ export default function Shop() {
                         <p
                           className={
                             activeCard === index
-                              ? "text-sm font-semibold text-palate_1/90 lg:text-base"
-                              : "text-xs font-normal text-palate_1/60 lg:text-sm"
+                              ? "text-sm font-semibold text-palate_2/90 lg:text-base"
+                              : "text-xs font-normal text-palate_2/60 lg:text-sm"
                           }
                         >
                           {item.description}
@@ -186,8 +186,8 @@ export default function Shop() {
                         <p
                           className={
                             activeCard === index
-                              ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
-                              : "text-base font-medium text-palate_1/60 lg:text-lg"
+                              ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
+                              : "text-base font-medium text-palate_2/60 lg:text-lg"
                           }
                         >
                           ₹{item.discountPrice}
@@ -223,8 +223,8 @@ export default function Shop() {
                     onClick={() => setActiveCard(index)}
                     className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                       activeCard === index
-                        ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white lg:h-[450px] lg:w-80"
-                        : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 lg:h-[400px] lg:w-72"
+                        ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
+                        : "h-[350px] w-64 scale-95 bg-palate_3 from-emerald-800 to-emerald-600 text-gray-300 lg:h-[400px] lg:w-72"
                     }`}
                   >
                     {activeCard === index && (
@@ -235,7 +235,7 @@ export default function Shop() {
                           handlePreviousCard();
                         }}
                       >
-                        <FaChevronLeft size={24} color="white" />
+                        <FaChevronLeft size={24} color="#004b3f" />
                       </button>
                     )}
                     {activeCard === index && (
@@ -246,7 +246,7 @@ export default function Shop() {
                           handleNextCard();
                         }}
                       >
-                        <FaChevronRight size={24} color="white" />
+                        <FaChevronRight size={24} color="#004b3f" />
                       </button>
                     )}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible lg:-top-16">
@@ -264,8 +264,8 @@ export default function Shop() {
                       <h2
                         className={
                           activeCard === index
-                            ? "text-xl font-extrabold text-palate_1/90 lg:text-2xl"
-                            : "text-lg font-semibold text-palate_1/60 lg:text-xl"
+                            ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
+                            : "text-lg font-bold text-palate_2/60 lg:text-xl"
                         }
                       >
                         {item.name}
@@ -273,8 +273,8 @@ export default function Shop() {
                       <p
                         className={
                           activeCard === index
-                            ? "text-sm font-semibold text-palate_1/90 lg:text-base"
-                            : "text-xs font-normal text-palate_1/60 lg:text-sm"
+                            ? "text-sm font-semibold text-palate_2/90 lg:text-base"
+                            : "text-xs font-bold text-palate_2/60 lg:text-sm"
                         }
                       >
                         {item.description}
@@ -282,8 +282,8 @@ export default function Shop() {
                       <p
                         className={
                           activeCard === index
-                            ? "text-lg font-extrabold text-palate_1/90 lg:text-2xl"
-                            : "text-base font-medium text-palate_1/60 lg:text-lg"
+                            ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
+                            : "text-base font-bold text-palate_2/60 lg:text-lg"
                         }
                       >
                         ₹{item.discountPrice}
@@ -311,7 +311,7 @@ export default function Shop() {
                         >
                           <FaMinus className="text-gray-700" />
                         </button>
-                        <span className="px-3 text-lg font-medium text-white lg:px-4 lg:text-xl">
+                        <span className="px-3 text-lg font-bold text-palate_2 lg:px-4 lg:text-xl">
                           {item.count}
                         </span>
                         <button
@@ -341,11 +341,11 @@ export default function Shop() {
                               },
                             ]}
                             total={item.discountPrice * item.count}
-                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
+                            className="rounded-full bg-palate_2/90 px-6 py-2 font-bold tracking-wide text-white lg:px-8 lg:py-3"
                           />
-                          {session?.user ? (
+                          {session?.user && (
                             <button
-                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
+                              className="rounded-full bg-gray-300 px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                               onClick={async () => {
                                 await addItemToCart.mutateAsync({
                                   id: item.id,
@@ -355,10 +355,6 @@ export default function Shop() {
                               }}
                             >
                               Add to Cart
-                            </button>
-                          ) : (
-                            <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3">
-                              Login for Cart
                             </button>
                           )}
                         </div>
@@ -374,7 +370,7 @@ export default function Shop() {
       {/* Modal for Bulk Order */}
       {showBulkOrderForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-lg bg-gradient-to-tr from-emerald-700 to-emerald-500 p-6 shadow-lg">
+          <div className="relative w-full max-w-lg rounded-lg bg-palate_3 p-6 shadow-lg">
             <button
               onClick={() => setShowBulkOrderForm(false)}
               className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"

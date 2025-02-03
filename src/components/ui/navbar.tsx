@@ -92,14 +92,14 @@ const Navbar = () => {
             <ToggleMute color={navbarFgClass} />
             {session ? (
               <button
-                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-black hover:text-white`}
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-palate_3 hover:text-palate_2 font-semibold`}
                 onClick={() => signOut()}
               >
                 Sign Out
               </button>
             ) : (
               <button
-                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-black hover:text-white`}
+                className={`rounded-md border border-[${navbarFgClass.substring(5)}] px-3 py-2 ${navbarFgClass} hover:bg-palate_3 hover:text-palate_2 font-semibold`}
                 onClick={() => signIn("google")}
               >
                 Sign In

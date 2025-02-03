@@ -1,6 +1,9 @@
+"use client"
+import { useSession } from "next-auth/react";
 import TeamCard from "../../components/ui/teamCard";
 
 const Team = () => {
+  const session = useSession();
   const teamMembers = [
     {
       name: "Ashton Prince Mathias",
@@ -32,7 +35,7 @@ const Team = () => {
     {
       name: "Keerthan K",
       role: "Developer",
-      description: "",
+      description: `You're ${session.data?.user.name ?? "not logged in "} right?`,
       image: "/team/keerthan.jpg",
       linkedin: "https://www.linkedin.com/in/keetha1011/",
       github: "https://github.com/keetha1011",
@@ -53,6 +56,7 @@ const Team = () => {
       image: "/team/aryan.jpg",
       github: "https://github.com/wizhill05",
       instagram: "https://instagram.com/just_aryansingh",
+      linkedin: "https://www.linkedin.com/in/justaryansingh",
     },
     {
       name: "Mayur Shet",
@@ -65,10 +69,9 @@ const Team = () => {
     {
       name: "Pavan C",
       role: "Designer",
-      description: "",
-      image: "",
-      linkedin:
-        "https://www.linkedin.com/in/pavan-c/",
+      description: "I hate Canva",
+      image: "/team/pavan.jpg",
+      linkedin: "https://www.linkedin.com/in/pavan-c/",
       github: "https://github.com/PACHITRA",
       instagram: "https://www.instagram.com/pavan_chitrapura/",
       behance: "https://www.behance.net/pachitra/",
@@ -76,7 +79,7 @@ const Team = () => {
   ];
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center bg-gradient-to-bl from-emerald-950 to-emerald-800 py-20 overflow-y-scroll">
+    <div className="flex min-h-screen w-full flex-col items-center overflow-y-scroll bg-gradient-to-bl from-emerald-950 to-emerald-800 py-20">
       <div className="mt-10 flex flex-wrap justify-center gap-8 md:grid md:grid-cols-2 lg:grid-cols-4">
         {teamMembers.map((member, index) => (
           <TeamCard key={index} {...member} />

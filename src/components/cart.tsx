@@ -65,11 +65,11 @@ export default function Cart({
       {/* Floating Cart Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white shadow-lg"
+        className="relative flex h-12 w-12 items-center justify-center rounded-full bg-palate_1 text-palate_2 shadow-lg"
       >
         <FaShoppingCart size={20} />
         {cartItems.length > 0 && (
-          <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm font-semibold text-white">
+          <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-700 text-sm font-semibold text-white">
             {cartItems.length}
           </div>
         )}
@@ -77,15 +77,15 @@ export default function Cart({
 
       {/* Cart Popup */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-80 rounded-lg bg-gradient-to-tr from-emerald-600 to-emerald-400 p-4 shadow-lg">
+        <div className="absolute bottom-16 right-0 w-80 rounded-lg bg-palate_1/80 lg:bg-palate_1 backdrop-blur-3xl p-4 shadow-2xl">
           {/* Cart Header */}
           <div className="flex items-center justify-between border-b border-white/20 pb-2">
-            <h1 className="text-lg font-semibold text-white">
+            <h1 className="text-lg font-semibold text-palate_2">
               <span className="font-bold">Merch</span> Cart
             </h1>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-full p-1 text-white hover:bg-white/20"
+              className="rounded-full p-1 text-palate_2 hover:bg-palate_2 hover:text-palate_1"
             >
               <X size={18} />
             </button>
@@ -93,11 +93,11 @@ export default function Cart({
 
           {/* Check if user is logged in */}
           {!session?.user ? (
-            <div className="mt-4 text-center text-white">Login to Use Cart</div>
+            <div className="mt-4 text-center text-palate_2">Login to Use Cart</div>
           ) : isLoading ? (
-            <div className="mt-4 text-center text-white">Loading...</div>
+            <div className="mt-4 text-center text-palate_2">Loading...</div>
           ) : cartItems.length === 0 ? (
-            <div className="mt-4 text-center text-white">
+            <div className="mt-4 text-center text-palate_2">
               Your cart is empty.
             </div>
           ) : (
@@ -105,7 +105,7 @@ export default function Cart({
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between rounded-lg bg-white p-3 shadow"
+                  className="flex items-center justify-between rounded-lg bg-palate_3 border border-palate_2/40 p-3 shadow"
                 >
                   <div>
                     <p className="text-sm font-bold text-gray-700">
@@ -120,7 +120,7 @@ export default function Cart({
                   </div>
                   <button
                     onClick={() => handleRemoveItem(item.Merchandise.id)}
-                    className="rounded-full bg-red-500 px-2 py-1 text-xs text-white shadow hover:bg-red-600"
+                    className="rounded-full bg-red-700 px-2 py-1 text-xs text-white shadow hover:bg-red-800"
                   >
                     Remove
                   </button>
@@ -139,7 +139,7 @@ export default function Cart({
               <div className="mt-4 flex justify-between">
                 <button
                   onClick={handleClearCart}
-                  className="rounded-full bg-red-500 px-3 py-1 text-sm text-white shadow hover:bg-red-600"
+                  className="rounded-full bg-red-700 px-3 py-1 text-sm text-white shadow hover:bg-red-800"
                 >
                   Clear Cart
                 </button>
