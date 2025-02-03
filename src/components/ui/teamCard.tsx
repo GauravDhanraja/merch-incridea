@@ -32,7 +32,7 @@ const TeamCard = ({
   behance,
 }: TeamCardProps) => {
   return (
-    <div className="w-80 rounded-2xl border bg-palate_1 px-4 py-4 text-center shadow-lg">
+    <div className="w-80 rounded-2xl border bg-palate_3 px-4 py-4 text-center shadow-lg">
       <div
         className="pb-full relative w-full overflow-hidden rounded-xl"
         style={{ paddingBottom: "100%" }}
@@ -41,7 +41,7 @@ const TeamCard = ({
       </div>
 
       <h2 className="mt-4 text-2xl font-bold text-palate_2">{name}</h2>
-      <p className="text-lg font-semibold text-palate_2">{role}</p>
+      <p className="text-lg font-bold text-palate_2">{role}</p>
 
       <div className="mt-4 flex justify-center gap-4">
         {linkedin && (
@@ -86,7 +86,7 @@ const TeamCard = ({
       <div className="mt-6 flex flex-col px-2">
         <RiDoubleQuotesL className="size-6" />
         {description && (
-          <p className="px-2 text-lg text-palate_2">{description}</p>
+          <p className="px-2 text-lg font-semibold text-palate_2">{description}</p>
         )}
         <RiDoubleQuotesR className="size-6 self-end" />
       </div>
