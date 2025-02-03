@@ -7,16 +7,10 @@ const ToggleMute = ({ color }: { color: string }) => {
 
   return (
     <div>
-      {!isMusicPlaying ? (
-        <GoMute
-          className={`h-8 w-8 ${color} cursor-pointer`}
-          onClick={toggleMusic}
-        />
+      {isMusicPlaying ? (
+        <GoUnmute className={`h-8 w-8 ${color} cursor-pointer`} onClick={toggleMusic} />
       ) : (
-        <GoUnmute
-          className={`h-8 w-8 ${color} cursor-pointer`}
-          onClick={toggleMusic}
-        />
+        <GoMute className={`h-8 w-8 ${color} cursor-pointer`} onClick={toggleMusic} />
       )}
     </div>
   );

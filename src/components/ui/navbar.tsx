@@ -17,6 +17,7 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
+    { label: "Team", href: "/team" },
   ];
 
   const toggleNavbar = () => {
@@ -39,13 +40,13 @@ const Navbar = () => {
     };
   }, []);
 
-  const navbarBgClass = pathname === "/" ? "bg-black/90" : "bg-palate_2/0";
+  const navbarBgClass = pathname === "/" ? "bg-black/90" : "bg-palate_2/90";
   const navbarFgClass =
     pathname === "/" ? "text-palate_1/90" : "text-palate_1/90"; // Replace `bg-palate_2/90` with your desired color for other routes.
 
   return (
     <nav
-      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] rounded-2xl md:mx-[5%] md:w-[90%] ${navbarBgClass} py-2 ${pathname === "/admin" ? "hidden" : ""}`}
+      className={`fixed z-50 mx-4 mt-[16px] grid w-[calc(100%-32px)] lg:mx-[5%] lg:w-[90%] rounded-2xl lg:backdrop-blur-xl py-2 ${pathname === "/" ? navbarBgClass : ""} ${pathname === "/admin" ? "hidden" : ""}`}
     >
       <div className="container relative mx-auto px-4 lg:text-sm">
         <div className="flex items-center justify-between">
@@ -106,7 +107,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center justify-center gap-3 md:hidden">
-            <ToggleMute color={navbarFgClass} />
+            <ToggleMute color={`${navbarFgClass}`}/>
             <button
               onClick={toggleNavbar}
               aria-label={mobileDrawerOpen ? "Close menu" : "Open menu"}
@@ -124,7 +125,7 @@ const Navbar = () => {
         {/* Mobile Drawer */}
         <div
           ref={mobileDrawerRef}
-          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col bg-palate_2 items-center rounded-t-3xl ${navbarBgClass} transition-opacity duration-500 ease-in-out lg:hidden ${
+          className={`fixed bottom-0 right-0 z-50 mx-auto flex h-[80vh] w-[100vw] flex-col ${navbarBgClass} items-center overflow-y-auto rounded-t-3xl shadow-2xl transition-all duration-500 ease-in-out lg:hidden ${
             mobileDrawerOpen
               ? "opacity-100 backdrop-blur-2xl"
               : "pointer-events-none opacity-0"
