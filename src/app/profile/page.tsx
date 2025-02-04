@@ -17,8 +17,6 @@ const Orders = () => {
     enabled: status === "authenticated",
   });
 
-  const paymentOrder = api.order.getUserOrders.useQuery();
-
   useEffect(() => {
     if (status === "loading") return;
     if (!session) {
