@@ -61,8 +61,8 @@ const Team = () => {
     {
       name: "Mayur Shet",
       role: "Designer",
-      description: "",
-      image: "",
+      description: "This guy was too busy to send his photo",
+      image: "/team/mayur.jpg",
       instagram: "https://instagram.com/exposure._.studio",
       behance: "https://www.behance.net/mayurshet/",
     },

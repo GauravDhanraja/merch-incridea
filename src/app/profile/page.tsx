@@ -70,7 +70,7 @@ const Orders = () => {
             <p className="mt-4 text-xl lg:text-2xl px-2 text-palate_2">
               You have no orders yet 🙁
             </p>
-          ) : paymentOrder?.status === "success" ? (
+          ) : (
             <div className="mt-4 space-y-6">
               {orders?.map((order) => (
                 <div
@@ -119,10 +119,6 @@ const Orders = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          ) : (
-            <div>
-              <p>Order Failed</p>
             </div>
           )}
         </div>
