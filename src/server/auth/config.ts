@@ -37,11 +37,11 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     Google({
-      clientId:process.env.AUTH_GOOGLE_ID,
-      clientSecret:process.env.AUTH_GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: true, 
-      }),
-    
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+
     /**
      * ...add more providers here.
      *
@@ -63,4 +63,5 @@ export const authConfig = {
       },
     }),
   },
+  trustHost: true,
 } satisfies NextAuthConfig;

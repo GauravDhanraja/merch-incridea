@@ -1,173 +1,70 @@
-import { Status } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import Razorpay from "razorpay";
-import { z } from "zod";
-import { env } from "~/env";
-
 import {
   adminProcedure,
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
-} from "../trpc";
-import type { JsonObject } from "next-auth/adapters";
+} from "~/server/api/trpc";
+import { z } from "zod";
+import { Sizes, Status } from "@prisma/client";
 
-export const razorpayRouter = createTRPCRouter({
-  initiateRefund: adminProcedure
-    .input(
-      z.object({
-        paymentId: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      try {
-        const paymentOrder = await ctx.db.paymentOrder.findUnique({
-          where: {
-            id: input.paymentId,
-          },
-        });
-        if (!paymentOrder) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Payment order not found",
-          });
-        }
+export const razorPayRouter = createTRPCRouter({
+  getPaymentStatus: protectedProcedure
+    .input(z.object({ orderId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const payment = await ctx.db.paymentOrder.findUnique({
+        where: { razorpayOrderID: input.orderId },
+        select: { status: true },
+      });
 
-        const razorpayInstance = new Razorpay({
-          key_id: env.RAZORPAY_KEY_ID,
-          key_secret: env.RAZORPAY_KEY_SECRET,
-        });
-
-        const refundRes = await razorpayInstance.payments.refund(
-          input.paymentId,
-          {
-            amount: paymentOrder?.amount * 100, // amount in paise, TODO: Check if this is correct
-            speed: "normal",
-            notes: {
-              reason: "Refund initiated by admin",
-            },
-          },
-        );
-
-        return ctx.db.paymentOrder.update({
-          where: {
-            id: input.paymentId,
-          },
-          data: {
-            status: "REFUNDED",
-            paymentData: {
-              ...(paymentOrder.paymentData as JsonObject),
-              refundData: {
-                refundData: { refundId: refundRes.id, notes: refundRes.notes },
-              },
-            },
-          },
-        });
-      } catch (err) {
-        console.log(err);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not create merchandise",
-        });
+      if (!payment) {
+        throw new Error("Payment order not found");
       }
+
+      return { status: payment.status };
     }),
-  getAllTransactions: publicProcedure.query(async ({ ctx }) => {
-    try {
-      return ctx.db.paymentOrder.findMany({});
-    } catch (error) {
-      console.log({
-        location: "getAllTransactions",
-        error,
-      });
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Could not get merchandise",
-      });
-    }
+
+  getAllTransactions: adminProcedure.query(async ({ ctx }) => {
+    return ctx.db.paymentOrder.findMany({
+      select: { amount: true },
+    });
   }),
-  getTransactionDetailsById: protectedProcedure
+
+  changePaymentStatus: protectedProcedure
     .input(
       z.object({
-        paymentId: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      try {
-        return ctx.db.paymentOrder.findUnique({
-          where: {
-            id: input.paymentId,
-          },
-        });
-      } catch (error) {
-        console.log({
-          location: "getTransactionDetailsById",
-          error,
-        });
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not get merchandise",
-        });
-      }
-    }),
-  getTransactionByStatus: protectedProcedure
-    .input(
-      z.object({
+        paymentOrderId: z.string(),
+        merch: z
+          .object({
+            id: z.string(),
+            quantity: z.number(),
+            size: z.nativeEnum(Sizes),
+          })
+          .array(),
         status: z.nativeEnum(Status),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      try {
-        return ctx.db.paymentOrder.findMany({
-          where: {
-            status: input.status,
-          },
-        });
-      } catch (error) {
-        console.log({
-          location: "getTransactionByStatus",
-          error,
-        });
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not get merchandise",
-        });
-      }
-    }),
-  handleWebhook: publicProcedure
-    .input(
-      z.object({
-        razorpayOrderId: z.string(),
-        status: z.nativeEnum(Status),
+        response: z.unknown(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      try {
-        const paymentOrder = await ctx.db.paymentOrder.findUnique({
-          where: {
-            razorpayOrderID: input.razorpayOrderId,
-          },
-        });
-        if (!paymentOrder) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Payment order not found",
-          });
-        }
+      const order = await ctx.db.paymentOrder.update({
+        where: {
+          id: input.paymentOrderId,
+        },
+        data: {
+          status: input.status,
+          paymentData: input.response ?? {},
+        },
+      });
 
-        return ctx.db.paymentOrder.update({
-          where: {
-            razorpayOrderID: input.razorpayOrderId,
-          },
-          data: {
-            status: input.status,
-          },
-        });
-      } catch (err) {
-        console.log(err);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not update payment status",
-        });
+      if (input.status === "SUCCESS") {
+        await Promise.all(
+          input.merch.map(async (item) => {
+            await ctx.db.merchandise.update({
+              where: { id: item.id },
+              data: { stock: { decrement: item.quantity } },
+            });
+          }),
+        );
       }
+
+      return order;
     }),
 });

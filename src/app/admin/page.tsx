@@ -77,7 +77,9 @@ export default function Admin() {
                 </CardHeader>
                 <CardContent>
                   {orderLoading ? (
-                    <p className="text-muted-foreground">Loading order data...</p>
+                    <p className="text-muted-foreground">
+                      Loading order data...
+                    </p>
                   ) : (
                     <OrderData columns={orderColumns} data={orderData} />
                   )}
@@ -92,7 +94,9 @@ export default function Admin() {
                 </CardHeader>
                 <CardContent>
                   {merchLoading ? (
-                    <p className="text-muted-foreground">Loading merchandise data...</p>
+                    <p className="text-muted-foreground">
+                      Loading merchandise data...
+                    </p>
                   ) : (
                     <MerchData columns={merchColumns} data={merchData} />
                   )}
