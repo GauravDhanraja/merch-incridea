@@ -168,7 +168,7 @@ export const merchandiseRouter = createTRPCRouter({
           });
         }
 
-        await ctx.db.paymentOrder.create({
+        return await ctx.db.paymentOrder.create({
           data: {
             orderId: order.id,
             razorpayOrderID: razorpayOrder.id,
@@ -176,11 +176,6 @@ export const merchandiseRouter = createTRPCRouter({
             status: "PENDING",
           },
         });
-
-        return {
-          success: true,
-          orderId: razorpayOrder.id,
-        };
       } catch (error) {
         console.error({ location: "purchaseMerch", error });
         throw new TRPCError({

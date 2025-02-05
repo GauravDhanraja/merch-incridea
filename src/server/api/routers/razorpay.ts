@@ -4,6 +4,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
+import { Sizes, Status } from "@prisma/client";
 
 export const razorPayRouter = createTRPCRouter({
   getPaymentStatus: protectedProcedure
@@ -26,4 +27,44 @@ export const razorPayRouter = createTRPCRouter({
       select: { amount: true },
     });
   }),
+
+  changePaymentStatus: protectedProcedure
+    .input(
+      z.object({
+        paymentOrderId: z.string(),
+        merch: z
+          .object({
+            id: z.string(),
+            quantity: z.number(),
+            size: z.nativeEnum(Sizes),
+          })
+          .array(),
+        status: z.nativeEnum(Status),
+        response: z.unknown(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const order = await ctx.db.paymentOrder.update({
+        where: {
+          id: input.paymentOrderId,
+        },
+        data: {
+          status: input.status,
+          paymentData: input.response ?? {},
+        },
+      });
+
+      if (input.status === "SUCCESS") {
+        await Promise.all(
+          input.merch.map(async (item) => {
+            await ctx.db.merchandise.update({
+              where: { id: item.id },
+              data: { stock: { decrement: item.quantity } },
+            });
+          }),
+        );
+      }
+
+      return order;
+    }),
 });
