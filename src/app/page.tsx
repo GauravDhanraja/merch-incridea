@@ -19,7 +19,7 @@ export default function HomePage() {
   // Display a loading state while cookies are being verified or the music preference is undefined
   if (isMusicPlaying === undefined) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-bl from-slate-900 to-emerald-900 text-white">
         <h1 className="text-2xl font-bold">Loading...</h1>
       </div>
     );

@@ -5,6 +5,7 @@ import Navbar from "~/components/ui/navbar";
 import { MusicProvider } from "~/components/ui/MusicContext";
 import { SessionProvider } from "next-auth/react";
 import TransitionWrapper from "~/components/ui/loader";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Incridea Merch",
@@ -22,6 +23,7 @@ export default function RootLayout({
           <SessionProvider>
             <MusicProvider>
               <Navbar />
+              <Toaster />
               <TRPCReactProvider>{children}</TRPCReactProvider>
             </MusicProvider>
           </SessionProvider>

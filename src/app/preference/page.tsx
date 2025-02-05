@@ -30,14 +30,14 @@ export default function Preference() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-gray-900 text-white">
+      <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-bl from-slate-900 to-emerald-900 text-white">
         <h1 className="text-2xl font-bold">Loading...</h1>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gray-900 text-white">
+    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-bl from-slate-900 to-emerald-900 text-palate_1">
       <div className="flex flex-col items-center text-center">
         <h1 className="mb-8 text-3xl font-bold">Welcome to Merch Incridea</h1>
         <p className="mb-6 text-lg">
@@ -46,9 +46,9 @@ export default function Preference() {
         <div className="flex flex-col gap-4 md:flex-row">
           <button
             onClick={() => handleMusicChoice(true)}
-            className="relative rounded bg-purple-600 px-6 py-3 text-white transition ease-in-out hover:bg-purple-700"
+            className="relative rounded bg-palate_3 px-6 py-3 text-palate_2 font-semibold transition ease-in-out hover:scale-10"
           >
-            <span className="absolute inset-0 rounded border-4 border-transparent transition-all duration-300 ease-in-out hover:border-purple-400"></span>
+            <span className="absolute inset-0 rounded border-4 border-transparent transition-all duration-300 ease-in-out hover:border-orange-300"></span>
             Yes, Play Music
           </button>
           <button

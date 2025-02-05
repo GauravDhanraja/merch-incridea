@@ -13,6 +13,7 @@ import { api } from "~/trpc/react";
 import { MerchData } from "./_components/merchData";
 import { merchColumns, orderColumns } from "./_components/columns";
 import { OrderData } from "./_components/orderData";
+import AdminNav  from "../../components/ui/adminNav"
 
 export default function Admin() {
   const { data: merchData = [], isLoading: merchLoading } =
@@ -25,28 +26,27 @@ export default function Admin() {
   const totalRevenue = transactionData
     .reduce((acc, item) => acc + (item.amount || 0), 0)
     .toFixed(2);
-  const totalSales = merchData.reduce(
-    (acc, item) => acc + (item.stock || 0),
-    0,
-  );
+  const totalSales = merchData.reduce((acc, item) => acc + (item.stock || 0), 0);
 
   return (
     <PageContainer scrollable>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight text-white">
+      <>
+      < AdminNav/>
+      </>
+      <div className="space-y-6 px-4 md:px-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <h2 className="text-3xl font-bold tracking-tight text-white text-center md:text-left">
             Admin Dashboard
           </h2>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2">
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-6">
+            {/* Stats Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Card>
-                <CardHeader className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">
-                    Total Revenue
-                  </CardTitle>
+                <CardHeader>
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -56,10 +56,8 @@ export default function Admin() {
               </Card>
 
               <Card>
-                <CardHeader className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">
-                    Total Sales
-                  </CardTitle>
+                <CardHeader>
+                  <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -69,14 +67,13 @@ export default function Admin() {
               </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* Data Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
               {/* Order Data */}
-              <Card className="col-span-5 md:col-span-4">
+              <Card className="col-span-1 lg:col-span-4">
                 <CardHeader>
                   <CardTitle>Order Wise Data</CardTitle>
-                  <CardDescription>
-                    This is the order-wise data.
-                  </CardDescription>
+                  <CardDescription>Detailed order-wise statistics.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {orderLoading ? (
@@ -89,12 +86,11 @@ export default function Admin() {
                 </CardContent>
               </Card>
 
-              <Card className="col-span-4 md:col-span-3">
+              {/* Merchandise Data */}
+              <Card className="col-span-1 lg:col-span-3">
                 <CardHeader>
                   <CardTitle>Merchandise Wise Data</CardTitle>
-                  <CardDescription>
-                    This is the merchandise-wise data.
-                  </CardDescription>
+                  <CardDescription>Detailed merchandise sales data.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {merchLoading ? (

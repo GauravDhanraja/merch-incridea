@@ -107,13 +107,12 @@ export default function Shop() {
   };
 
   return (
-    <main className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-gradient-to-bl from-emerald-950 to-emerald-800 pt-24 md:overflow-y-hidden md:pt-20">
+    <main className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-gradient-to-bl from-emerald-950 to-emerald-800 pt-24 lg:overflow-y-hidden lg:pt-20">
       {isLoading ? (
         <CircleLoader />
       ) : (
-        <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 md:justify-center md:pt-6">
-          <div className="flex flex-wrap justify-center gap-14">
-            {/* Remaining merchandise */}
+        <div className="flex min-h-screen w-full flex-col items-center justify-start space-y-8 p-4 pt-28 lg:justify-center lg:pt-6">
+          <div className="flex flex-wrap justify-center gap-14 pb-12">
             <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
@@ -125,15 +124,15 @@ export default function Shop() {
                       }}
                       data-index={index}
                       onClick={() => setActiveCard(index)}
-                      className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                      className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                         activeCard === index
-                          ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white md:h-[450px] md:w-80"
-                          : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-gray-300 md:h-[400px] md:w-72"
+                          ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
+                          : "h-[350px] w-64 scale-95 bg-palate_3 text-gray-300 lg:h-[400px] lg:w-72"
                       }`}
                     >
                       {activeCard === index && (
                         <button
-                          className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                          className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
                           onClick={(e) => {
                             e.stopPropagation();
                             handlePreviousCard();
@@ -144,7 +143,7 @@ export default function Shop() {
                       )}
                       {activeCard === index && (
                         <button
-                          className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                          className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleNextCard();
@@ -153,8 +152,8 @@ export default function Shop() {
                           <FaChevronRight size={24} />
                         </button>
                       )}
-                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
-                        <div className="h-36 w-36 md:h-48 md:w-48">
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible lg:-top-16">
+                        <div className="h-36 w-36 lg:h-48 lg:w-48">
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -164,12 +163,12 @@ export default function Shop() {
                           />
                         </div>
                       </div>
-                      <div className="mt-24 text-center md:mt-28">
+                      <div className="mt-24 text-center lg:mt-28">
                         <h2
                           className={
                             activeCard === index
-                              ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
-                              : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                              ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
+                              : "text-lg font-semibold text-palate_2/60 lg:text-xl"
                           }
                         >
                           {item.name}
@@ -177,8 +176,8 @@ export default function Shop() {
                         <p
                           className={
                             activeCard === index
-                              ? "text-sm font-semibold text-palate_1/90 md:text-base"
-                              : "text-xs font-normal text-palate_1/60 md:text-sm"
+                              ? "text-sm font-semibold text-palate_2/90 lg:text-base"
+                              : "text-xs font-normal text-palate_2/60 lg:text-sm"
                           }
                         >
                           {item.description}
@@ -186,8 +185,8 @@ export default function Shop() {
                         <p
                           className={
                             activeCard === index
-                              ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
-                              : "text-base font-medium text-palate_1/60 md:text-lg"
+                              ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
+                              : "text-base font-medium text-palate_2/60 lg:text-lg"
                           }
                         >
                           ₹{item.discountPrice}
@@ -196,7 +195,7 @@ export default function Shop() {
                           <div className="mt-6">
                             {session?.user.role === "CLASS_REP" ? (
                               <button
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                                 onClick={() => setShowBulkOrderForm(true)}
                               >
                                 Bulk Order
@@ -204,7 +203,7 @@ export default function Shop() {
                             ) : (
                               <button
                                 disabled
-                                className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                                className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                               >
                                 Buy through CR
                               </button>
@@ -221,36 +220,36 @@ export default function Shop() {
                       if (el) cardRefs.current[index] = el;
                     }}
                     onClick={() => setActiveCard(index)}
-                    className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 md:rounded-3xl md:p-6 ${
+                    className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
                       activeCard === index
-                        ? "h-[400px] w-72 scale-105 bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white md:h-[450px] md:w-80"
-                        : "h-[350px] w-64 scale-95 bg-gradient-to-tr from-emerald-800 to-emerald-600 text-gray-300 md:h-[400px] md:w-72"
+                        ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
+                        : "h-[350px] w-64 scale-95 bg-palate_3 from-emerald-800 to-emerald-600 text-gray-300 lg:h-[400px] lg:w-72"
                     }`}
                   >
                     {activeCard === index && (
                       <button
-                        className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 md:left-4 md:top-10"
+                        className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePreviousCard();
                         }}
                       >
-                        <FaChevronLeft size={24} color="white" />
+                        <FaChevronLeft size={24} color="#004b3f" />
                       </button>
                     )}
                     {activeCard === index && (
                       <button
-                        className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 md:right-4 md:top-10"
+                        className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleNextCard();
                         }}
                       >
-                        <FaChevronRight size={24} color="white" />
+                        <FaChevronRight size={24} color="#004b3f" />
                       </button>
                     )}
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible md:-top-16">
-                      <div className="h-36 w-36 md:h-48 md:w-48">
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible lg:-top-16">
+                      <div className="h-36 w-36 lg:h-48 lg:w-48">
                         <Image
                           src={item.image}
                           alt={item.name}
@@ -260,12 +259,12 @@ export default function Shop() {
                         />
                       </div>
                     </div>
-                    <div className="mt-24 text-center md:mt-28">
+                    <div className="mt-24 text-center lg:mt-28">
                       <h2
                         className={
                           activeCard === index
-                            ? "text-xl font-extrabold text-palate_1/90 md:text-2xl"
-                            : "text-lg font-semibold text-palate_1/60 md:text-xl"
+                            ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
+                            : "text-lg font-bold text-palate_2/60 lg:text-xl"
                         }
                       >
                         {item.name}
@@ -273,8 +272,8 @@ export default function Shop() {
                       <p
                         className={
                           activeCard === index
-                            ? "text-sm font-semibold text-palate_1/90 md:text-base"
-                            : "text-xs font-normal text-palate_1/60 md:text-sm"
+                            ? "text-sm font-semibold text-palate_2/90 lg:text-base"
+                            : "text-xs font-bold text-palate_2/60 lg:text-sm"
                         }
                       >
                         {item.description}
@@ -282,8 +281,8 @@ export default function Shop() {
                       <p
                         className={
                           activeCard === index
-                            ? "text-lg font-extrabold text-palate_1/90 md:text-2xl"
-                            : "text-base font-medium text-palate_1/60 md:text-lg"
+                            ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
+                            : "text-base font-bold text-palate_2/60 lg:text-lg"
                         }
                       >
                         ₹{item.discountPrice}
@@ -294,7 +293,7 @@ export default function Shop() {
                         }`}
                       >
                         <button
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold lg:h-10 lg:w-10 lg:text-xl"
                           onClick={(e) => {
                             e.stopPropagation();
                             setMerchData((prev) =>
@@ -311,11 +310,11 @@ export default function Shop() {
                         >
                           <FaMinus className="text-gray-700" />
                         </button>
-                        <span className="px-3 text-lg font-medium text-white md:px-4 md:text-xl">
+                        <span className="px-3 text-lg font-bold text-palate_2 lg:px-4 lg:text-xl">
                           {item.count}
                         </span>
                         <button
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold md:h-10 md:w-10 md:text-xl"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-lg font-bold lg:h-10 lg:w-10 lg:text-xl"
                           onClick={(e) => {
                             e.stopPropagation();
                             setMerchData((prev) =>
@@ -331,7 +330,7 @@ export default function Shop() {
                         </button>
                       </div>
                       {activeCard === index && (
-                        <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
+                        <div className="mt-4 flex flex-wrap justify-center gap-2 lg:mt-6 lg:gap-3">
                           <BuyButton
                             merch={[
                               {
@@ -341,11 +340,11 @@ export default function Shop() {
                               },
                             ]}
                             total={item.discountPrice * item.count}
-                            className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                            className="rounded-full bg-palate_2/90 px-6 py-2 font-bold tracking-wide text-white lg:px-8 lg:py-3"
                           />
-                          {session?.user ? (
+                          {session?.user && (
                             <button
-                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                              className="rounded-full bg-gray-300 px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                               onClick={async () => {
                                 await addItemToCart.mutateAsync({
                                   id: item.id,
@@ -355,10 +354,6 @@ export default function Shop() {
                               }}
                             >
                               Add to Cart
-                            </button>
-                          ) : (
-                            <button className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3">
-                              Login for Cart
                             </button>
                           )}
                         </div>
@@ -374,7 +369,7 @@ export default function Shop() {
       {/* Modal for Bulk Order */}
       {showBulkOrderForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-lg bg-gradient-to-tr from-emerald-700 to-emerald-500 p-6 shadow-lg">
+          <div className="relative w-full max-w-lg rounded-lg bg-palate_3 p-6 shadow-lg">
             <button
               onClick={() => setShowBulkOrderForm(false)}
               className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
@@ -432,7 +427,7 @@ export default function Shop() {
                         size: size as Sizes,
                       }))}
                     total={bulkTotalCost}
-                    className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black md:px-8 md:py-3"
+                    className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                   />
                 )}
               </div>

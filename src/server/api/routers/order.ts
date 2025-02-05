@@ -42,6 +42,21 @@ export const orderRouter = createTRPCRouter({
     return await ctx.db.order.findMany({
       where: {
         userId: ctx.session.user.id,
+        PaymentOrder: {
+          status: 'SUCCESS',
+        }
+      },
+      include: {
+        OrderItem: {
+          include: {
+            Merchandise: true,
+          },
+        },
+        PaymentOrder: {
+          select: {
+            status: true,
+          },
+        },
       },
     });
   }),
