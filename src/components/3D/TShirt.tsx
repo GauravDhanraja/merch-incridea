@@ -4,13 +4,26 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 //@ts-expect-error blah
 import { WiggleBone } from "wiggle/spring";
 
 export function TShirt({ playAudio }: { playAudio: boolean }) {
-  const { nodes, materials, scene } = useGLTF("/models/tshirt.glb");
+  const { nodes, materials, scene } = useLoader(
+    GLTFLoader,
+    "/models/tshirt.glb",
+    (loader) => {
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(
+        "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
+      );
+      loader.setDRACOLoader(dracoLoader);
+    },
+  );
+
   const modelRef = useRef();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [audioLevel, setAudioLevel] = useState(0);
@@ -181,8 +194,8 @@ export function TShirt({ playAudio }: { playAudio: boolean }) {
       //@ts-expect-error blah
       ref={modelRef}
       dispose={null}
-      scale={[0.7, 0.7, 0.7]}
-      position={[0, -2, 0]}
+      scale={[1.2, 1.2, 1.2]}
+      position={[0, 0, 0]}
       rotation-x={mouseSpring.rotationX.to(
         (mouseX) => audioSpring.rotationX.get() + mouseX,
       )}

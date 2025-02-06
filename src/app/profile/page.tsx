@@ -101,7 +101,9 @@ const Orders = () => {
                             className="font-semibold text-palate_1 lg:text-xl"
                           >
                             {item.Merchandise.name}{" "}
-                            {item.size !== "FREE_SIZE" ? `-${item.size}` : null}{" "}
+                            {item.size !== "FREE_SIZE"
+                              ? `- ${item.size}`
+                              : null}{" "}
                             x{item.quantity}
                           </span>
                         );
