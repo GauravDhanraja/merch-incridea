@@ -75,7 +75,6 @@ model Merchandise {
   updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
   Cart      Cart[]
-  
 }
 
 model OrderItem {
@@ -153,6 +152,7 @@ enum Status {
 }
 
 enum Sizes {
+  XS
   S
   M
   L

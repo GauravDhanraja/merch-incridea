@@ -139,7 +139,7 @@ export const merchandiseRouter = createTRPCRouter({
                   merchandiseId: item.id,
                   quantity: item.quantity,
                   size: item.size,
-                  total: input.total,
+                  total: item.amount * item.quantity,
                 })),
               },
             },
@@ -177,10 +177,10 @@ export const merchandiseRouter = createTRPCRouter({
           },
         });
       } catch (error) {
-        console.error({ location: "purchaseMerch", error });
+        console.error("purchaseMerch error details:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Could not create order",
+          message: "Could not create order. Please try again.",
         });
       }
     }),

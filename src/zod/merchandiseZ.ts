@@ -28,6 +28,7 @@ export const purchaseMerchZ = z.object({
       id: z.string(),
       quantity: z.number(),
       size: z.nativeEnum(Sizes),
+      amount: z.number(),
     })
     .array(),
   total: z.number(),

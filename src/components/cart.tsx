@@ -36,10 +36,12 @@ export default function Cart({
     id: string;
     quantity: number;
     size: Sizes;
+    amount: number;
   }[] = cartItems.map((item) => ({
     id: item.Merchandise.id,
     quantity: item.quantity,
     size: "FREE_SIZE",
+    amount: item.Merchandise.discountPrice,
   }));
 
   // Update cartItems on removal
@@ -77,7 +79,7 @@ export default function Cart({
 
       {/* Cart Popup */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-80 rounded-lg bg-palate_1/80 lg:bg-palate_1 backdrop-blur-3xl p-4 shadow-2xl">
+        <div className="absolute bottom-16 right-0 w-80 rounded-lg bg-palate_1/80 p-4 shadow-2xl backdrop-blur-3xl lg:bg-palate_1">
           {/* Cart Header */}
           <div className="flex items-center justify-between border-b border-white/20 pb-2">
             <h1 className="text-lg font-semibold text-palate_2">
@@ -93,7 +95,9 @@ export default function Cart({
 
           {/* Check if user is logged in */}
           {!session?.user ? (
-            <div className="mt-4 text-center text-palate_2">Login to Use Cart</div>
+            <div className="mt-4 text-center text-palate_2">
+              Login to Use Cart
+            </div>
           ) : isLoading ? (
             <div className="mt-4 text-center text-palate_2">Loading...</div>
           ) : cartItems.length === 0 ? (
@@ -105,7 +109,7 @@ export default function Cart({
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between rounded-lg bg-palate_3 border border-palate_2/40 p-3 shadow"
+                  className="flex items-center justify-between rounded-lg border border-palate_2/40 bg-palate_3 p-3 shadow"
                 >
                   <div>
                     <p className="text-sm font-bold text-gray-700">

@@ -54,6 +54,9 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
+    signIn: async ({ user, account, profile, email, credentials }) => {
+      return user.email?.endsWith("@nmamit.in") ?? false;
+    },
     session: ({ session, user }) => ({
       ...session,
       user: {

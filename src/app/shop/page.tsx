@@ -1,6 +1,6 @@
 "use client";
 
-import { Sizes, type Merchandise } from "@prisma/client";
+import type { Sizes, Merchandise } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import CircleLoader from "~/components/ui/loader-circle-progress";
@@ -27,6 +27,7 @@ export default function Shop() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showBulkOrderForm, setShowBulkOrderForm] = useState(false);
   const [sizes, setSizes] = useState<sizeType>({
+    XS: 0,
     S: 0,
     M: 0,
     L: 0,
@@ -37,6 +38,8 @@ export default function Shop() {
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
   const [bulkTotalQty, setBulkTotalQty] = useState(0);
   const [tshirtData, setTshirtData] = useState<Merchandise[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { data: session } = useSession();
 
@@ -74,16 +77,6 @@ export default function Shop() {
     }
   }, [allMerchData]);
 
-  // const handlePaymentSuccess = async (razorpayOrderId: string) => {
-  //   try {
-  //     await rzpWebhook.mutateAsync({
-  //       razorpayOrderId,
-  //       status: "SUCCESS",
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating payment status:", error);
-  //   }
-  // };
   const handleNextCard = () => {
     setActiveCard((prev) => {
       const nextCard = (prev + 1) % merchData.length;
@@ -116,71 +109,80 @@ export default function Shop() {
             <div className="flex flex-wrap justify-center gap-14">
               {merchData.map((item, index) =>
                 item.bulkOrder ? (
-                  <>
-                    <div
-                      key={item.id}
-                      ref={(el) => {
-                        if (el) cardRefs.current[0] = el;
-                      }}
-                      data-index={index}
-                      onClick={() => setActiveCard(index)}
-                      className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
-                        activeCard === index
-                          ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
-                          : "h-[350px] w-64 scale-95 bg-palate_3 text-gray-300 lg:h-[400px] lg:w-72"
-                      }`}
-                    >
-                      {activeCard === index && (
-                        <button
-                          className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePreviousCard();
-                          }}
-                        >
-                          <FaChevronLeft size={24} />
-                        </button>
-                      )}
-                      {activeCard === index && (
-                        <button
-                          className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleNextCard();
-                          }}
-                        >
-                          <FaChevronRight size={24} />
-                        </button>
-                      )}
-                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible lg:-top-16">
-                        <div className="h-36 w-36 lg:h-48 lg:w-48">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            layout="fill"
-                            objectFit="cover"
-                            className="rounded-full"
-                          />
-                        </div>
+                  <div
+                    key={item.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current[0] = el;
+                    }}
+                    data-index={index}
+                    onClick={() => setActiveCard(index)}
+                    className={`relative cursor-pointer rounded-2xl p-4 shadow-lg transition-all duration-300 lg:rounded-3xl lg:p-6 ${
+                      activeCard === index
+                        ? "h-[400px] w-72 scale-105 bg-palate_3 text-white lg:h-[450px] lg:w-80"
+                        : "h-[350px] w-64 scale-95 bg-palate_3 text-gray-300 lg:h-[400px] lg:w-72"
+                    }`}
+                  >
+                    {activeCard === index && (
+                      <button
+                        className="absolute left-3 top-8 p-0 text-white hover:text-gray-200 lg:left-4 lg:top-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePreviousCard();
+                        }}
+                      >
+                        <FaChevronLeft size={24} />
+                      </button>
+                    )}
+                    {activeCard === index && (
+                      <button
+                        className="absolute right-3 top-8 p-0 text-white hover:text-gray-200 lg:right-4 lg:top-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNextCard();
+                        }}
+                      >
+                        <FaChevronRight size={24} />
+                      </button>
+                    )}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 transform overflow-visible lg:-top-16">
+                      <div className="h-36 w-36 lg:h-48 lg:w-48">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-full"
+                        />
                       </div>
-                      <div className="mt-24 text-center lg:mt-28">
-                        <h2
-                          className={
-                            activeCard === index
-                              ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
-                              : "text-lg font-semibold text-palate_2/60 lg:text-xl"
-                          }
-                        >
-                          {item.name}
-                        </h2>
+                    </div>
+                    <div className="mt-24 text-center lg:mt-28">
+                      <h2
+                        className={
+                          activeCard === index
+                            ? "text-xl font-extrabold text-palate_2/90 lg:text-2xl"
+                            : "text-lg font-semibold text-palate_2/60 lg:text-xl"
+                        }
+                      >
+                        {item.name}
+                      </h2>
+                      <p
+                        className={
+                          activeCard === index
+                            ? "text-sm font-semibold text-palate_2/90 lg:text-base"
+                            : "text-xs font-normal text-palate_2/60 lg:text-sm"
+                        }
+                      >
+                        {item.description}
+                      </p>
+                      <div className="flex justify-center gap-4">
                         <p
                           className={
                             activeCard === index
-                              ? "text-sm font-semibold text-palate_2/90 lg:text-base"
-                              : "text-xs font-normal text-palate_2/60 lg:text-sm"
+                              ? "text-lg font-extrabold text-palate_2/50 line-through lg:text-2xl"
+                              : "text-base font-medium text-palate_2/50 line-through lg:text-lg"
                           }
                         >
-                          {item.description}
+                          ₹{item.originalPrice}
                         </p>
                         <p
                           className={
@@ -191,28 +193,28 @@ export default function Shop() {
                         >
                           ₹{item.discountPrice}
                         </p>
-                        {activeCard === index && (
-                          <div className="mt-6">
-                            {session?.user.role === "CLASS_REP" ? (
-                              <button
-                                className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
-                                onClick={() => setShowBulkOrderForm(true)}
-                              >
-                                Bulk Order
-                              </button>
-                            ) : (
-                              <button
-                                disabled
-                                className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
-                              >
-                                Buy through CR
-                              </button>
-                            )}
-                          </div>
-                        )}
                       </div>
+                      {activeCard === index && (
+                        <div className="mt-6">
+                          {session?.user.role === "CLASS_REP" ? (
+                            <button
+                              className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
+                              onClick={() => setShowBulkOrderForm(true)}
+                            >
+                              Bulk Order
+                            </button>
+                          ) : (
+                            <button
+                              disabled
+                              className="cursor-not-allowed rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
+                            >
+                              Buy through CR
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <div
                     key={item.id}
@@ -278,15 +280,26 @@ export default function Shop() {
                       >
                         {item.description}
                       </p>
-                      <p
-                        className={
-                          activeCard === index
-                            ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
-                            : "text-base font-bold text-palate_2/60 lg:text-lg"
-                        }
-                      >
-                        ₹{item.discountPrice}
-                      </p>
+                      <div className="flex justify-center gap-4">
+                        <p
+                          className={
+                            activeCard === index
+                              ? "text-lg font-extrabold text-palate_2/50 line-through lg:text-2xl"
+                              : "text-base font-bold text-palate_2/50 line-through lg:text-lg"
+                          }
+                        >
+                          ₹{item.originalPrice}
+                        </p>
+                        <p
+                          className={
+                            activeCard === index
+                              ? "text-lg font-extrabold text-palate_2/90 lg:text-2xl"
+                              : "text-base font-bold text-palate_2/60 lg:text-lg"
+                          }
+                        >
+                          ₹{item.discountPrice}
+                        </p>
+                      </div>
                       <div
                         className={`mt-6 flex items-center justify-center gap-3 ${
                           activeCard !== index ? "hidden" : ""
@@ -337,6 +350,7 @@ export default function Shop() {
                                 id: item.id,
                                 quantity: item.count,
                                 size: "FREE_SIZE",
+                                amount: item.discountPrice,
                               },
                             ]}
                             total={item.discountPrice * item.count}
@@ -369,17 +383,28 @@ export default function Shop() {
       {/* Modal for Bulk Order */}
       {showBulkOrderForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-lg bg-palate_3 p-6 shadow-lg">
+          <div className="relative w-full max-w-lg rounded-lg bg-palate_2 p-6 shadow-lg">
             <button
-              onClick={() => setShowBulkOrderForm(false)}
-              className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+              onClick={() => {
+                if (!isSubmitting) {
+                  setShowBulkOrderForm(false);
+                  setError(null);
+                }
+              }}
+              disabled={isSubmitting}
+              className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600 disabled:opacity-50"
             >
               ✕
             </button>
             <h2 className="mb-4 text-xl font-bold text-white">
               Bulk Order Request
             </h2>
-            <form className="space-y-4">
+            {error && (
+              <div className="mb-4 rounded bg-red-100 p-2 text-red-600">
+                {error}
+              </div>
+            )}
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
@@ -419,15 +444,34 @@ export default function Shop() {
               <div className="mt-6 text-center">
                 {merchData[0] && (
                   <BuyButton
+                    disabled={isSubmitting || bulkTotalQty === 0}
                     merch={Object.entries(sizes)
                       .filter(([_, quantity]) => quantity > 0)
                       .map(([size, quantity]) => ({
                         id: tshirtData[0]?.id ?? "",
                         quantity: quantity,
                         size: size as Sizes,
+                        amount: tshirtData[0]?.discountPrice ?? 0,
                       }))}
                     total={bulkTotalCost}
-                    className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
+                    className={`rounded-full px-6 py-2 font-bold tracking-wide ${
+                      bulkTotalQty === 0
+                        ? "bg-gray-400 text-gray-700"
+                        : "bg-white text-black"
+                    } lg:px-8 lg:py-3`}
+                    onStart={() => {
+                      setIsSubmitting(true);
+                      setError(null);
+                    }}
+                    onSuccess={() => {
+                      setIsSubmitting(false);
+                      setShowBulkOrderForm(false);
+                      setError(null);
+                    }}
+                    onError={(err) => {
+                      setIsSubmitting(false);
+                      setError(err.message || "An error occurred");
+                    }}
                   />
                 )}
               </div>

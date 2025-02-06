@@ -11,87 +11,108 @@ import { env } from "~/env";
 import { api } from "~/trpc/react";
 import type { Sizes } from "@prisma/client";
 
+interface PaymentButtonProps {
+  merch?: { id: string; quantity: number; size: Sizes; amount: number }[];
+  total?: number;
+  className?: string;
+  disabled?: boolean;
+  onClick?: () => Promise<void>;
+  onStart?: () => void;
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
 const PaymentButton = ({
   merch,
   total,
   className,
-}: {
-  merch?: {
-    id: string;
-    quantity: number;
-    size: Sizes;
-  }[];
-  total?: number;
-  className?: string;
-}) => {
+  disabled,
+  onClick,
+  onStart,
+  onSuccess,
+  onError,
+}: PaymentButtonProps) => {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const purchaseMerch = api.merchandise.purchaseMerch.useMutation();
   const changePaymentStatus = api.razorpay.changePaymentStatus.useMutation();
 
   useEffect(() => {
-    if (purchaseMerch.isPending) {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-    }
+    setIsLoading(purchaseMerch.isPending);
   }, [purchaseMerch.isPending]);
 
+  useEffect(() => {
+    setIsLoading(purchaseMerch.isPending);
+  }, [purchaseMerch.isPending]);
+
+  // Use disabled prop if provided, otherwise fall back on isLoading.
+  const buttonDisabled = disabled ?? isLoading;
+
   const handleClick = async () => {
-    if (merch && total) {
-      const purchase = await purchaseMerch.mutateAsync({
-        merch: merch,
-        total: total,
-      });
+    try {
+      if (merch && total) {
+        onStart?.();
+        const purchase = await purchaseMerch.mutateAsync({
+          merch: merch,
+          total: total,
+        });
 
-      const paymentObject = new (window as any).Razorpay({
-        key: env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        order_id: purchase.razorpayOrderID,
-        amount: purchase.amount,
-        currency: "INR",
-        name: "Merch Incridea",
-        description: "Merchandise Purchase",
-        notes: {
-          address: "NMAM Institute of Technology, Nitte, Karkala",
-        },
-        theme: {
-          color: "#04382b",
-        },
-        handler: async (response: any) => {
-          console.log(response);
-          if (response.razorpay_payment_id) {
-            await changePaymentStatus.mutateAsync({
-              paymentOrderId: purchase.id,
-              merch: merch,
-              status: "SUCCESS",
-              response: response,
-            });
-          }
-        },
-      });
+        const paymentObject = new (window as any).Razorpay({
+          key: env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          order_id: purchase.razorpayOrderID,
+          amount: purchase.amount,
+          currency: "INR",
+          name: "Merch Incridea",
+          description: "Merchandise Purchase",
+          notes: {
+            address: "NMAM Institute of Technology, Nitte, Karkala",
+          },
+          theme: {
+            color: "#04382b",
+          },
+          handler: async (response: any) => {
+            try {
+              if (response.razorpay_payment_id) {
+                await changePaymentStatus.mutateAsync({
+                  paymentOrderId: purchase.id,
+                  merch: merch,
+                  status: "SUCCESS",
+                  response: response,
+                });
+                onSuccess?.();
+              }
+            } catch (error) {
+              onError?.(error as Error);
+            }
+          },
+        });
 
-      paymentObject.open();
+        paymentObject.open();
+      }
+    } catch (error) {
+      onError?.(error as Error);
     }
   };
 
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <Button
+      <button
         className={className}
-        disabled={isLoading}
+        disabled={buttonDisabled}
         onClick={async () => {
-          await handleClick();
+          if (onClick) await onClick();
+          else await handleClick();
         }}
       >
-        {isLoading
+        {buttonDisabled
           ? "Processing..."
           : session?.user
             ? merch
               ? "Buy Now"
               : "Pay now"
             : "Login to Buy"}
-      </Button>
+      </button>
     </>
   );
 };

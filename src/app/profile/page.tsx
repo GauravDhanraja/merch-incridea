@@ -48,7 +48,7 @@ const Orders = () => {
   return (
     <div className="flex min-h-screen flex-col items-center overflow-auto bg-gradient-to-bl from-emerald-950 to-emerald-800 px-2 pt-16 sm:px-4">
       {/* Profile Section */}
-      <div className="mt-16 flex w-full flex-col bg-palate_3 p-2 shadow-lg lg:w-[60%] lg:p-10 rounded-3xl mx-2">
+      <div className="mx-2 mt-16 flex w-full flex-col rounded-3xl bg-palate_3 p-2 shadow-lg lg:w-[60%] lg:p-10">
         <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-center lg:space-x-12">
           <div className="flex items-center justify-center">
             <div className="mt-8 text-center lg:mt-0 lg:text-left">
@@ -62,10 +62,12 @@ const Orders = () => {
 
         {/* Orders Section */}
         <div className="mt-8 flex-grow overflow-y-auto overflow-x-hidden">
-          <h2 className="px-2 text-2xl lg:text-4xl font-semibold text-palate_2">Orders</h2>
+          <h2 className="px-2 text-2xl font-semibold text-palate_2 lg:text-4xl">
+            Orders
+          </h2>
 
           {orders?.length === 0 ? (
-            <p className="mt-4 text-xl lg:text-2xl px-2 text-palate_2">
+            <p className="mt-4 px-2 text-xl text-palate_2 lg:text-2xl">
               You have no orders yet 🙁
             </p>
           ) : (
@@ -98,7 +100,9 @@ const Orders = () => {
                             key={item.id}
                             className="font-semibold text-palate_1 lg:text-xl"
                           >
-                            {item.Merchandise.name} x{item.quantity}
+                            {item.Merchandise.name}{" "}
+                            {item.size !== "FREE_SIZE" ? `-${item.size}` : null}{" "}
+                            x{item.quantity}
                           </span>
                         );
                       })}
