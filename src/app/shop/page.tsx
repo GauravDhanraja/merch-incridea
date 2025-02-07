@@ -408,7 +408,7 @@ export default function Shop() {
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
-                {["S", "M", "L", "XL", "XXL"].map((size, index) => (
+                {["XS", "S", "M", "L", "XL", "XXL"].map((size, index) => (
                   <div
                     key={index}
                     className="mb-2 flex items-center justify-between"

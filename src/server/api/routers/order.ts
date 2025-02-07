@@ -43,8 +43,8 @@ export const orderRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
         PaymentOrder: {
-          status: 'SUCCESS',
-        }
+          status: "SUCCESS",
+        },
       },
       include: {
         OrderItem: {
