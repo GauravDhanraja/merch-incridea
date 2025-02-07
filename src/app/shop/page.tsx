@@ -196,7 +196,8 @@ export default function Shop() {
                       </div>
                       {activeCard === index && (
                         <div className="mt-6">
-                          {session?.user.role === "CLASS_REP" ? (
+                          {session?.user.role === "CLASS_REP" ||
+                          session?.user.role === "ADMIN" ? (
                             <button
                               className="rounded-full bg-white px-6 py-2 font-bold tracking-wide text-black lg:px-8 lg:py-3"
                               onClick={() => setShowBulkOrderForm(true)}
