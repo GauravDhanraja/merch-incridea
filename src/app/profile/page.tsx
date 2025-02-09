@@ -72,57 +72,59 @@ const Orders = () => {
             </p>
           ) : (
             <div className="mt-4 space-y-6">
-              {orders?.map((order) => (
-                <div
-                  key={order.id}
-                  className="flex flex-row justify-between rounded-2xl border border-gray-200 bg-palate_2/90 p-2 shadow-2xl lg:p-4"
-                >
-                  <div className="flex h-full overflow-x-scroll lg:mb-0">
-                    <div className="flex flex-col gap-2">
-                      <div>
-                        <div className="flex flex-row items-center">
-                          <span className="text-md mr-4 text-center font-semibold text-palate_1/90 md:text-xl">
-                            Copy Order ID:
+              {orders
+                ?.filter((it) => it.PaymentOrder?.status === "SUCCESS")
+                .map((order) => (
+                  <div
+                    key={order.id}
+                    className="flex flex-row justify-between rounded-2xl border border-gray-200 bg-palate_2/90 p-2 shadow-2xl lg:p-4"
+                  >
+                    <div className="flex h-full overflow-x-scroll lg:mb-0">
+                      <div className="flex flex-col gap-2">
+                        <div>
+                          <div className="flex flex-row items-center">
+                            <span className="text-md mr-4 text-center font-semibold text-palate_1/90 md:text-xl">
+                              Copy Order ID:
+                            </span>
+                            <button
+                              onClick={async () => await handleCopy(order.id)}
+                            >
+                              <FaCopy className="size-6 items-center pb-1 text-palate_1" />
+                            </button>
+                          </div>
+                          <span className="text-wrap text-xs font-semibold text-palate_1/25 lg:text-xl">
+                            {order.id}
                           </span>
-                          <button
-                            onClick={async () => await handleCopy(order.id)}
-                          >
-                            <FaCopy className="size-6 items-center pb-1 text-palate_1" />
-                          </button>
                         </div>
-                        <span className="text-wrap text-xs font-semibold text-palate_1/25 lg:text-xl">
-                          {order.id}
+                        {order.OrderItem.map((item) => {
+                          return (
+                            <span
+                              key={item.id}
+                              className="font-semibold text-palate_1 lg:text-xl"
+                            >
+                              {item.Merchandise.name}{" "}
+                              {item.size !== "FREE_SIZE"
+                                ? `- ${item.size}`
+                                : null}{" "}
+                              x{item.quantity}
+                            </span>
+                          );
+                        })}
+                        <span className="py-2 text-xl text-palate_1/90">
+                          {new Date(order.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      {order.OrderItem.map((item) => {
-                        return (
-                          <span
-                            key={item.id}
-                            className="font-semibold text-palate_1 lg:text-xl"
-                          >
-                            {item.Merchandise.name}{" "}
-                            {item.size !== "FREE_SIZE"
-                              ? `- ${item.size}`
-                              : null}{" "}
-                            x{item.quantity}
-                          </span>
-                        );
-                      })}
-                      <span className="py-2 text-xl text-palate_1/90">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </span>
+                    </div>
+                    <div className="right-0 top-0 flex items-center justify-center rounded-md">
+                      <QRCodeCanvas
+                        bgColor="rgba(0,0,0,0)"
+                        fgColor="#FEFED8"
+                        value={`${order.id}`}
+                        size={140}
+                      />
                     </div>
                   </div>
-                  <div className="right-0 top-0 flex items-center justify-center rounded-md">
-                    <QRCodeCanvas
-                      bgColor="rgba(0,0,0,0)"
-                      fgColor="#FEFED8"
-                      value={`${order.id}`}
-                      size={140}
-                    />
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>
