@@ -159,6 +159,6 @@ enum Sizes {
   XL
   XXL
   TXL
-  FXL
+  SXL
   FREE_SIZE
 }

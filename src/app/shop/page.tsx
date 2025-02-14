@@ -34,7 +34,7 @@ export default function Shop() {
     XL: 0,
     XXL: 0,
     TXL: 0,
-    FXL: 0,
+    SXL: 0,
     FREE_SIZE: 0,
   });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
@@ -411,7 +411,7 @@ export default function Shop() {
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
-                {["XS", "S", "M", "L", "XL", "XXL", "TXL", "FXL"].map(
+                {["XS", "S", "M", "L", "XL", "XXL", "TXL", "SXL"].map(
                   (size, index) => (
                     <div
                       key={index}
@@ -421,7 +421,7 @@ export default function Shop() {
                         htmlFor={`size-${index}`}
                         className="font-semibold text-white"
                       >
-                        {size === "TXL" ? "3XL" : size === "FXL" ? "4XL" : size}
+                        {size === "TXL" ? "3XL" : size === "SXL" ? "6XL" : size}
                       </label>
                       <input
                         type="number"
