@@ -33,6 +33,8 @@ export default function Shop() {
     L: 0,
     XL: 0,
     XXL: 0,
+    TXL: 0,
+    FXL: 0,
     FREE_SIZE: 0,
   });
   const [bulkTotalCost, setBulkTotalCost] = useState(0);
@@ -409,30 +411,32 @@ export default function Shop() {
               {/* Sizes and Quantities */}
               <div>
                 <h3 className="mb-2 font-semibold text-white">T-Shirt Sizes</h3>
-                {["XS", "S", "M", "L", "XL", "XXL"].map((size, index) => (
-                  <div
-                    key={index}
-                    className="mb-2 flex items-center justify-between"
-                  >
-                    <label
-                      htmlFor={`size-${index}`}
-                      className="font-semibold text-white"
+                {["XS", "S", "M", "L", "XL", "XXL", "TXL", "FXL"].map(
+                  (size, index) => (
+                    <div
+                      key={index}
+                      className="mb-2 flex items-center justify-between"
                     >
-                      {size}
-                    </label>
-                    <input
-                      type="number"
-                      id={`size-${index}`}
-                      className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
-                      placeholder="Qty"
-                      min={0}
-                      value={sizes[size as Sizes]}
-                      onChange={(e) =>
-                        handleSizeChange(size, parseInt(e.target.value) || 0)
-                      }
-                    />
-                  </div>
-                ))}
+                      <label
+                        htmlFor={`size-${index}`}
+                        className="font-semibold text-white"
+                      >
+                        {size === "TXL" ? "3XL" : size === "FXL" ? "4XL" : size}
+                      </label>
+                      <input
+                        type="number"
+                        id={`size-${index}`}
+                        className="w-24 rounded-md bg-emerald-200 p-2 text-gray-800"
+                        placeholder="Qty"
+                        min={0}
+                        value={sizes[size as Sizes]}
+                        onChange={(e) =>
+                          handleSizeChange(size, parseInt(e.target.value) || 0)
+                        }
+                      />
+                    </div>
+                  ),
+                )}
               </div>
 
               {/* Total Cost */}
