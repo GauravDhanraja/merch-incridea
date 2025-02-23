@@ -6,11 +6,7 @@ export default async function Layout({
 }) {
   const session = await auth();
   if (session?.user && session?.user?.role === "ADMIN") {
-    return (
-      <main className="h-full min-h-screen w-full bg-[#06040b]">
-        {children}
-      </main>
-    );
+    return <main className="h-screen w-full bg-[#06040b]">{children}</main>;
   }
   return (
     <main className="flex h-full min-h-screen w-full flex-col items-center justify-center gap-4 bg-[#06040b]">

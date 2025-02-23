@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
+import { z } from "zod";
 
 export const orderRouter = createTRPCRouter({
   getAllUserOrders: adminProcedure.query(async ({ ctx }) => {
@@ -37,6 +38,23 @@ export const orderRouter = createTRPCRouter({
       });
     }
   }),
+
+  markOrderDelivered: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.order.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          delivered: true,
+        },
+      });
+    }),
 
   getUserOrders: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.order.findMany({
